@@ -1,6 +1,8 @@
 (ns socky.handler
   (:use compojure.core)
-  (:require [compojure.handler :as handler]
+  (:require [chord.http-kit :refer [with-channel]]
+            [clojure.core.async :refer [<! >! go-loop]]
+            [compojure.handler :as handler]
             [compojure.route :as route]
             [hiccup.page :refer [html5 include-js]]
             [org.httpkit.server :as httpkit]))
@@ -13,15 +15,12 @@
    [:body [:div#content]]))
 
 (defn websocket-handler [request]
-  (httpkit/with-channel request channel
-    (httpkit/on-close channel (fn [status] (println "channel closed")))
-    (if (httpkit/websocket? channel)
-      (println "WebSocket channel")
-      (println "HTTP channel"))
-    (httpkit/on-receive channel
-                (fn [data]
-                  (println (str "on receive: " data))
-                  (httpkit/send! channel data)))))
+  (with-channel request channel
+    (go-loop []
+     (let [{:keys [message]} (<! channel)]
+       (println (str "message received: " message))
+       (>! channel (str "Hello client from server: " message))
+       (recur)))))
 
 (defroutes app-routes
   (GET "/" [] (page-frame))
