@@ -1,17 +1,7 @@
 (ns socky.client
   (:require [chord.client :refer [ws-ch]]
-            [cljs.core.async :refer [<! >! chan]]
-            [dommy.core :as d])
-  (:require-macros [cljs.core.async.macros :refer [go]]
-                   [dommy.macros :refer [node sel1]]))
-
-(defn render-page []
-  (node
-   (list
-    [:div
-     [:h3 "Test"]
-    [:div
-     [:h3 "ing"]]])))
+            [cljs.core.async :refer [<! >! chan]])
+  (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (def websocket-url "ws://localhost:8080/socky")
 (def websocket (atom (chan)))
