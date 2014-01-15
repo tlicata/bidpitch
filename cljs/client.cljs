@@ -1,4 +1,4 @@
-(ns sockey.client
+(ns socky.client
   (:require [dommy.core :as d])
   (:require-macros [dommy.macros :refer [node sel1]]))
 
