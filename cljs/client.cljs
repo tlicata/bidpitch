@@ -1,6 +1,7 @@
 (ns socky.client
   (:require [chord.client :refer [ws-ch]]
-            [cljs.core.async :refer [<! >! chan]])
+            [cljs.core.async :refer [<! >! chan]]
+            [cljs.reader :refer [read-string]])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (def websocket-url "ws://localhost:8080/socky")
@@ -16,5 +17,5 @@
          (reset! websocket (<! (ws-ch websocket-url)))
          (loop []
            (when-let [msg (<! @websocket)]
-             (.log js/console (:message msg))
+             (.log js/console (str (keys (read-string (:message msg)))))
              (recur))))))
