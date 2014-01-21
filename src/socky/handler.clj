@@ -5,14 +5,20 @@
             [compojure.handler :as handler]
             [compojure.route :as route]
             [hiccup.page :refer [html5 include-js]]
+            [hiccup.element :refer [javascript-tag]]
             [org.httpkit.server :as httpkit]
             [socky.crossover.game :as game]))
+
+(defn- include-cljs [path]
+  (list
+   (javascript-tag "var CLOSURE_NO_DEPS = true;")
+   (include-js path)))
 
 (defn page-frame []
   (html5
    [:head
     [:title "HttpKit Example"]
-    (include-js "/js/bin/main.js")]
+    (include-js "/js/lib/react-0.8.0.js" "/js/bin/main.js")]
    [:body [:div#content]]))
 
 (defn websocket-handler [request]
