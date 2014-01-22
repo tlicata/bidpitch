@@ -24,7 +24,7 @@
 (defn websocket-handler [request]
   (with-channel request channel
     (go-loop []
-     (let [{:keys [message]} (<! channel)]
+     (when-let [{:keys [message]} (<! channel)]
        (println (str "message received: " message))
        (>! channel (prn-str game/test-round))
        (recur)))))
