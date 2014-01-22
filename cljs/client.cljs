@@ -4,7 +4,7 @@
             [cljs.reader :refer [read-string]]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true])
-  (:require-macros [cljs.core.async.macros :refer [go]]))
+  (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
 (def websocket-url "ws://localhost:8080/socky")
 (def websocket (atom (chan)))
@@ -23,10 +23,11 @@
             (reify
               om/IWillMount
               (will-mount [_]
-                (go (while true
-                      (when-let [msg (<! @websocket)]
-                        (.log js/console "message received" (:message msg))
-                        (om/set-state! owner :message (:message msg))))))
+                (go-loop []
+                 (when-let [msg (<! @websocket)]
+                   (.log js/console "message received" (:message msg))
+                   (om/set-state! owner :message (:message msg))
+                   (recur))))
               om/IRender
               (render [_]
                 (dom/div nil
