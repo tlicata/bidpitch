@@ -1,5 +1,5 @@
 (ns socky.crossover.game
-  (:require [socky.crossover.cards :refer [create-deck]]))
+  (:require [socky.crossover.cards :refer [create-deck suits]]))
 
 (def player {:id nil :name ""})
 (def player-state {:cards [] :tricks []})
@@ -31,7 +31,8 @@
 (def test-players [tim sharon louise paul])
 
 (def test-table {:players test-players :scores [3 5]})
-(def test-round {:dealer tim
-                 :player-states (deal (create-deck) test-players)
-                 :bids {}
-                 :trump ""})
+(defn test-round []
+  {:dealer (rand-nth test-players)
+   :player-states (deal (create-deck) test-players)
+   :bids {}
+   :trump (rand-nth suits)})

@@ -26,7 +26,7 @@
     (go-loop []
      (when-let [{:keys [message]} (<! channel)]
        (println (str "message received: " message))
-       (>! channel (prn-str game/test-round))
+       (>! channel (prn-str (game/test-round)))
        (recur)))))
 
 (defroutes app-routes
