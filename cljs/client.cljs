@@ -11,7 +11,7 @@
 
 (defn send-message [msg]
   (go
-   (>! @websocket (or msg "pizza"))))
+   (>! @websocket (or msg "bid:pass"))))
 
 (set! (.-onload js/window)
       (fn []

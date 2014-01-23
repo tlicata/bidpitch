@@ -2,6 +2,7 @@
   (:use compojure.core)
   (:require [chord.http-kit :refer [with-channel]]
             [clojure.core.async :refer [<! >! go-loop]]
+            [clojure.string :refer [split]]
             [compojure.handler :as handler]
             [compojure.route :as route]
             [hiccup.page :refer [html5 include-js]]
@@ -26,7 +27,11 @@
     (go-loop []
      (when-let [{:keys [message]} (<! channel)]
        (println (str "message received: " message))
-       (>! channel (prn-str (game/test-round)))
+       (let [[msg val] (split message #":")]
+         (cond
+          (= msg "bid") (>! channel (str "thanks for " (if (= val "pass") "passing" "bidding")))
+          (= msg "play") (>! channel (str "thanks for playing " val))
+          :else (>! channel "unknown message type")))
        (recur)))))
 
 (defroutes app-routes
