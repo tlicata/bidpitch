@@ -1,6 +1,6 @@
 (ns socky.client
   (:require [chord.client :refer [ws-ch]]
-            [cljs.core.async :refer [<! >! chan]]
+            [cljs.core.async :refer [<! >! chan put!]]
             [cljs.reader :refer [read-string]]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true])
@@ -10,13 +10,19 @@
 (def websocket (atom (chan)))
 
 (defn send-message [msg]
-  (go
-   (>! @websocket (or msg "bid:pass"))))
+  (put! @websocket (or msg "bid:pass")))
+
+(defn player-join [name]
+  (put! @websocket (str "join:" name)))
+
+(defn chat [player message]
+  (put! @websocket (str "chat:" player ":" message)))
 
 (set! (.-onload js/window)
       (fn []
         (go
          (reset! websocket (<! (ws-ch websocket-url)))
+         (player-join "tim")
          (om/root
           {}
           (fn [data owner]
