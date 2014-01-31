@@ -51,13 +51,22 @@
        (println (str "channel closed"))))))
 
 (defroutes app-routes
-  (GET "/" [] (page-frame))
-  (GET "/socky" [] websocket-handler)
+  (GET "/" [] (page-frame)))
+
+(defroutes logged-in-routes
+  (GET "/socky" [] websocket-handler))
+
+(defroutes fall-through-routes
   (route/resources "/")
   (route/not-found "Not Found"))
 
+(defroutes all-routes
+  app-routes
+  logged-in-routes
+  fall-through-routes)
+
 (def app
-  (handler/site app-routes))
+  (handler/site all-routes))
 
 (defn -main []
   (httpkit/run-server app {:port 8080}))
