@@ -25,6 +25,18 @@
     (include-js "/js/lib/react-0.8.0.js" "/js/bin/main.js")]
    [:body [:div#content]]))
 
+(defn page-dummy []
+  (html5
+   [:head
+    [:title "HttpKit Dummy"]]
+   [:body [:div#content [:p "Dummy"]]]))
+
+(defn page-login []
+  (html5
+   [:head
+    [:title "Login"]]
+   [:body [:div#content [:p "Login"]]]))
+
 (def users {"tim" {:username "tim"
                    :password (creds/hash-bcrypt "tim_pass")
                    :roles #{::user}}
@@ -61,10 +73,14 @@
        (println (str "channel closed"))))))
 
 (defroutes app-routes
-  (GET "/" [] (page-frame)))
+  (GET "/" [] (page-frame))
+  (GET "/login" [] (page-login)))
 
 (defroutes logged-in-routes
-  (GET "/socky" [] websocket-handler))
+  (GET "/socky" []
+       (friend/authenticated websocket-handler))
+  (GET "/test-auth" []
+       (friend/authenticated (page-dummy))))
 
 (defroutes fall-through-routes
   (route/resources "/")
