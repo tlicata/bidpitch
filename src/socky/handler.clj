@@ -1,6 +1,9 @@
 (ns socky.handler
   (:use compojure.core)
-  (:require [chord.http-kit :refer [with-channel]]
+  (:require [cemerick.friend :as friend]
+            [cemerick.friend.workflows :as workflows]
+            [cemerick.friend.credentials :as creds]
+            [chord.http-kit :refer [with-channel]]
             [clojure.core.async :refer [<! >! go go-loop put!]]
             [clojure.string :refer [split]]
             [compojure.handler :as handler]
@@ -21,6 +24,13 @@
     [:title "HttpKit Example"]
     (include-js "/js/lib/react-0.8.0.js" "/js/bin/main.js")]
    [:body [:div#content]]))
+
+(def users {"tim" {:username "tim"
+                   :password (creds/hash-bcrypt "tim_pass")
+                   :roles #{::user}}
+            "louise" {:username "louise"
+                      :password (creds/hash-bcrypt "louise_pass")
+                      :roles #{::user}}})
 
 (def game (atom {}))
 
@@ -62,7 +72,9 @@
 
 (defroutes all-routes
   app-routes
-  logged-in-routes
+  (-> logged-in-routes
+      (friend/authenticate {:credential-fn (partial creds/bcrypt-credential-fn users)
+                            :workflows [(workflows/interactive-form)]}))
   fall-through-routes)
 
 (def app
