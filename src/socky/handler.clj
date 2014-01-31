@@ -38,16 +38,17 @@
 (defn websocket-handler [request]
   (with-channel request channel
     (go-loop []
-     (when-let [{:keys [message]} (<! channel)]
-       (println (str "message received: " message))
+     (if-let [{:keys [message]} (<! channel)]
        (let [[msg val val2] (split message #":")]
+         (println (str "message received: " message))
          (cond
           (= msg "join") (>! channel (player-join val channel))
           (= msg "bid") (>! channel (str "thanks for " (if (= val "pass") "passing" "bidding")))
           (= msg "play") (>! channel (str "thanks for playing " val))
           (= msg "chat") (>! channel (chat val val2))
-          :else (>! channel "unknown message type")))
-       (recur)))))
+          :else (>! channel "unknown message type"))
+         (recur))
+       (println (str "channel closed"))))))
 
 (defroutes app-routes
   (GET "/" [] (page-frame))
