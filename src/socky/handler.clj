@@ -11,6 +11,7 @@
             [hiccup.page :refer [html5 include-js]]
             [hiccup.element :refer [javascript-tag]]
             [org.httpkit.server :as httpkit]
+            [ring.util.response :as resp]
             [socky.crossover.game :as game]))
 
 (defn- include-cljs [path]
@@ -35,7 +36,11 @@
   (html5
    [:head
     [:title "Login"]]
-   [:body [:div#content [:p "Login"]]]))
+   [:body
+    [:form {:method "POST" :action "login"}
+     [:div "Username" [:input {:type "text" :name "username"}]]
+     [:div "Password" [:input {:type "password" :name "password"}]]
+     [:div [:input {:type "submit" :class "button" :value "Login"}]]]]))
 
 (def users {"tim" {:username "tim"
                    :password (creds/hash-bcrypt "tim_pass")
@@ -74,7 +79,8 @@
 
 (defroutes app-routes
   (GET "/" [] (page-frame))
-  (GET "/login" [] (page-login)))
+  (GET "/login" [] (page-login))
+  (GET "/logout" [] (friend/logout* (resp/redirect "/"))))
 
 (defroutes logged-in-routes
   (GET "/socky" []
