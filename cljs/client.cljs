@@ -12,9 +12,6 @@
 (defn send-message [msg]
   (put! @websocket (or msg "bid:pass")))
 
-(defn player-join [name]
-  (put! @websocket (str "join:" name)))
-
 (defn chat [player message]
   (put! @websocket (str "chat:" player ":" message)))
 
@@ -22,7 +19,6 @@
       (fn []
         (go
          (reset! websocket (<! (ws-ch websocket-url)))
-         (player-join "tim")
          (om/root
           {}
           (fn [data owner]
