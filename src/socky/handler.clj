@@ -19,10 +19,17 @@
    (javascript-tag "var CLOSURE_NO_DEPS = true;")
    (include-js path)))
 
-(defn page-frame []
+(defn page-home []
   (html5
    [:head
-    [:title "HttpKit Example"]
+    [:title "Bid Pitch - Home"]]
+   [:body
+    [:p "Welcome to Bid Pitch"]]))
+
+(defn page-game []
+  (html5
+   [:head
+    [:title "Bid Pitch"]
     (include-js "/js/lib/react-0.8.0.js" "/js/bin/main.js")]
    [:body [:div#content]]))
 
@@ -79,11 +86,13 @@
           (println (str "channel closed")))))))
 
 (defroutes app-routes
-  (GET "/" [] (page-frame))
+  (GET "/" [] (page-home))
   (GET "/login" [] (page-login))
   (GET "/logout" [] (friend/logout* (resp/redirect "/"))))
 
 (defroutes logged-in-routes
+  (GET "/game" []
+       (friend/authenticated (page-game)))
   (GET "/socky" []
        (friend/authenticated websocket-handler))
   (GET "/test-auth" []
