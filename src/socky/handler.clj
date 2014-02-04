@@ -8,7 +8,7 @@
             [clojure.string :refer [split]]
             [compojure.handler :as handler]
             [compojure.route :as route]
-            [hiccup.page :refer [html5 include-js]]
+            [hiccup.page :refer [html5 include-css include-js]]
             [hiccup.element :refer [javascript-tag]]
             [org.httpkit.server :as httpkit]
             [ring.util.response :as resp]
@@ -22,7 +22,8 @@
 (defn page-home []
   (html5
    [:head
-    [:title "Bid Pitch - Home"]]
+    [:title "Bid Pitch - Home"]
+    (include-css "/css/styles.css")]
    [:body
     [:p "Welcome to Bid Pitch"]]))
 
