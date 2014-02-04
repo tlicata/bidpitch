@@ -58,10 +58,6 @@
 
 (def game (atom {}))
 
-(defn player-join [name socket]
-  (swap! game assoc name {:socket socket})
-  (str "thanks for registering, " name))
-
 (defn chat [name message]
   (if-let [player (get @game name)]
     (let [socket (:socket player)]
@@ -72,7 +68,7 @@
 (defn websocket-handler [request]
   (with-channel request channel
     (when-let [user (friend/current-authentication)]
-      (player-join (:username user) channel)
+      (swap! game assoc (:username user) {:socket channel})
       (go-loop []
         (if-let [{:keys [message]} (<! channel)]
           (let [[msg val val2] (split message #":")]
