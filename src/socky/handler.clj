@@ -103,5 +103,9 @@
 (def app
   (handler/site all-routes))
 
+(defonce server (atom nil))
+(defn stop-server []
+  (@server :timeout 100)
+  (reset! server nil))
 (defn -main []
-  (httpkit/run-server app {:port 8080}))
+  (reset! server (httpkit/run-server app {:port 8080})))
