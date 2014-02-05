@@ -1,5 +1,6 @@
 (ns socky.crossover.game
-  (:require [socky.crossover.cards :refer [create-deck suits]]))
+  (:require [socky.crossover.cards :refer [create-deck suits]]
+            [socky.handler :refer [users]]))
 
 (def player {:id nil :name ""})
 (def player-state {:cards [] :tricks []})
@@ -19,16 +20,12 @@
 (defn deal [deck players]
   (let [hands (deal-cards deck (count players))]
     (map (fn [hand player]
-           {:id (:id player)
+           {:id player
             :cards hand
             :tricks []})
          hands players)))
 
-(def tim {:id 1 :name "Tim"})
-(def sharon {:id 2 :name "Sharon"})
-(def louise {:id 3 :name "Louise"})
-(def paul {:id 4 :name "Paul"})
-(def test-players [tim sharon louise paul])
+(def test-players (map #(:username (second %)) users))
 
 (def test-table {:players test-players :scores [3 5]})
 (defn test-round []
