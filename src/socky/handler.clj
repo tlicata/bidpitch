@@ -9,7 +9,7 @@
             [compojure.handler :as handler]
             [compojure.route :as route]
             [hiccup.page :refer [html5 include-css include-js]]
-            [hiccup.element :refer [javascript-tag]]
+            [hiccup.element :refer [javascript-tag link-to]]
             [org.httpkit.server :as httpkit]
             [ring.util.response :as resp]
             [socky.crossover.game :as game]))
@@ -25,7 +25,9 @@
     [:title "Bid Pitch - Home"]
     (include-css "/css/styles.css")]
    [:body
-    [:p "Welcome to Bid Pitch"]]))
+    [:p "Welcome to Bid Pitch"]
+    (link-to "/game-create" "create game")
+    (link-to "/game-join" "join game")]))
 
 (defn page-game []
   (html5
@@ -33,6 +35,22 @@
     [:title "Bid Pitch"]
     (include-js "/js/lib/react-0.8.0.js" "/js/bin/main.js")]
    [:body [:div#content]]))
+
+(defn page-game-create []
+  (html5
+   [:head
+    [:title "Bid Pitch - Create Game"]
+    (include-css "/css/styles.css")]
+   [:body
+    [:p "Make a game, fool"]]))
+
+(defn page-game-join []
+  (html5
+   [:head
+    [:title "Bid Pitch - Join Game"]
+    (include-css "/css/styles.css")]
+   [:body
+    [:p "Join a game, fool"]]))
 
 (defn page-dummy []
   (html5
@@ -90,6 +108,10 @@
 (defroutes logged-in-routes
   (GET "/game" []
        (friend/authenticated (page-game)))
+  (GET "/game-create" []
+       (friend/authenticated (page-game-create)))
+  (GET "/game-join" []
+       (friend/authenticated (page-game-join)))
   (GET "/socky" []
        (friend/authenticated websocket-handler))
   (GET "/test-auth" []
