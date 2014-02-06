@@ -32,4 +32,4 @@
   {:dealer (rand-nth test-players)
    :player-states (deal (create-deck) test-players)
    :bids {}
-   :trump (rand-nth suits)})
+   :trump nil})
