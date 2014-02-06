@@ -36,14 +36,51 @@
     (adjusted-index players index)))
 (defn next-player [players old-player]
     (nth players (next-index players old-player)))
+(defn order-players [players dealer]
+  (let [is-not-dealer (fn [player] (not= dealer player))
+        before-dealer (take-while is-not-dealer players)
+        dealer-and-after (drop-while is-not-dealer players)]
+    (concat (rest dealer-and-after) before-dealer [dealer])))
 
 (def test-players (map #(:username (second %)) users))
 
 (def test-table {:players test-players :scores [3 5]})
 (defn test-round []
-  (let [dealer (rand-nth test-players)]
+  (let [dealer (rand-nth test-players)
+        players (order-players test-players dealer)]
     {:dealer dealer
-     :player-states (deal (create-deck) test-players)
-     :bids {}
-     :onus (next-player test-players dealer)
+     :player-states (deal (create-deck) players)
+     :bids []
+     :onus (next-player players dealer)
      :trump nil}))
+
+(defn max-bid [bids]
+  (if (= (count bids) 0) 0 (apply max bids)))
+(defn highest-bidder [state]
+  (let [bids (:bids state)
+        players (map :id (:player-states state))
+        highest (.indexOf bids (max-bid bids))]
+    (when (not= highest -1)
+      (nth players highest))))
+(defn update-bid [old-state bids players player value]
+  (if (and (= (count bids) (player-index players player))
+           (or (= value 0)
+               (and (> value (max-bid bids))
+                    (> value 1)
+                    (< value 5))))
+    (let [new-state (assoc old-state :bids (conj bids value))]
+      (if (= (count players) (count (:bids new-state)))
+        (assoc new-state :onus (highest-bidder new-state))
+        (assoc new-state :onus (next-player players player))))))
+
+(defn advance-state [old-state player action value]
+  (let [bids (:bids old-state)
+        onus (:onus old-state)
+        players (map :id (:player-states old-state))
+        bidding-complete (= (count bids) (count players))]
+    (if (= onus player)
+      (if bidding-complete
+        (if (= action "play")
+          (assoc old-state :onus (next-player players onus)))
+        (if (= action "bid")
+           (update-bid old-state bids players player value))))))
