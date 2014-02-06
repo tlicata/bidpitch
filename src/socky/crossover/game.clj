@@ -31,11 +31,11 @@
 (defn adjusted-index [players index]
   (let [num-players (count players)]
     (if (>= index num-players) 0 index)))
-(defn next-index [old-player players]
+(defn next-index [players old-player]
   (let [index (inc (player-index players old-player))]
     (adjusted-index players index)))
-(defn next-player [old-player players]
-    (nth players (next-index old-player players)))
+(defn next-player [players old-player]
+    (nth players (next-index players old-player)))
 
 (def test-players (map #(:username (second %)) users))
 
