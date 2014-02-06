@@ -25,6 +25,18 @@
             :tricks []})
          hands players)))
 
+; Utility functions to get next player
+(defn player-index [players player]
+  (.indexOf players player))
+(defn adjusted-index [players index]
+  (let [num-players (count players)]
+    (if (>= index num-players) 0 index)))
+(defn next-index [old-player players]
+  (let [index (inc (player-index players old-player))]
+    (adjusted-index players index)))
+(defn next-player [old-player players]
+    (nth players (next-index old-player players)))
+
 (def test-players (map #(:username (second %)) users))
 
 (def test-table {:players test-players :scores [3 5]})
