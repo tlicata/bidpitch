@@ -41,7 +41,9 @@
 
 (def test-table {:players test-players :scores [3 5]})
 (defn test-round []
-  {:dealer (rand-nth test-players)
-   :player-states (deal (create-deck) test-players)
-   :bids {}
-   :trump nil})
+  (let [dealer (rand-nth test-players)]
+    {:dealer dealer
+     :player-states (deal (create-deck) test-players)
+     :bids {}
+     :onus (next-player test-players dealer)
+     :trump nil}))
