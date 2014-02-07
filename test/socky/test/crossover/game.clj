@@ -11,3 +11,15 @@
       (is (= (next-player players "tim") "louise"))
       (is (= (next-player players "louise") "sharon"))
       (is (= (next-player players "sharon") "tim")))))
+
+(deftest test-order-players
+  (testing "ordering players after dealer"
+    (let [players ["tim" "paul" "mike" "rob"]]
+      (is (= (order-players players "tim")
+             ["paul" "mike" "rob" "tim"]))
+      (is (= (order-players players "paul")
+             ["mike" "rob" "tim" "paul"]))
+      (is (= (order-players players "mike")
+             ["rob" "tim" "paul" "mike"]))
+      (is (= (order-players players "rob")
+             ["tim" "paul" "mike" "rob"])))))
