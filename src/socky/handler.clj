@@ -11,8 +11,7 @@
             [hiccup.page :refer [html5 include-css include-js]]
             [hiccup.element :refer [javascript-tag link-to]]
             [org.httpkit.server :as httpkit]
-            [ring.util.response :as resp]
-            [socky.crossover.game :as game]))
+            [ring.util.response :as resp]))
 
 (defn- include-cljs [path]
   (list
