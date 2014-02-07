@@ -23,3 +23,11 @@
              ["rob" "tim" "paul" "mike"]))
       (is (= (order-players players "rob")
              ["tim" "paul" "mike" "rob"])))))
+
+(deftest test-max-bid
+  (testing "getting maximum bid out of all bids"
+    (is (= (max-bid [1 2 3 0]) 3))
+    (is (= (max-bid [0 0 0 2]) 2))
+    (is (= (max-bid [3 0 0 0]) 3))
+    (is (= (max-bid [0 2]) 2))
+    (is (= (max-bid []) 0))))
