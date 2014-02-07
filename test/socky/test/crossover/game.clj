@@ -31,3 +31,11 @@
     (is (= (max-bid [3 0 0 0]) 3))
     (is (= (max-bid [0 2]) 2))
     (is (= (max-bid []) 0))))
+
+(deftest test-highest-bidder
+  (testing "seeing who was the highest bidder"
+    (let [base {:player-states [{:id "mike"} {:id "paul"} {:id "rob"} {:id "bob"}]}]
+      (is (= (highest-bidder (assoc base :bids [0 0 2 3])) "bob"))
+      (is (= (highest-bidder (assoc base :bids [3 0 0 0])) "mike"))
+      (is (= (highest-bidder (assoc base :bids [0 0 3 0])) "rob"))
+      (is (= (highest-bidder (assoc base :bids [0 3 0 0])) "paul")))))
