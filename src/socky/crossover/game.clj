@@ -45,15 +45,19 @@
 (def test-players (map #(:username (second %)) users))
 
 (def test-table {:players test-players :scores [3 5]})
-(defn test-round []
-  (let [dealer (rand-nth test-players)
-        players (order-players test-players dealer)]
+
+(defn create-initial-state [players dealer]
+  (let [ordered (order-players players dealer)]
     {:dealer dealer
-     :player-states (deal (create-deck) players)
+     :player-states (deal (create-deck) ordered)
      :bids []
-     :onus (next-player players dealer)
+     :onus (next-player ordered dealer)
      :trump nil}))
 
+
+(defn test-round []
+  (let [dealer (rand-nth test-players)]
+    (create-initial-state test-players dealer)))
 (defn max-bid [bids]
   (if (= (count bids) 0) 0 (apply max bids)))
 (defn highest-bidder [state]
