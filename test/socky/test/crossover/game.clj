@@ -39,3 +39,20 @@
       (is (= (highest-bidder (assoc base :bids [3 0 0 0])) "mike"))
       (is (= (highest-bidder (assoc base :bids [0 0 3 0])) "rob"))
       (is (= (highest-bidder (assoc base :bids [0 3 0 0])) "paul")))))
+
+(deftest test-game-play
+  (testing "actual game play"
+    (let [players ["tim" "sharon" "louise" "rob" "paul" "mike"]
+          dealer (first players)
+          initial-state (create-initial-state players dealer)]
+      (is (= (:dealer initial-state) "tim"))
+      (is (= (:onus initial-state) "sharon"))
+      ;; next player must be sharon
+      (is (nil? (advance-state initial-state "louise" "bid" 2)))
+      ;; bid must be at least 2
+      (is (nil? (advance-state initial-state "sharon" "bid" 1)))
+      ;; bid must not be greater than 4
+      (is (nil? (advance-state initial-state "sharon" "bid" 5)))
+      (let [next-state (advance-state initial-state "sharon" "bid" 2)]
+        (is (= (:onus next-state) "louise"))
+        (is (= (:bids next-state) [2]))))))
