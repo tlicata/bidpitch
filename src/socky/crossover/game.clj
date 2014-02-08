@@ -51,6 +51,7 @@
     {:dealer dealer
      :player-states (deal (create-deck) ordered)
      :bids []
+     :table-cards []
      :onus (next-player ordered dealer)
      :trump nil}))
 
