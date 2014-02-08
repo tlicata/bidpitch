@@ -1,5 +1,5 @@
 (ns socky.crossover.game
-  (:require [socky.crossover.cards :refer [create-deck suits]]
+  (:require [socky.crossover.cards :refer [create-deck get-suit suits]]
             [socky.handler :refer [users]]))
 
 (def player {:id nil :name ""})
@@ -77,6 +77,22 @@
       (if (= (count players) (count (:bids new-state)))
         (assoc new-state :onus (highest-bidder new-state))
         (assoc new-state :onus (next-player players player))))))
+
+(defn valid-play? [old-state player value]
+  (let [trump (:trump old-state)
+        suit (get-suit value)]
+    false))
+
+(defn update-play [old-state player value]
+  (let [trump (:trump old-state)
+        suit (get-suit value)]
+    ;; is valid card?
+    ;; remove card from player's hand
+    ;; add it to table-cards
+    (if (nil? trump)
+      (let [new-state (assoc old-state :trump suit)]
+        new-state)
+      nil)))
 
 (defn advance-state [old-state player action value]
   (let [bids (:bids old-state)
