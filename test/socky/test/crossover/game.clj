@@ -47,7 +47,7 @@
           initial-state (create-initial-state players dealer)]
       (is (= (:dealer initial-state) "tim"))
       (is (= (:onus initial-state) "sharon"))
-      ;; next player must be sharon
+      ;; only sharon can make the next move
       (is (nil? (advance-state initial-state "louise" "bid" 2)))
       ;; bid must be at least 2
       (is (nil? (advance-state initial-state "sharon" "bid" 1)))
