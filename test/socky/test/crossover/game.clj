@@ -40,9 +40,42 @@
       (is (= (highest-bidder (assoc base :bids [0 0 3 0])) "rob"))
       (is (= (highest-bidder (assoc base :bids [0 3 0 0])) "paul")))))
 
+(def cards {:player-states [{:cards ["5D" "6H" "AS" "3C" "JH"] :id "tim"}
+                            {:cards ["2C" "3D" "7C" "9H" "TS"] :id "sharon"}
+                            {:cards ["QH" "5S" "KS" "8H" "4D"] :id "louise"}]})
+
+(deftest test-player-has-card
+  (testing "whether or not a player has a card"
+    (is (player-has-card? cards "tim" "5D"))
+    (is (player-has-card? cards "tim" "JH"))
+    (is (not (player-has-card? cards "tim" "KC")))
+    (is (not (player-has-card? cards "tim" "3D")))
+    (is (player-has-card? cards "sharon" "2C"))
+    (is (player-has-card? cards "sharon" "3D"))
+    (is (not (player-has-card? cards "sharon" "QH")))
+    (is (not (player-has-card? cards "sharon" "KS")))
+    (is (not (player-has-card? cards "sharon" "8H")))
+    (is (player-has-card? cards "louise" "QH"))
+    (is (player-has-card? cards "louise" "4D"))))
+
 (deftest test-valid-play
   (testing "if a given card is valid play"
-    (is false)))
+    ;; leading cards are always valid
+    (is (valid-play? (assoc cards :table-cards []) "tim" "5D"))
+    (is (valid-play? (assoc cards :table-cards []) "tim" "AS"))
+    ;; following suits is always valid
+    (is (valid-play? (assoc cards :table-cards ["AD"]) "tim" "5D"))
+    (is (valid-play? (assoc cards :table-cards ["AC"]) "tim" "3C"))
+    (let [state (assoc cards :trump "D" :table-cards ["AC"])]
+      ;; not following suit when able is an error
+      (is (not (valid-play? state "tim" "6H")))
+      (is (not (valid-play? state "sharon" "TS")))
+      ;; throwing trump is ok though
+      (is (valid-play? state "tim" "5D"))
+      (is (valid-play? state "sharon" "3D"))
+      (is (valid-play? state "louise" "4D"))
+      ;; not following suit when can't is fine
+      (is (valid-play? state "louise" "8H")))))
 
 (deftest test-game-play
   (testing "actual game play"

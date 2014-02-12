@@ -83,19 +83,22 @@
 ;; helper functions for managing cards
 (defn cards-for-player [state player]
   (let [player-states (:player-states state)
-        player-state (filter #(= player (:id %)) player-states)]
+        player-state (first (filter #(= player (:id %)) player-states))]
     (:cards player-state)))
 (defn cards-by-suit [state player suit]
   (let [cards (cards-for-player state player)]
     (filter #(= suit (get-suit %)) cards)))
+(defn player-has-card? [state player card]
+  (some #(= card %) (cards-for-player state player)))
 (defn valid-play? [old-state player value]
   (let [table-cards (:table-cards old-state)
         lead-suit (get-suit (first table-cards))
         suit (get-suit value)]
-    (or (empty? table-cards) ;; lead card is always valid
-        (= suit lead-suit) ;; following suit is always valid
-        (= suit (:trump old-state)) ;; trump is always valid
-        (empty? (cards-by-suit old-state player lead-suit)))))
+    (and (player-has-card? old-state player value)
+         (or (empty? table-cards) ;; lead card is always valid
+             (= suit lead-suit) ;; following suit is always valid
+             (= suit (:trump old-state)) ;; trump is always valid
+             (empty? (cards-by-suit old-state player lead-suit))))))
 
 (defn update-play [old-state player value]
   (let [trump (:trump old-state)
