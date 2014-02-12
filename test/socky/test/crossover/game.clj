@@ -40,6 +40,10 @@
       (is (= (highest-bidder (assoc base :bids [0 0 3 0])) "rob"))
       (is (= (highest-bidder (assoc base :bids [0 3 0 0])) "paul")))))
 
+(deftest test-valid-play
+  (testing "if a given card is valid play"
+    (is false)))
+
 (deftest test-game-play
   (testing "actual game play"
     (let [players ["tim" "sharon" "louise" "rob" "paul" "mike"]

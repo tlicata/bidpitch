@@ -59,6 +59,8 @@
 (defn test-round []
   (let [dealer (rand-nth test-players)]
     (create-initial-state test-players dealer)))
+
+;; helper functions for managing bids
 (defn max-bid [bids]
   (if (= (count bids) 0) 0 (apply max bids)))
 (defn highest-bidder [state]
@@ -78,20 +80,31 @@
         (assoc new-state :onus (highest-bidder new-state))
         (assoc new-state :onus (next-player players player))))))
 
+;; helper functions for managing cards
+(defn cards-for-player [state player]
+  (let [player-states (:player-states state)
+        player-state (filter #(= player (:id %)) player-states)]
+    (:cards player-state)))
+(defn cards-by-suit [state player suit]
+  (let [cards (cards-for-player state player)]
+    (filter #(= suit (get-suit %)) cards)))
 (defn valid-play? [old-state player value]
-  (let [trump (:trump old-state)
+  (let [table-cards (:table-cards old-state)
+        lead-suit (get-suit (first table-cards))
         suit (get-suit value)]
-    false))
+    (or (empty? table-cards) ;; lead card is always valid
+        (= suit lead-suit) ;; following suit is always valid
+        (= suit (:trump old-state)) ;; trump is always valid
+        (empty? (cards-by-suit old-state player lead-suit)))))
 
 (defn update-play [old-state player value]
   (let [trump (:trump old-state)
         suit (get-suit value)]
-    ;; is valid card?
-    ;; remove card from player's hand
-    ;; add it to table-cards
-    (if (nil? trump)
-      (let [new-state (assoc old-state :trump suit)]
-        new-state)
+    (when (valid-play? old-state player value)
+      ;; (-> old-state
+      ;;     (remove-card player value)
+      ;;     (add-table-card value)
+      ;;     (check-trump value)))))
       nil)))
 
 (defn advance-state [old-state player action value]
