@@ -92,4 +92,22 @@
       (is (nil? (advance-state initial-state "sharon" "bid" 5)))
       (let [next-state (advance-state initial-state "sharon" "bid" 2)]
         (is (= (:onus next-state) "louise"))
-        (is (= (:bids next-state) [2]))))))
+        (is (= (:bids next-state) [2]))
+        ;; only louise can act
+        (is (nil? (advance-state next-state "rob" "bid" "3")))
+        ;; louise can only bid
+        (is (nil? (advance-state next-state "louise" "play" "4C")))
+        ;; louise must bid more than sharon
+        (is (nil? (advance-state next-state "louise" "bid" 2)))
+        (let [bid-3 (advance-state next-state "louise" "bid" 3)]
+          ;; louise can bid more than sharon
+          (is (not (nil? bid-3)))
+          ;; then the onus should be on rob
+          (is (= (:onus bid-3) "rob"))
+          (is (= (:bids bid-3) [2 3])))
+        (let [pass (advance-state next-state "louise" "bid" 0)]
+          ;; louise can pass (implemented as bidding 0)
+          (is (not (nil? pass)))
+          ;; onus should still be on rob
+          (is (= (:onus pass) "rob"))
+          (is (= (:bids pass) [2 0])))))))
