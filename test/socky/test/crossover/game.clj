@@ -79,7 +79,7 @@
 
 (deftest test-game-play
   (testing "actual game play"
-    (let [players ["tim" "sharon" "louise" "rob" "paul" "mike"]
+    (let [players ["tim" "sharon" "louise" "rob"]
           dealer (first players)
           initial-state (create-initial-state players dealer)]
       (is (= (:dealer initial-state) "tim"))
@@ -110,4 +110,27 @@
           (is (not (nil? pass)))
           ;; onus should still be on rob
           (is (= (:onus pass) "rob"))
-          (is (= (:bids pass) [2 0])))))))
+          (is (= (:bids pass) [2 0]))
+          ;; rob must bid more than sharon
+          (is (nil? (advance-state pass "rob" "bid" 2)))
+          ;; rob can pass
+          (is (not (nil? (advance-state pass "rob" "bid" 0))))
+          (let [bid-4 (advance-state pass "rob" "bid" 4)]
+            ;; rob can bid 3 or 4
+            (is (not (nil? bid-4)))
+            ;; tim can't bid less than 4
+            (is (nil? (advance-state bid-4 "tim" "bid" 2)))
+            ;; tim should pass
+            (let [play (advance-state bid-4 "tim" "bid" 0)
+                  rob-card (first (cards-for-player play "rob"))
+                  tim-card (first (cards-for-player play "tim"))]
+              ;; onus should now be on highest bidder (rob)
+              (is (= (:onus play) "rob"))
+              ;; rob can't do any more bidding
+              (is (nil? (advance-state play "rob" "bid" 4)))
+              ;; no one else can play
+              (is (nil? (advance-state play "tim" "play" tim-card)))
+              ;; rob can't play a card that's not his
+              (is (nil? (advance-state play "rob" "play" tim-card)))
+              ;; rob can play any card
+              (is (not (nil? (advance-state play "rob" "play" rob-card)))))))))))
