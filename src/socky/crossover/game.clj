@@ -103,21 +103,21 @@
 (defn update-play [old-state player value]
   (let [trump (:trump old-state)
         suit (get-suit value)]
-    (when (valid-play? old-state player value)
+    (valid-play? old-state player value)))
       ;; (-> old-state
       ;;     (remove-card player value)
       ;;     (add-table-card value)
       ;;     (check-trump value)))))
-      nil)))
+      ;; nil)))
 
 (defn advance-state [old-state player action value]
   (let [bids (:bids old-state)
         onus (:onus old-state)
         players (map :id (:player-states old-state))
         bidding-complete (= (count bids) (count players))]
-    (if (= onus player)
+    (when (= onus player)
       (if bidding-complete
-        (if (= action "play")
-          (assoc old-state :onus (next-player players onus)))
-        (if (= action "bid")
+        (when (= action "play")
+          (update-play old-state player value))
+        (when (= action "bid")
            (update-bid old-state bids players player value))))))
