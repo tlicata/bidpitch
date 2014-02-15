@@ -19,7 +19,7 @@
 
 (defn deal [deck players]
   (let [hands (deal-cards deck (count players))]
-    (map (fn [hand player]
+    (mapv (fn [hand player]
            {:id player
             :cards hand
             :tricks []})
@@ -99,16 +99,24 @@
              (= suit lead-suit) ;; following suit is always valid
              (= suit (:trump old-state)) ;; trump is always valid
              (empty? (cards-by-suit old-state player lead-suit))))))
+(defn remove-card [state player card]
+  (let [index (player-index (map :id (:player-states state)) player)]
+    (update-in state [:player-states index :cards] #(remove #{card} %))))
+(defn add-table-card [state card]
+  (assoc state :table-cards (conj (:table-cards state) card)))
+(defn check-trump [state suit]
+  (if (nil? (:trump state))
+    (assoc state :trump suit)
+    state))
 
 (defn update-play [old-state player value]
   (let [trump (:trump old-state)
         suit (get-suit value)]
-    (valid-play? old-state player value)))
-      ;; (-> old-state
-      ;;     (remove-card player value)
-      ;;     (add-table-card value)
-      ;;     (check-trump value)))))
-      ;; nil)))
+    (when (valid-play? old-state player value)
+      (-> old-state
+          (remove-card player value)
+          (add-table-card value)
+          (check-trump (get-suit value))))))
 
 (defn advance-state [old-state player action value]
   (let [bids (:bids old-state)

@@ -1,5 +1,6 @@
 (ns socky.test.crossover.game
   (:use clojure.test
+        socky.crossover.cards
         socky.crossover.game))
 
 (deftest test-next-player
@@ -132,5 +133,10 @@
               (is (nil? (advance-state play "tim" "play" tim-card)))
               ;; rob can't play a card that's not his
               (is (nil? (advance-state play "rob" "play" tim-card)))
-              ;; rob can play any card
-              (is (not (nil? (advance-state play "rob" "play" rob-card)))))))))))
+              (let [trump-lead (advance-state play "rob" "play" rob-card)]
+                ;; rob can play any card
+                (is (not (nil? trump-lead)))
+                ;; and that suit is now trump
+                (is (= (get-suit rob-card) (:trump trump-lead)))
+                ;; and that card is now on the table
+                (is (= [rob-card] (:table-cards trump-lead)))))))))))
