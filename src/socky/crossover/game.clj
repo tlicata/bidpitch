@@ -44,8 +44,6 @@
 
 (def test-players (map #(:username (second %)) users))
 
-(def test-table {:players test-players :scores [3 5]})
-
 (defn create-initial-state [players dealer]
   (let [ordered (order-players players dealer)]
     {:dealer dealer
