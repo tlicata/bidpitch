@@ -3,6 +3,20 @@
         socky.crossover.cards
         socky.crossover.game))
 
+(deftest test-deal
+  (testing "dealing cards to players"
+    (let [players ["sharon" "louise"]
+          deck (create-deck)
+          player-states (deal deck players)
+          sharon (first player-states)
+          louise (second player-states)]
+      (is (= (:id sharon) "sharon"))
+      (is (= (:id louise) "louise"))
+      (is (= (:tricks sharon) []))
+      (is (= (:tricks louise) []))
+      (is (= (count (:cards sharon)) 6))
+      (is (= (count (:cards louise)) 6)))))
+
 (deftest test-next-player
   (testing "next player functionality"
     (let [players ["tim" "louise" "sharon"]]
