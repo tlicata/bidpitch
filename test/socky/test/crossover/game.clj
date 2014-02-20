@@ -7,11 +7,9 @@
   (testing "dealing cards to players"
     (let [players ["sharon" "louise"]
           deck (create-deck)
-          player-states (deal deck players)
-          sharon (first player-states)
-          louise (second player-states)]
-      (is (= (:id sharon) "sharon"))
-      (is (= (:id louise) "louise"))
+          player-cards (deal deck players)
+          sharon (get player-cards "sharon")
+          louise (get player-cards "louise")]
       (is (= (:tricks sharon) []))
       (is (= (:tricks louise) []))
       (is (= (count (:cards sharon)) 6))
@@ -49,15 +47,15 @@
 
 (deftest test-highest-bidder
   (testing "seeing who was the highest bidder"
-    (let [base {:player-states [{:id "mike"} {:id "paul"} {:id "rob"} {:id "bob"}]}]
+    (let [base {:players ["mike" "paul" "rob" "bob"]}]
       (is (= (highest-bidder (assoc base :bids [0 0 2 3])) "bob"))
       (is (= (highest-bidder (assoc base :bids [3 0 0 0])) "mike"))
       (is (= (highest-bidder (assoc base :bids [0 0 3 0])) "rob"))
       (is (= (highest-bidder (assoc base :bids [0 3 0 0])) "paul")))))
 
-(def cards {:player-states [{:cards ["5D" "6H" "AS" "3C" "JH"] :id "tim"}
-                            {:cards ["2C" "3D" "7C" "9H" "TS"] :id "sharon"}
-                            {:cards ["QH" "5S" "KS" "8H" "4D"] :id "louise"}]})
+(def cards {:player-cards {"tim" {:cards ["5D" "6H" "AS" "3C" "JH"]}
+                           "sharon" {:cards ["2C" "3D" "7C" "9H" "TS"]}
+                           "louise" {:cards ["QH" "5S" "KS" "8H" "4D"]}}})
 
 (deftest test-player-has-card
   (testing "whether or not a player has a card"
@@ -137,8 +135,8 @@
             (is (nil? (advance-state bid-4 "tim" "bid" 2)))
             ;; tim should pass
             (let [play (advance-state bid-4 "tim" "bid" 0)
-                  rob-card (first (cards-for-player play "rob"))
-                  tim-card (first (cards-for-player play "tim"))]
+                  rob-card (first (get-player-cards play "rob"))
+                  tim-card (first (get-player-cards play "tim"))]
               ;; onus should now be on highest bidder (rob)
               (is (= (:onus play) "rob"))
               ;; rob can't do any more bidding

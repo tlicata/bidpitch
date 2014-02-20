@@ -7,15 +7,22 @@
 
 (defn deal [deck players]
   (let [hands (deal-cards deck (count players))]
-    (mapv (fn [hand player]
-           {:id player
-            :cards hand
-            :tricks []})
-         hands players)))
+    (zipmap
+     players
+     (mapv (fn [hand]
+             {:cards hand :tricks []})
+           hands))))
+
 
 ; Getters from state
 (defn get-players [state]
-  (map :id (:player-states state)))
+  (:players state))
+(defn get-player-state [state player]
+  (get (:player-cards state) player))
+(defn get-player-cards [state player]
+  (:cards (get-player-state state player)))
+(defn get-player-tricks [state player]
+  (:tricks (get-player-state state player)))
 
 ; Utility functions to get next player
 (defn player-index [players player]
@@ -39,7 +46,8 @@
 (defn create-initial-state [players dealer]
   (let [ordered (order-players players dealer)]
     {:dealer dealer
-     :player-states (deal (create-deck) ordered)
+     :players ordered
+     :player-cards (deal (create-deck) ordered)
      :bids []
      :table-cards []
      :onus (next-player ordered dealer)
@@ -71,15 +79,11 @@
         (assoc new-state :onus (next-player players player))))))
 
 ;; helper functions for managing cards
-(defn cards-for-player [state player]
-  (let [player-states (:player-states state)
-        player-state (first (filter #(= player (:id %)) player-states))]
-    (:cards player-state)))
 (defn cards-by-suit [state player suit]
-  (let [cards (cards-for-player state player)]
+  (let [cards (get-player-cards state player)]
     (filter #(= suit (get-suit %)) cards)))
 (defn player-has-card? [state player card]
-  (some #(= card %) (cards-for-player state player)))
+  (some #(= card %) (get-player-cards state player)))
 (defn valid-play? [old-state player value]
   (let [table-cards (:table-cards old-state)
         lead-suit (get-suit (first table-cards))
@@ -90,8 +94,7 @@
              (= suit (:trump old-state)) ;; trump is always valid
              (empty? (cards-by-suit old-state player lead-suit))))))
 (defn remove-card [state player card]
-  (let [index (player-index (get-players state) player)]
-    (update-in state [:player-states index :cards] #(remove #{card} %))))
+  (update-in state [:player-cards player] #(remove #{card} %)))
 (defn add-table-card [state card]
   (assoc state :table-cards (conj (:table-cards state) card)))
 (defn check-trump [state suit]
