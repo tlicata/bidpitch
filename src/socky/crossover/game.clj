@@ -2,9 +2,9 @@
   (:require [socky.crossover.cards :refer [create-deck get-suit suits]]
             [socky.handler :refer [users]]))
 
+; Helper functions for dealing cards
 (defn deal-cards [deck num-players]
   (take num-players (partition 6 deck)))
-
 (defn deal [deck players]
   (let [hands (deal-cards deck (count players))]
     (zipmap
@@ -12,7 +12,6 @@
      (mapv (fn [hand]
              {:cards hand :tricks []})
            hands))))
-
 
 ; Getters from state
 (defn get-players [state]
