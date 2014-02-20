@@ -2,18 +2,6 @@
   (:require [socky.crossover.cards :refer [create-deck get-suit suits]]
             [socky.handler :refer [users]]))
 
-(def player {:id nil :name ""})
-(def player-state {:cards [] :tricks []})
-
-(def round {:dealer :id
-            :player-states {}
-            :bids {}
-            :trump ""})
-
-(def table {:players [] :scores []})
-
-(def state {:table table :round round})
-
 (defn deal-cards [deck num-players]
   (take num-players (partition 6 deck)))
 
