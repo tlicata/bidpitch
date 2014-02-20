@@ -5,15 +5,14 @@
 
 (deftest test-deal
   (testing "dealing cards to players"
-    (let [players ["sharon" "louise"]
-          deck (create-deck)
-          player-cards (deal deck players)
-          sharon (get player-cards "sharon")
-          louise (get player-cards "louise")]
-      (is (= (:tricks sharon) []))
-      (is (= (:tricks louise) []))
-      (is (= (count (:cards sharon)) 6))
-      (is (= (count (:cards louise)) 6)))))
+    (let [state (-> empty-state
+                    (add-player "sharon")
+                    (add-player "louise")
+                    (dealt-state "sharon"))]
+      (is (= (get-player-tricks state "sharon") []))
+      (is (= (get-player-tricks state "louise") []))
+      (is (= (count (get-player-cards state "sharon")) 6))
+      (is (= (count (get-player-cards state "louise")) 6)))))
 
 (deftest test-next-player
   (testing "next player functionality"

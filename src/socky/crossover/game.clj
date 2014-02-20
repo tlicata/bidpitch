@@ -53,6 +53,24 @@
      :onus (next-player ordered dealer)
      :trump nil}))
 
+(def empty-state
+  {:bids []
+   :dealer nil
+   :onus nil
+   :players []
+   :player-cards {}
+   :table-cards []
+   :trump nil})
+
+(defn add-player [state player]
+  (update-in state [:players] conj player))
+
+(defn dealt-state [state dealer]
+  (let [players (get-players state)
+        ordered (order-players players dealer)]
+    (-> state
+     (assoc :players ordered)
+     (assoc :player-cards (deal (create-deck) ordered)))))
 
 (defn test-round []
   (let [dealer (rand-nth test-players)]
