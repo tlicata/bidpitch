@@ -61,8 +61,8 @@
    :table-cards []
    :trump nil})
 
-(defn add-player [state player]
-  (update-in state [:players] conj player))
+(defn add-player [state & players]
+  (update-in state [:players] concat players))
 
 (defn dealt-state [state dealer]
   (let [players (get-players state)
