@@ -46,7 +46,11 @@
 
 (deftest test-highest-bidder
   (testing "seeing who was the highest bidder"
-    (let [base {:players ["mike" "paul" "rob" "bob"]}]
+    (let [base (-> empty-state
+                   (add-player "mike")
+                   (add-player "paul")
+                   (add-player "rob")
+                   (add-player "bob"))]
       (is (= (highest-bidder (assoc base :bids [0 0 2 3])) "bob"))
       (is (= (highest-bidder (assoc base :bids [3 0 0 0])) "mike"))
       (is (= (highest-bidder (assoc base :bids [0 0 3 0])) "rob"))
