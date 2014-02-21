@@ -91,6 +91,19 @@
       ;; not following suit when can't is fine
       (is (valid-play? state "louise" "8H")))))
 
+;; (deftest test-trick-taking
+;;   (testing "taking a trick"
+;;     (let [state (-> empty-state
+;;                      (add-player "tim" "sharon" "louise")
+;;                      (add-cards "tim" [])
+;;                      (add-cards "sharon" [])
+;;                      (add-cards "louise" [])
+;;                      (bid "sharon" 0)
+;;                      (bid "louise" 2)
+;;                      (bid "tim" 3)
+;;                      (play "tim" "4C"))]
+;;       (not (nil? state)))))
+
 (deftest test-game-play
   (testing "actual game play"
     (let [initial-state (-> empty-state
