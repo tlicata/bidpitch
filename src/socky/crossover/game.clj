@@ -55,6 +55,16 @@
   (update-in state [:players] concat players))
 (defn add-player [state & players]
   (add-players state players))
+(defn add-cards
+  ;; deal random cards
+  ([state]
+     (let [players (get-players state)
+           cards (deal-cards (create-deck) (count players))
+           both (zipmap players cards)]
+       (reduce #(add-cards %1 (first %2) (second %2)) state both)))
+  ;; give specific cards to player
+  ([state player cards]
+     (assoc-in state [:player-cards player] {:cards cards :tricks []})))
 
 (defn dealt-state [state dealer]
   (let [players (get-players state)
