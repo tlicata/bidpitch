@@ -8,6 +8,7 @@
     (let [state (-> empty-state
                     (add-player "sharon")
                     (add-player "louise")
+                    (add-cards)
                     (dealt-state "sharon"))]
       (is (= (get-player-tricks state "sharon") []))
       (is (= (get-player-tricks state "louise") []))
@@ -94,6 +95,7 @@
   (testing "actual game play"
     (let [initial-state (-> empty-state
                             (add-player "tim" "sharon" "louise" "rob")
+                            (add-cards)
                             (dealt-state "tim"))]
       (is (= (:dealer initial-state) "tim"))
       (is (= (:onus initial-state) "sharon"))

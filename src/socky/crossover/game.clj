@@ -5,13 +5,6 @@
 ; Helper functions for dealing cards
 (defn deal-cards [deck num-players]
   (take num-players (partition 6 deck)))
-(defn deal [deck players]
-  (let [hands (deal-cards deck (count players))]
-    (zipmap
-     players
-     (mapv (fn [hand]
-             {:cards hand :tricks []})
-           hands))))
 
 ; Getters from state
 (defn get-players [state]
@@ -72,13 +65,13 @@
     (-> state
         (assoc :dealer dealer)
         (assoc :onus (next-player ordered dealer))
-        (assoc :players ordered)
-        (assoc :player-cards (deal (create-deck) ordered)))))
+        (assoc :players ordered))))
 
 (defn test-round []
   (let [dealer (rand-nth test-players)]
     (-> empty-state
         (add-players test-players)
+        (add-cards)
         (dealt-state dealer))))
 
 ;; helper functions for managing bids
