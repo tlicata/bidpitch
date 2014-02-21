@@ -42,16 +42,6 @@
 
 (def test-players (map #(:username (second %)) users))
 
-(defn create-initial-state [players dealer]
-  (let [ordered (order-players players dealer)]
-    {:dealer dealer
-     :players ordered
-     :player-cards (deal (create-deck) ordered)
-     :bids []
-     :table-cards []
-     :onus (next-player ordered dealer)
-     :trump nil}))
-
 (def empty-state
   {:bids []
    :dealer nil
@@ -61,19 +51,25 @@
    :table-cards []
    :trump nil})
 
-(defn add-player [state & players]
+(defn add-players [state players]
   (update-in state [:players] concat players))
+(defn add-player [state & players]
+  (add-players state players))
 
 (defn dealt-state [state dealer]
   (let [players (get-players state)
         ordered (order-players players dealer)]
     (-> state
-     (assoc :players ordered)
-     (assoc :player-cards (deal (create-deck) ordered)))))
+        (assoc :dealer dealer)
+        (assoc :onus (next-player ordered dealer))
+        (assoc :players ordered)
+        (assoc :player-cards (deal (create-deck) ordered)))))
 
 (defn test-round []
   (let [dealer (rand-nth test-players)]
-    (create-initial-state test-players dealer)))
+    (-> empty-state
+        (add-players test-players)
+        (dealt-state dealer))))
 
 ;; helper functions for managing bids
 (defn max-bid [bids]

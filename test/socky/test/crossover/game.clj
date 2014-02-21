@@ -92,9 +92,9 @@
 
 (deftest test-game-play
   (testing "actual game play"
-    (let [players ["tim" "sharon" "louise" "rob"]
-          dealer (first players)
-          initial-state (create-initial-state players dealer)]
+    (let [initial-state (-> empty-state
+                            (add-player "tim" "sharon" "louise" "rob")
+                            (dealt-state "tim"))]
       (is (= (:dealer initial-state) "tim"))
       (is (= (:onus initial-state) "sharon"))
       ;; only sharon can make the next move
