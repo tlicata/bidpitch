@@ -11,7 +11,8 @@
             [hiccup.page :refer [html5 include-css include-js]]
             [hiccup.element :refer [javascript-tag link-to]]
             [org.httpkit.server :as httpkit]
-            [ring.util.response :as resp]))
+            [ring.util.response :as resp]
+            [socky.users :refer [users]]))
 
 (defn- include-cljs [path]
   (list
@@ -66,16 +67,6 @@
      [:div "Username" [:input {:type "text" :name "username"}]]
      [:div "Password" [:input {:type "password" :name "password"}]]
      [:div [:input {:type "submit" :class "button" :value "Login"}]]]]))
-
-(def users {"tim" {:username "tim"
-                   :password (creds/hash-bcrypt "tim_pass")
-                   :roles #{::user}}
-            "louise" {:username "louise"
-                      :password (creds/hash-bcrypt "louise_pass")
-                      :roles #{::user}}
-            "sharon" {:username "sharon"
-                      :password (creds/hash-bcrypt "sharon_pass")
-                      :roles #{::user}}})
 
 (def game (atom {}))
 

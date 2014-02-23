@@ -1,6 +1,6 @@
 (ns socky.crossover.game
   (:require [socky.crossover.cards :refer [create-deck get-suit suits]]
-            [socky.handler :refer [users]]))
+            [socky.users :refer [users]]))
 
 ; Helper functions for dealing cards
 (defn deal-cards [deck num-players]
