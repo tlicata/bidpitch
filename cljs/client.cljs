@@ -38,4 +38,5 @@
                            (if msg
                              msg
                              "Hello World"))))))
-         (.getElementById js/document "content")))))
+         (.getElementById js/document "content"))
+         (>! @websocket "state"))))

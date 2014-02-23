@@ -12,6 +12,7 @@
             [hiccup.element :refer [javascript-tag link-to]]
             [org.httpkit.server :as httpkit]
             [ring.util.response :as resp]
+            [socky.crossover.game :refer [empty-state]]
             [socky.users :refer [users]]))
 
 (defn- include-cljs [path]
@@ -68,7 +69,7 @@
      [:div "Password" [:input {:type "password" :name "password"}]]
      [:div [:input {:type "submit" :class "button" :value "Login"}]]]]))
 
-(def game (atom {}))
+(def game (atom {:state empty-state}))
 
 (defn chat [name message]
   (if-let [player (get @game name)]
@@ -89,6 +90,7 @@
              (= msg "bid") (>! channel (str "thanks for " (if (= val "pass") "passing" "bidding")))
              (= msg "play") (>! channel (str "thanks for playing " val))
              (= msg "chat") (>! channel (chat val val2))
+             (= msg "state") (>! channel (prn-str (:state @game)))
              :else (>! channel "unknown message type"))
             (recur))
           (println (str "channel closed")))))))
