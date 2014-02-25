@@ -69,10 +69,11 @@
      [:div "Password" [:input {:type "password" :name "password"}]]
      [:div [:input {:type "submit" :class "button" :value "Login"}]]]]))
 
-(def game (atom {:state empty-state}))
+(def sockets (atom {}))
+(def game-state (atom empty-state))
 
 (defn chat [name message]
-  (if-let [player (get @game name)]
+  (if-let [player (get @sockets name)]
     (let [socket (:socket player)]
       (put! socket message)
       (str "thanks for chatting with " name))
@@ -81,7 +82,7 @@
 (defn websocket-handler [request]
   (with-channel request channel
     (when-let [user (friend/current-authentication)]
-      (swap! game assoc (:username user) {:socket channel})
+      (swap! sockets assoc (:username user) {:socket channel})
       (go-loop []
         (if-let [{:keys [message]} (<! channel)]
           (let [[msg val val2] (split message #":")]
@@ -90,7 +91,7 @@
              (= msg "bid") (>! channel (str "thanks for " (if (= val "pass") "passing" "bidding")))
              (= msg "play") (>! channel (str "thanks for playing " val))
              (= msg "chat") (>! channel (chat val val2))
-             (= msg "state") (>! channel (prn-str (:state @game)))
+             (= msg "state") (>! channel (prn-str @game-state))
              :else (>! channel "unknown message type"))
             (recur))
           (println (str "channel closed")))))))
