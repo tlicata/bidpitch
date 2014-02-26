@@ -44,8 +44,11 @@
    :table-cards []
    :trump nil})
 
+(defn has-player? [state player]
+  (some #{player} (get-players state)))
 (defn add-players [state players]
-  (update-in state [:players] concat players))
+  (let [dedupe (filter #(not (has-player? state %)) players)]
+    (update-in state [:players] concat dedupe)))
 (defn add-player [state & players]
   (add-players state players))
 (defn add-cards
