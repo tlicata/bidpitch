@@ -15,28 +15,28 @@
 (defn chat [player message]
   (put! @websocket (str "chat:" player ":" message)))
 
+(defn app [data owner]
+  (reify
+    om/IWillMount
+    (will-mount [_]
+      (go-loop []
+               (when-let [msg (<! @websocket)]
+                 (.log js/console "message received" (:message msg))
+                 (om/set-state! owner :message (:message msg))
+                 (recur))))
+    om/IRender
+    (render [_]
+      (dom/div nil
+               (let [msg (om/get-state owner :message)]
+                 (.log js/console "render")
+                 (if msg
+                   msg
+                   "Hello World"))))))
+
 (set! (.-onload js/window)
       (fn []
-        (go
-         (reset! websocket (<! (ws-ch websocket-url)))
-         (om/root
-          {}
-          (fn [data owner]
-            (reify
-              om/IWillMount
-              (will-mount [_]
-                (go-loop []
-                 (when-let [msg (<! @websocket)]
-                   (.log js/console "message received" (:message msg))
-                   (om/set-state! owner :message (:message msg))
-                   (recur))))
-              om/IRender
-              (render [_]
-                (dom/div nil
-                         (let [msg (om/get-state owner :message)]
-                           (.log js/console "render")
-                           (if msg
-                             msg
-                             "Hello World"))))))
-         (.getElementById js/document "content"))
-         (>! @websocket "state"))))
+        (let [target (.getElementById js/document "content")]
+          (go
+           (reset! websocket (<! (ws-ch websocket-url)))
+           (om/root {} app target)
+           (>! @websocket "state")))))
