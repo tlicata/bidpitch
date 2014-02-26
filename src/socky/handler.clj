@@ -12,7 +12,7 @@
             [hiccup.element :refer [javascript-tag link-to]]
             [org.httpkit.server :as httpkit]
             [ring.util.response :as resp]
-            [socky.crossover.game :refer [empty-state]]
+            [socky.crossover.game :as game]
             [socky.users :refer [users]]))
 
 (defn- include-cljs [path]
@@ -70,7 +70,7 @@
      [:div [:input {:type "submit" :class "button" :value "Login"}]]]]))
 
 (def sockets (atom {}))
-(def game-state (atom empty-state))
+(def game-state (atom game/empty-state))
 
 (defn chat [name message]
   (if-let [player (get @sockets name)]
@@ -78,6 +78,10 @@
       (put! socket message)
       (str "thanks for chatting with " name))
     (str "can't send message to " name)))
+
+(defn player-join [name]
+  (when-let [new-state (game/add-player @game-state name)]
+    (reset! game-state new-state)))
 
 (defn websocket-handler [request]
   (with-channel request channel
@@ -88,6 +92,7 @@
           (let [[msg val val2] (split message #":")]
             (println (str "message received: " message))
             (cond
+             (= msg "join") (>! channel (do (player-join (:username user)) (prn-str @game-state)))
              (= msg "bid") (>! channel (str "thanks for " (if (= val "pass") "passing" "bidding")))
              (= msg "play") (>! channel (str "thanks for playing " val))
              (= msg "chat") (>! channel (chat val val2))
