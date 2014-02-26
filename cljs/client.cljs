@@ -29,9 +29,7 @@
       (dom/div nil
                (let [msg (om/get-state owner :message)]
                  (.log js/console "render")
-                 (if msg
-                   msg
-                   "Hello World"))))))
+                 (or msg "Hello World"))))))
 
 (set! (.-onload js/window)
       (fn []
