@@ -1,6 +1,6 @@
 (ns socky.test.crossover.game
   (:use clojure.test
-        socky.crossover.cards
+        socky.cards
         socky.crossover.game))
 
 (deftest test-deal
