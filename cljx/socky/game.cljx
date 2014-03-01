@@ -1,4 +1,4 @@
-(ns socky.crossover.game
+(ns socky.game
   (:require [socky.cards :refer [create-deck get-suit suits]]))
 
 ; Helper functions for dealing cards
