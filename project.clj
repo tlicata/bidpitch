@@ -18,7 +18,7 @@
   :profiles
   {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
                         [ring-mock "0.1.5"]]}}
-  :cljsbuild {:builds [{:source-paths ["cljs"]
+  :cljsbuild {:builds [{:source-paths ["cljs" "target/generated-src/cljs"]
                         :compiler {:output-to "resources/public/js/bin/main.js"
                                    :optimizations :whitespace
                                    :pretty-print true}}]}
