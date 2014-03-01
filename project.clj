@@ -14,7 +14,7 @@
             [lein-cljsbuild "0.3.3"]
             [com.keminglabs/cljx "0.3.1"]]
   :hooks [leiningen.cljsbuild cljx.hooks]
-  :source-paths ["src" "target/generated-src/clj"]
+  :source-paths ["src/clj" "target/generated-src/clj"]
   :profiles
   {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
                         [ring-mock "0.1.5"]]}}
