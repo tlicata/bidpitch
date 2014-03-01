@@ -1,4 +1,4 @@
-(ns socky.test.crossover.game
+(ns socky.test.game
   (:use clojure.test
         socky.cards
         socky.game))
