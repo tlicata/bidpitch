@@ -22,9 +22,9 @@
                         :compiler {:output-to "resources/public/js/bin/main.js"
                                    :optimizations :whitespace
                                    :pretty-print true}}]}
-  :cljx {:builds [{:source-paths ["cljx"]
+  :cljx {:builds [{:source-paths ["src/cljx"]
                    :output-path "target/generated-src/clj"
                    :rules :clj}
-                  {:source-paths ["cljx"]
+                  {:source-paths ["src/cljx"]
                    :output-path "target/generated-src/cljs"
                    :rules :cljs}]})
