@@ -16,8 +16,10 @@
   (:tricks (get-player-state state player)))
 
 ; Utility functions to get next player
+(defn index-of [vect item]
+  (first (keep-indexed #(if (= %2 item) %1) vect)))
 (defn player-index [players player]
-  (.indexOf players player))
+  (index-of players player))
 (defn adjusted-index [players index]
   (let [num-players (count players)]
     (if (>= index num-players) 0 index)))
@@ -73,7 +75,7 @@
 (defn highest-bidder [state]
   (let [bids (:bids state)
         players (get-players state)
-        highest (.indexOf bids (max-bid bids))]
+        highest (index-of bids (max-bid bids))]
     (when (not= highest -1)
       (nth players highest))))
 (defn update-bid [old-state bids players player value]
