@@ -1,6 +1,5 @@
 (ns socky.crossover.game
-  (:require [socky.cards :refer [create-deck get-suit suits]]
-            [socky.users :refer [users]]))
+  (:require [socky.cards :refer [create-deck get-suit suits]]))
 
 ; Helper functions for dealing cards
 (defn deal-cards [deck num-players]
@@ -32,8 +31,6 @@
         before-dealer (take-while is-not-dealer players)
         dealer-and-after (drop-while is-not-dealer players)]
     (concat (rest dealer-and-after) before-dealer [dealer])))
-
-(def test-players (map #(:username (second %)) users))
 
 (def empty-state
   {:bids []
@@ -69,13 +66,6 @@
         (assoc :dealer dealer)
         (assoc :onus (next-player ordered dealer))
         (assoc :players ordered))))
-
-(defn test-round []
-  (let [dealer (rand-nth test-players)]
-    (-> empty-state
-        (add-players test-players)
-        (add-cards)
-        (dealt-state dealer))))
 
 ;; helper functions for managing bids
 (defn max-bid [bids]
