@@ -91,6 +91,19 @@
       ;; not following suit when can't is fine
       (is (valid-play? state "louise" "8H")))))
 
+(deftest test-remove-card
+  (testing "removing a card from a player's hand"
+    (let [cards ["4C" "7H" "8D" "TS" "JC"]
+          state (-> empty-state
+                    (add-player "tim")
+                    (add-cards "tim" cards))]
+      (is (player-has-card? state "tim" "4C"))
+      (is (= cards (get-player-cards state "tim")))
+      (let [removed (remove-card state "tim" "4C")]
+        (is (not (player-has-card? removed "tim" "4C")))
+        (is (= ["7H" "8D" "TS" "JC"]
+               (get-player-cards removed "tim")))))))
+
 ;; (deftest test-trick-taking
 ;;   (testing "taking a trick"
 ;;     (let [state (-> empty-state

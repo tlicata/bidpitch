@@ -115,7 +115,7 @@
              (= suit (get-trump old-state)) ;; trump is always valid
              (empty? (cards-by-suit old-state player lead-suit))))))
 (defn remove-card [state player card]
-  (update-in state [:player-cards player] #(remove #{card} %)))
+  (update-in state [:player-cards player :cards] #(remove #{card} %)))
 (defn add-table-card [state card]
   (assoc state :table-cards (conj (:table-cards state) card)))
 (defn check-trump [state suit]
