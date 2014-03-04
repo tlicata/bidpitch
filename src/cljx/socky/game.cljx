@@ -14,6 +14,8 @@
   (:cards (get-player-state state player)))
 (defn get-player-tricks [state player]
   (:tricks (get-player-state state player)))
+(defn get-bids [state]
+  (:bids state))
 
 ; Utility functions to get next player
 (defn index-of [vect item]
@@ -73,7 +75,7 @@
 (defn max-bid [bids]
   (if (= (count bids) 0) 0 (apply max bids)))
 (defn highest-bidder [state]
-  (let [bids (:bids state)
+  (let [bids (get-bids state)
         players (get-players state)
         highest (index-of bids (max-bid bids))]
     (when (not= highest -1)
@@ -123,7 +125,7 @@
           (check-trump (get-suit value))))))
 
 (defn advance-state [old-state player action value]
-  (let [bids (:bids old-state)
+  (let [bids (get-bids old-state)
         onus (:onus old-state)
         players (get-players old-state)
         bidding-complete (= (count bids) (count players))]
