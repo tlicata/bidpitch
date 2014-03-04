@@ -80,16 +80,18 @@
         highest (index-of bids (max-bid bids))]
     (when (not= highest -1)
       (nth players highest))))
-(defn update-bid [old-state bids players player value]
-  (if (and (= (count bids) (player-index players player))
-           (or (= value 0)
-               (and (> value (max-bid bids))
-                    (> value 1)
-                    (< value 5))))
-    (let [new-state (assoc old-state :bids (conj bids value))]
-      (if (= (count players) (count (:bids new-state)))
-        (assoc new-state :onus (highest-bidder new-state))
-        (assoc new-state :onus (next-player players player))))))
+(defn update-bid [old-state player value]
+  (let [bids (get-bids old-state)
+        players (get-players old-state)]
+    (if (and (= (count bids) (player-index players player))
+             (or (= value 0)
+                 (and (> value (max-bid bids))
+                      (> value 1)
+                      (< value 5))))
+      (let [new-state (assoc old-state :bids (conj bids value))]
+        (if (= (count players) (count (get-bids new-state)))
+          (assoc new-state :onus (highest-bidder new-state))
+          (assoc new-state :onus (next-player players player)))))))
 
 ;; helper functions for managing cards
 (defn cards-by-suit [state player suit]
@@ -134,4 +136,4 @@
         (when (= action "play")
           (update-play old-state player value))
         (when (= action "bid")
-           (update-bid old-state bids players player value))))))
+           (update-bid old-state player value))))))
