@@ -104,6 +104,11 @@
         (is (= ["7H" "8D" "TS" "JC"]
                (get-player-cards removed "tim")))))))
 
+(deftest test-add-table-card
+  (testing "playing a card to the table"
+    (let [state (add-table-card empty-state "4C")]
+      (= (get-table-cards state) ["4C"]))))
+
 ;; (deftest test-trick-taking
 ;;   (testing "taking a trick"
 ;;     (let [state (-> empty-state
