@@ -122,6 +122,11 @@
   (if (nil? (get-trump state))
     (assoc state :trump suit)
     state))
+(defn highest [cards suit]
+  (let [matching (filter #(= suit (get-suit %)) cards)
+        indices (map #(index-of ranks (get-rank %)) matching)]
+    (when-not (empty? indices)
+      (make-card (nth ranks (apply max indices)) suit))))
 
 (defn update-play [old-state player value]
   (let [trump (get-trump old-state)

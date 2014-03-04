@@ -109,6 +109,14 @@
     (let [state (add-table-card empty-state "4C")]
       (= (get-table-cards state) ["4C"]))))
 
+(deftest test-highest
+  (testing "finding the highest played card of a suit"
+    (let [cards ["4C" "5D" "JD" "KS" "AS"]]
+      (is (highest cards "C") "4C")
+      (is (highest cards "D") "5D")
+      (is (highest cards "S") "AS")
+      (is (nil? (highest cards "H"))))))
+
 ;; (deftest test-trick-taking
 ;;   (testing "taking a trick"
 ;;     (let [state (-> empty-state
