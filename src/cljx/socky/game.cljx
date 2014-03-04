@@ -16,6 +16,12 @@
   (:tricks (get-player-state state player)))
 (defn get-bids [state]
   (:bids state))
+(defn get-table-cards [state]
+  (:table-cards state))
+(defn get-trump [state]
+  (:trump state))
+(defn get-lead-suit [state]
+  (get-suit (first (get-table-cards state))))
 
 ; Utility functions to get next player
 (defn index-of [vect item]
@@ -100,25 +106,25 @@
 (defn player-has-card? [state player card]
   (some #(= card %) (get-player-cards state player)))
 (defn valid-play? [old-state player value]
-  (let [table-cards (:table-cards old-state)
-        lead-suit (get-suit (first table-cards))
+  (let [table-cards (get-table-cards old-state)
+        lead-suit (get-lead-suit old-state)
         suit (get-suit value)]
     (and (player-has-card? old-state player value)
          (or (empty? table-cards) ;; lead card is always valid
              (= suit lead-suit) ;; following suit is always valid
-             (= suit (:trump old-state)) ;; trump is always valid
+             (= suit (get-trump old-state)) ;; trump is always valid
              (empty? (cards-by-suit old-state player lead-suit))))))
 (defn remove-card [state player card]
   (update-in state [:player-cards player] #(remove #{card} %)))
 (defn add-table-card [state card]
   (assoc state :table-cards (conj (:table-cards state) card)))
 (defn check-trump [state suit]
-  (if (nil? (:trump state))
+  (if (nil? (get-trump state))
     (assoc state :trump suit)
     state))
 
 (defn update-play [old-state player value]
-  (let [trump (:trump old-state)
+  (let [trump (get-trump old-state)
         suit (get-suit value)]
     (when (valid-play? old-state player value)
       (-> old-state
