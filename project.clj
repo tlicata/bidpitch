@@ -11,12 +11,20 @@
                  [jarohen/chord "0.2.2"]
                  [om "0.2.3"]]
   :plugins [[lein-ring "0.8.10"]
-            [lein-cljsbuild "0.3.3"]]
-  :hooks [leiningen.cljsbuild]
+            [lein-cljsbuild "0.3.3"]
+            [com.keminglabs/cljx "0.3.1"]]
+  :hooks [leiningen.cljsbuild cljx.hooks]
+  :source-paths ["src/clj" "target/generated-src/clj"]
   :profiles
   {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
                         [ring-mock "0.1.5"]]}}
-  :cljsbuild {:builds [{:source-paths ["cljs"]
+  :cljsbuild {:builds [{:source-paths ["src/cljs" "target/generated-src/cljs"]
                         :compiler {:output-to "resources/public/js/bin/main.js"
                                    :optimizations :whitespace
-                                   :pretty-print true}}]})
+                                   :pretty-print true}}]}
+  :cljx {:builds [{:source-paths ["src/cljx"]
+                   :output-path "target/generated-src/clj"
+                   :rules :clj}
+                  {:source-paths ["src/cljx"]
+                   :output-path "target/generated-src/cljs"
+                   :rules :cljs}]})

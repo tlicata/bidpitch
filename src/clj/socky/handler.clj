@@ -12,7 +12,7 @@
             [hiccup.element :refer [javascript-tag link-to]]
             [org.httpkit.server :as httpkit]
             [ring.util.response :as resp]
-            [socky.crossover.game :as game]
+            [socky.game :as game]
             [socky.users :refer [users]]))
 
 (defn- include-cljs [path]

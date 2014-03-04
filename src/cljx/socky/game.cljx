@@ -1,6 +1,5 @@
-(ns socky.crossover.game
-  (:require [socky.crossover.cards :refer [create-deck get-suit suits]]
-            [socky.users :refer [users]]))
+(ns socky.game
+  (:require [socky.cards :refer [create-deck get-suit suits]]))
 
 ; Helper functions for dealing cards
 (defn deal-cards [deck num-players]
@@ -17,8 +16,10 @@
   (:tricks (get-player-state state player)))
 
 ; Utility functions to get next player
+(defn index-of [vect item]
+  (first (keep-indexed #(if (= %2 item) %1) vect)))
 (defn player-index [players player]
-  (.indexOf players player))
+  (index-of players player))
 (defn adjusted-index [players index]
   (let [num-players (count players)]
     (if (>= index num-players) 0 index)))
@@ -32,8 +33,6 @@
         before-dealer (take-while is-not-dealer players)
         dealer-and-after (drop-while is-not-dealer players)]
     (concat (rest dealer-and-after) before-dealer [dealer])))
-
-(def test-players (map #(:username (second %)) users))
 
 (def empty-state
   {:bids []
@@ -70,20 +69,13 @@
         (assoc :onus (next-player ordered dealer))
         (assoc :players ordered))))
 
-(defn test-round []
-  (let [dealer (rand-nth test-players)]
-    (-> empty-state
-        (add-players test-players)
-        (add-cards)
-        (dealt-state dealer))))
-
 ;; helper functions for managing bids
 (defn max-bid [bids]
   (if (= (count bids) 0) 0 (apply max bids)))
 (defn highest-bidder [state]
   (let [bids (:bids state)
         players (get-players state)
-        highest (.indexOf bids (max-bid bids))]
+        highest (index-of bids (max-bid bids))]
     (when (not= highest -1)
       (nth players highest))))
 (defn update-bid [old-state bids players player value]
