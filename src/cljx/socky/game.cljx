@@ -143,3 +143,8 @@
           (update-play old-state player value))
         (when (= action "bid")
            (update-bid old-state player value))))))
+
+(defn bid [state player value]
+  (advance-state state player "bid" value))
+(defn play [state player value]
+  (advance-state state player "play" value))
