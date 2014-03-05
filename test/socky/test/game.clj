@@ -9,7 +9,7 @@
                     (add-player "sharon")
                     (add-player "louise")
                     (add-cards)
-                    (dealt-state "sharon"))]
+                    (dealt-state))]
       (is (= (get-player-tricks state "sharon") []))
       (is (= (get-player-tricks state "louise") []))
       (is (= (count (get-player-cards state "sharon")) 6))
@@ -161,7 +161,7 @@
     (let [initial-state (-> empty-state
                             (add-player "tim" "sharon" "louise" "rob")
                             (add-cards)
-                            (dealt-state "tim"))]
+                            (dealt-state))]
       (is (= (:dealer initial-state) "tim"))
       (is (= (:onus initial-state) "sharon"))
       ;; only sharon can make the next move

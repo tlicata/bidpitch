@@ -69,14 +69,17 @@
   ([state player cards]
      (assoc-in state [:player-cards player] {:cards cards :tricks []})))
 
-(defn dealt-state [state dealer]
-  (let [players (get-players state)
-        onus (next-player players dealer)
-        ordered (order-players players onus)]
-    (-> state
-        (assoc :dealer dealer)
-        (assoc :onus onus)
-        (assoc :players ordered))))
+(defn dealt-state
+  ([state]
+     (dealt-state state (first (get-players state))))
+  ([state dealer]
+     (let [players (get-players state)
+           onus (next-player players dealer)
+           ordered (order-players players onus)]
+       (-> state
+           (assoc :dealer dealer)
+           (assoc :onus onus)
+           (assoc :players ordered)))))
 
 ;; helper functions for managing bids
 (defn max-bid [bids]
