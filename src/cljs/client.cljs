@@ -30,11 +30,7 @@
       (dom/div nil
                (let [msg (om/get-state owner :message)]
                  (.log js/console "render")
-                 (or msg (prn-str (-> game/empty-state
-                                      (game/add-player "tim")
-                                      (game/add-player "louise")
-                                      (game/add-cards)
-                                      (game/dealt-state "tim")))))))))
+                 (or msg (prn-str game/empty-state)))))))
 
 (set! (.-onload js/window)
       (fn []
