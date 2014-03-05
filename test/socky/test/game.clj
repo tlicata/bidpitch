@@ -26,16 +26,16 @@
       (is (= (next-player players "sharon") "tim")))))
 
 (deftest test-order-players
-  (testing "ordering players after dealer"
+  (testing "ordering players from a starting point"
     (let [players ["tim" "paul" "mike" "rob"]]
       (is (= (order-players players "tim")
-             ["paul" "mike" "rob" "tim"]))
+             ["tim" "paul" "mike" "rob"]))
       (is (= (order-players players "paul")
-             ["mike" "rob" "tim" "paul"]))
+             ["paul" "mike" "rob" "tim"]))
       (is (= (order-players players "mike")
-             ["rob" "tim" "paul" "mike"]))
+             ["mike" "rob" "tim" "paul"]))
       (is (= (order-players players "rob")
-             ["tim" "paul" "mike" "rob"])))))
+             ["rob" "tim" "paul" "mike"])))))
 
 (deftest test-max-bid
   (testing "getting maximum bid out of all bids"

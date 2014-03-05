@@ -36,11 +36,11 @@
     (adjusted-index players index)))
 (defn next-player [players old-player]
     (nth players (next-index players old-player)))
-(defn order-players [players dealer]
-  (let [is-not-dealer (fn [player] (not= dealer player))
-        before-dealer (take-while is-not-dealer players)
-        dealer-and-after (drop-while is-not-dealer players)]
-    (concat (rest dealer-and-after) before-dealer [dealer])))
+(defn order-players [players start]
+  (let [is-not-start #(not= start %)
+        before-start (take-while is-not-start players)
+        start-and-after (drop-while is-not-start players)]
+    (concat start-and-after before-start)))
 
 (def empty-state
   {:bids []
@@ -71,10 +71,11 @@
 
 (defn dealt-state [state dealer]
   (let [players (get-players state)
-        ordered (order-players players dealer)]
+        onus (next-player players dealer)
+        ordered (order-players players onus)]
     (-> state
         (assoc :dealer dealer)
-        (assoc :onus (next-player ordered dealer))
+        (assoc :onus onus)
         (assoc :players ordered))))
 
 ;; helper functions for managing bids
