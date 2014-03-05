@@ -130,6 +130,30 @@
         indices (map #(index-of ranks (get-rank %)) matching)]
     (when-not (empty? indices)
       (make-card (nth ranks (apply max indices)) suit))))
+(defn determine-winner [state]
+  (let [lead-suit (get-lead-suit state)
+        table-cards (get-table-cards state)
+        trump (get-trump state)
+        players (order-players (get-players state) (highest-bidder state))
+        highest-trump (highest table-cards trump)
+        highest-lead-suit (highest table-cards lead-suit)
+        winning-card (or highest-trump highest-lead-suit)]
+    (nth players (index-of table-cards winning-card))))
+(defn award-trick-to-winner [state]
+  (let [winner (determine-winner state)]
+    (-> state
+        (update-in [:player-cards winner :tricks] conj (get-table-cards state))
+        (assoc :onus winner))))
+(defn check-hand-winner [state player]
+  (let [lead-suit (get-lead-suit state)
+        players (get-players state)
+        table-cards (get-table-cards state)
+        trump (get-trump state)]
+    (if (= (count table-cards) (count players))
+      (-> state
+          (award-trick-to-winner)
+          (clear-table-cards))
+      (assoc state :onus (next-player players player)))))
 
 (defn update-play [old-state player value]
   (let [trump (get-trump old-state)
@@ -138,7 +162,8 @@
       (-> old-state
           (remove-card player value)
           (add-table-card value)
-          (check-trump (get-suit value))))))
+          (check-trump (get-suit value))
+          (check-hand-winner player)))))
 
 (defn advance-state [old-state player action value]
   (let [bids (get-bids old-state)

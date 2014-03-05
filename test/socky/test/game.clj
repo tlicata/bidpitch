@@ -126,6 +126,36 @@
       (is (highest cards "S") "AS")
       (is (nil? (highest cards "H"))))))
 
+(def hand-in-progress (-> empty-state
+                          (add-player "tim" "louise" "sharon")
+                          (add-cards "tim" ["4C" "5S" "7D"])
+                          (add-cards "louise" ["AC" "KC" "9D"])
+                          (add-cards "sharon" ["2C" "7S" "JC"])
+                          (dealt-state "sharon")
+                          (bid "tim" 2)
+                          (bid "louise" 3)
+                          (bid "sharon" 0)
+                          (play "louise" "AC")
+                          (play "sharon" "2C")))
+(def hand-played (play hand-in-progress "tim" "4C"))
+
+(deftest test-award-trick-to-winner
+  (testing "put table-cards into winner's tricks pile"
+    (is (= (get-player-tricks hand-played "louise") [["AC" "2C" "4C"]]))))
+
+(deftest test-check-hand-winner
+  (testing "if everyone has played a card, resolve state"
+    ;; leave an unfinished hand alone
+    (is (= hand-in-progress (check-hand-winner hand-in-progress "sharon")))
+    ;; correctly sort out state for completed hand
+    (let [resolved (check-hand-winner hand-played "tim")]
+      ;; onus is on the winner
+      (is (:onus resolved) "louise")
+      ;; louise got the trick
+      (is (= (get-player-tricks resolved "louise") [["AC" "2C" "4C"]]))
+      ;; table cards were cleared
+      (is (empty? (get-table-cards resolved))))))
+
 ;; (deftest test-trick-taking
 ;;   (testing "taking a trick"
 ;;     (let [state (-> empty-state
