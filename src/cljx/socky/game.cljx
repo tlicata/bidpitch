@@ -118,6 +118,8 @@
   (update-in state [:player-cards player :cards] #(remove #{card} %)))
 (defn add-table-card [state card]
   (assoc state :table-cards (conj (:table-cards state) card)))
+(defn clear-table-cards [state]
+  (assoc state :table-cards []))
 (defn check-trump [state suit]
   (if (nil? (get-trump state))
     (assoc state :trump suit)
