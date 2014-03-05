@@ -83,19 +83,34 @@
   (when-let [new-state (game/add-player @game-state name)]
     (reset! game-state new-state)))
 
+(defn player-bid [name value]
+  (when-let [new-state (game/bid @game-state name (Integer. value))]
+    (reset! game-state new-state)))
+
+(defn player-play [name value]
+  (when-let [new-state (game/play @game-state name value)]
+    (reset! game-state new-state)))
+
+(defn player-start []
+  (when-let [new-state (-> @game-state
+                           game/add-cards
+                           game/dealt-state)]
+    (reset! game-state new-state)))
+
 (defn websocket-handler [request]
   (with-channel request channel
-    (when-let [user (friend/current-authentication)]
-      (swap! sockets assoc (:username user) {:socket channel})
+    (when-let [username (:username (friend/current-authentication))]
+      (swap! sockets assoc username {:socket channel})
       (go-loop []
         (if-let [{:keys [message]} (<! channel)]
           (let [[msg val val2] (split message #":")]
             (println (str "message received: " message))
             (cond
-             (= msg "join") (>! channel (do (player-join (:username user)) (prn-str @game-state)))
-             (= msg "bid") (>! channel (str "thanks for " (if (= val "pass") "passing" "bidding")))
-             (= msg "play") (>! channel (str "thanks for playing " val))
+             (= msg "join") (>! channel (do (player-join username) (prn-str @game-state)))
+             (= msg "bid") (>! channel (do (player-bid username val) (prn-str @game-state)))
+             (= msg "play") (>! channel (do (player-play username val) (prn-str @game-state)))
              (= msg "chat") (>! channel (chat val val2))
+             (= msg "start") (>! channel (do (player-start) (prn-str @game-state)))
              (= msg "state") (>! channel (prn-str @game-state))
              :else (>! channel "unknown message type"))
             (recur))
