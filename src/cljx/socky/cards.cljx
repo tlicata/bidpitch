@@ -9,5 +9,8 @@
 (defn get-rank [card]
   (str (first card)))
 
+(defn make-card [rank suit]
+  (str rank suit))
+
 (defn create-deck []
   (shuffle (flatten (map #(map (fn [rank] (str rank %)) ranks) suits))))

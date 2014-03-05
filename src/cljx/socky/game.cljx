@@ -1,5 +1,5 @@
 (ns socky.game
-  (:require [socky.cards :refer [create-deck get-suit suits]]))
+  (:require [socky.cards :refer [create-deck get-suit get-rank make-card ranks suits]]))
 
 ; Helper functions for dealing cards
 (defn deal-cards [deck num-players]
