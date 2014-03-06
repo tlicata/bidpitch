@@ -90,6 +90,10 @@
                            game/dealt-state)]
     (reset! game-state new-state)))
 
+(defn update-all []
+  (doseq [[user data] @sockets]
+    (put! (:socket data) (prn-str @game-state))))
+
 (defn websocket-handler [request]
   (with-channel request channel
     (when-let [username (:username (friend/current-authentication))]
@@ -99,10 +103,10 @@
           (let [[msg val val2] (split message #":")]
             (println (str "message received: " message))
             (cond
-             (= msg "join") (>! channel (do (player-join username) (prn-str @game-state)))
-             (= msg "bid") (>! channel (do (player-bid username val) (prn-str @game-state)))
-             (= msg "play") (>! channel (do (player-play username val) (prn-str @game-state)))
-             (= msg "start") (>! channel (do (player-start) (prn-str @game-state)))
+             (= msg "join") (do (player-join username) (update-all))
+             (= msg "bid") (do (player-bid username val) (update-all))
+             (= msg "play") (do (player-play username val) (update-all))
+             (= msg "start") (do (player-start) (update-all))
              (= msg "state") (>! channel (prn-str @game-state))
              :else (>! channel "unknown message type"))
             (recur))
