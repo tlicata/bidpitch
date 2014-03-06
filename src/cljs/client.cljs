@@ -13,9 +13,6 @@
 (defn send-message [msg]
   (put! @websocket (or msg "bid:pass")))
 
-(defn chat [player message]
-  (put! @websocket (str "chat:" player ":" message)))
-
 (defn app [data owner]
   (reify
     om/IWillMount

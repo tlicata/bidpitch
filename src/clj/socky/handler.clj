@@ -72,13 +72,6 @@
 (def sockets (atom {}))
 (def game-state (atom game/empty-state))
 
-(defn chat [name message]
-  (if-let [player (get @sockets name)]
-    (let [socket (:socket player)]
-      (put! socket message)
-      (str "thanks for chatting with " name))
-    (str "can't send message to " name)))
-
 (defn player-join [name]
   (when-let [new-state (game/add-player @game-state name)]
     (reset! game-state new-state)))
@@ -109,7 +102,6 @@
              (= msg "join") (>! channel (do (player-join username) (prn-str @game-state)))
              (= msg "bid") (>! channel (do (player-bid username val) (prn-str @game-state)))
              (= msg "play") (>! channel (do (player-play username val) (prn-str @game-state)))
-             (= msg "chat") (>! channel (chat val val2))
              (= msg "start") (>! channel (do (player-start) (prn-str @game-state)))
              (= msg "state") (>! channel (prn-str @game-state))
              :else (>! channel "unknown message type"))
