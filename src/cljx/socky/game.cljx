@@ -72,6 +72,8 @@
   ;; give specific cards to player
   ([state player cards]
      (assoc-in state [:player-cards player] {:cards cards :tricks []})))
+(defn shield [state user]
+  (assoc state :player-cards (select-keys (:player-cards state) [user])))
 
 (defn dealt-state
   ([state]

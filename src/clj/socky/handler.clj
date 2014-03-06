@@ -92,7 +92,7 @@
 
 (defn update-all []
   (doseq [[user data] @sockets]
-    (put! (:socket data) (prn-str @game-state))))
+    (put! (:socket data) (prn-str (game/shield @game-state user)))))
 
 (defn websocket-handler [request]
   (with-channel request channel
@@ -107,7 +107,7 @@
              (= msg "bid") (do (player-bid username val) (update-all))
              (= msg "play") (do (player-play username val) (update-all))
              (= msg "start") (do (player-start) (update-all))
-             (= msg "state") (>! channel (prn-str @game-state))
+             (= msg "state") (>! channel (prn-str (game/shield @game-state username)))
              :else (>! channel "unknown message type"))
             (recur))
           (println (str "channel closed")))))))

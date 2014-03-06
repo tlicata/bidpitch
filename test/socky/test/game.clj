@@ -37,6 +37,20 @@
       (is (= (order-players players "rob")
              ["rob" "tim" "paul" "mike"])))))
 
+(deftest test-shield
+  (testing "hide opponent/teammate data from a player"
+    (let [state (-> empty-state
+                    (add-player "tim" "sharon" "louise")
+                    (add-cards)
+                    (dealt-state))]
+      (is (not (empty? (get-player-cards state "tim"))))
+      (is (not (empty? (get-player-cards state "sharon"))))
+      (is (not (empty? (get-player-cards state "louise"))))
+      (let [shielded (shield state "tim")]
+        (is (not (empty? (get-player-cards shielded "tim"))))
+        (is (nil? (get-player-cards shielded "sharon")))
+        (is (nil? (get-player-cards shielded "louise")))))))
+
 (deftest test-max-bid
   (testing "getting maximum bid out of all bids"
     (is (= (max-bid [1 2 3 0]) 3))
