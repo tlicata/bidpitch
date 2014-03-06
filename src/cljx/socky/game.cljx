@@ -22,6 +22,8 @@
   (:trump state))
 (defn get-lead-suit [state]
   (get-suit (first (get-table-cards state))))
+(defn get-dealer [state]
+  (:dealer state))
 
 ; Utility functions to get next player
 (defn index-of [vect item]
@@ -96,14 +98,20 @@
         highest (index-of bids (max-bid bids))]
     (when (not= highest -1)
       (nth players highest))))
+(defn valid-bid? [state player value]
+  (let [bids (get-bids state)
+        dealer (get-dealer state)
+        leading (max-bid bids)
+        in-range (and (> value 1) (< value 5))]
+    (if (= (count bids) (player-index (get-players state) player))
+      (if (and (= player dealer) (= leading 0))
+        in-range        ;; stick the dealer if no bids
+        (or (= value 0) ;; else bid must be in range and above max (or pass)
+            (and (> value leading) in-range))))))
 (defn update-bid [old-state player value]
   (let [bids (get-bids old-state)
         players (get-players old-state)]
-    (if (and (= (count bids) (player-index players player))
-             (or (= value 0)
-                 (and (> value (max-bid bids))
-                      (> value 1)
-                      (< value 5))))
+    (if (valid-bid? old-state player value)
       (let [new-state (assoc old-state :bids (conj bids value))]
         (if (= (count players) (count (get-bids new-state)))
           (-> new-state

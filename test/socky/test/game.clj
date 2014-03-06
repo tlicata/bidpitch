@@ -59,6 +59,60 @@
     (is (= (max-bid [0 2]) 2))
     (is (= (max-bid []) 0))))
 
+(deftest test-valid-bid
+  (testing "is a given bid allowed"
+    (let [base (-> empty-state (add-player "tim" "sharon" "louise")
+                   (add-cards) (dealt-state))]
+      ;; tim is dealer, so sharon can lead and bid anything
+      (is (valid-bid? base "sharon" 0))
+      (is (valid-bid? base "sharon" 2))
+      (is (valid-bid? base "sharon" 3))
+      (is (valid-bid? base "sharon" 4))
+      ;; sharon can't bid invalid values
+      (is (not (valid-bid? base "sharon" -1)))
+      (is (not (valid-bid? base "sharon" 1)))
+      (is (not (valid-bid? base "sharon" 5)))
+      ;; no one else can bid
+      (is (not (valid-bid? base "tim" 2)))
+      (is (not (valid-bid? base "louise" 2)))
+      (is (not (valid-bid? base "random" 2)))
+      ;; different sharon bid scenarios
+      (let [sharon-pass (-> base (bid "sharon" 0))
+            sharon-2 (-> base (bid "sharon" 2))
+            sharon-3 (-> base (bid "sharon" 3))
+            sharon-4 (-> base (bid "sharon" 4))]
+        ;; louise can bid anything if sharon passed
+        (is (valid-bid? sharon-pass "louise" 0))
+        (is (valid-bid? sharon-pass "louise" 3))
+        ;; louise can't bid invalid values
+        (is (not (valid-bid? sharon-2 "louise" 1)))
+        (is (not (valid-bid? sharon-4 "louise" 5)))
+        ;; tim can't bid anything
+        (is (not (valid-bid? sharon-pass "tim" -1)))
+        (is (not (valid-bid? sharon-2 "tim" 2)))
+        (is (not (valid-bid? sharon-3 "tim" 0)))
+        ;; louise can bid more than sharon
+        (is (valid-bid? sharon-pass "louise" 2))
+        (is (valid-bid? sharon-2 "louise" 3))
+        (is (valid-bid? sharon-3 "louise" 4))
+        ;; louise can't bid <= sharon
+        (is (not (valid-bid? sharon-2 "louise" 2)))
+        (is (not (valid-bid? sharon-3 "louise" 2)))
+        (is (not (valid-bid? sharon-4 "louise" 3)))
+        ;; different louise bid scenarios
+        (let [louise-duck (-> sharon-2 (bid "louise" 0))
+              louise-jump (-> sharon-2 (bid "louise" 3))
+              all-pass (-> sharon-pass (bid "louise" 0))]
+          ;; tim can outbid all existing bids
+          (is (valid-bid? louise-duck "tim" 3))
+          (is (valid-bid? louise-jump "tim" 4))
+          (is (valid-bid? all-pass "tim" 2))
+          ;; tim can't bid <= than existing
+          (is (not (valid-bid? louise-duck "tim" 2)))
+          (is (not (valid-bid? louise-jump "tim" 2)))
+          ;; dealer *must* bid if no one else has
+          (is (not (valid-bid? all-pass "tim" 0))))))))
+
 (deftest test-highest-bidder
   (testing "seeing who was the highest bidder"
     (let [base (-> empty-state
