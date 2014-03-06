@@ -129,7 +129,7 @@
 (def hand-in-progress (-> empty-state
                           (add-player "tim" "louise" "sharon")
                           (add-cards "tim" ["4C" "5S" "7D"])
-                          (add-cards "louise" ["AC" "KC" "9D"])
+                          (add-cards "louise" ["AC" "KC" "4D"])
                           (add-cards "sharon" ["2C" "7S" "JC"])
                           (dealt-state "sharon")
                           (bid "tim" 2)
@@ -138,6 +138,13 @@
                           (play "louise" "AC")
                           (play "sharon" "2C")))
 (def hand-played (play hand-in-progress "tim" "4C"))
+(def non-bidder-lead (-> hand-played
+                          (play "louise" "4D")
+                          (play "sharon" "7S")
+                          (play "tim" "7D")
+                          (play "tim" "5S")
+                          (play "louise" "KC")
+                          (play "sharon" "JC")))
 
 (deftest test-award-trick-to-winner
   (testing "put table-cards into winner's tricks pile"
@@ -154,7 +161,12 @@
       ;; louise got the trick
       (is (= (get-player-tricks resolved "louise") [["AC" "2C" "4C"]]))
       ;; table cards were cleared
-      (is (empty? (get-table-cards resolved))))))
+      (is (empty? (get-table-cards resolved))))
+    ;; non-bidder leads were causing trouble
+    (is (not (nil? non-bidder-lead)))
+    (is (= (get-player-tricks non-bidder-lead "tim") [["4D" "7S" "7D"]]))
+    (is (= (get-player-tricks non-bidder-lead "louise") [["AC" "2C" "4C"] ["5S" "KC" "JC"]]))))
+
 
 (deftest test-game-play
   (testing "actual game play"

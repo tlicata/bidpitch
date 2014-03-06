@@ -41,6 +41,10 @@
         before-start (take-while is-not-start players)
         start-and-after (drop-while is-not-start players)]
     (concat start-and-after before-start)))
+(defn order-around-onus [state]
+  (let [onus (:onus state)
+        players (get-players state)]
+    (assoc state :players (order-players players onus))))
 
 (def empty-state
   {:bids []
@@ -100,7 +104,9 @@
                       (< value 5))))
       (let [new-state (assoc old-state :bids (conj bids value))]
         (if (= (count players) (count (get-bids new-state)))
-          (assoc new-state :onus (highest-bidder new-state))
+          (-> new-state
+              (assoc :onus (highest-bidder new-state))
+              (order-around-onus))
           (assoc new-state :onus (next-player players player)))))))
 
 ;; helper functions for managing cards
@@ -137,7 +143,7 @@
   (let [lead-suit (get-lead-suit state)
         table-cards (get-table-cards state)
         trump (get-trump state)
-        players (order-players (get-players state) (highest-bidder state))
+        players (get-players state)
         highest-trump (highest table-cards trump)
         highest-lead-suit (highest table-cards lead-suit)
         winning-card (or highest-trump highest-lead-suit)]
@@ -146,7 +152,8 @@
   (let [winner (determine-winner state)]
     (-> state
         (update-in [:player-cards winner :tricks] conj (get-table-cards state))
-        (assoc :onus winner))))
+        (assoc :onus winner)
+        (order-around-onus))))
 (defn check-hand-winner [state player]
   (let [lead-suit (get-lead-suit state)
         players (get-players state)
