@@ -174,6 +174,13 @@
           (award-trick-to-winner)
           (clear-table-cards))
       (assoc state :onus (next-player players player)))))
+;; helper function for scoring tricks
+(defn tally-game-pts [state player]
+  (let [tricks (get-player-tricks state player)
+        values {"A" 4, "K" 3, "Q" 2, "J" 1, "T" 10}
+        get-value (fn [sum card]
+                    (+ sum (get values (get-rank card) 0)))]
+    (reduce get-value 0 (flatten tricks))))
 
 (defn update-play [old-state player value]
   (let [trump (get-trump old-state)

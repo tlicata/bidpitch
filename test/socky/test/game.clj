@@ -196,9 +196,9 @@
 
 (def hand-in-progress (-> empty-state
                           (add-player "tim" "louise" "sharon")
-                          (add-cards "tim" ["4C" "5S" "7D"])
-                          (add-cards "louise" ["AC" "KC" "4D"])
-                          (add-cards "sharon" ["2C" "7S" "JC"])
+                          (add-cards "tim" ["4C" "5S" "7D" "QD"])
+                          (add-cards "louise" ["AC" "KC" "4D" "TH"])
+                          (add-cards "sharon" ["2C" "7S" "JC" "KS"])
                           (dealt-state "sharon")
                           (bid "tim" 2)
                           (bid "louise" 3)
@@ -213,6 +213,10 @@
                           (play "tim" "5S")
                           (play "louise" "KC")
                           (play "sharon" "JC")))
+(def game-pts (-> non-bidder-lead
+                  (play "louise" "TH")
+                  (play "sharon" "KS")
+                  (play "tim" "QD")))
 
 (deftest test-award-trick-to-winner
   (testing "put table-cards into winner's tricks pile"
@@ -235,6 +239,11 @@
     (is (= (get-player-tricks non-bidder-lead "tim") [["4D" "7S" "7D"]]))
     (is (= (get-player-tricks non-bidder-lead "louise") [["AC" "2C" "4C"] ["5S" "KC" "JC"]]))))
 
+(deftest test-tally-game-pts
+  (testing "adding up points for game"
+    (is (= (tally-game-pts game-pts "tim") 0))
+    (is (= (tally-game-pts game-pts "louise") 23))
+    (is (= (tally-game-pts game-pts "sharon") 0))))
 
 (deftest test-game-play
   (testing "actual game play"
