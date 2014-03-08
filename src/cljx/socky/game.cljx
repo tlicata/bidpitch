@@ -149,6 +149,11 @@
         indices (map #(index-of ranks (get-rank %)) matching)]
     (when-not (empty? indices)
       (make-card (nth ranks (apply max indices)) suit))))
+(defn lowest [cards suit]
+  (let [matching (filter #(= suit (get-suit %)) cards)
+        indices (map #(index-of ranks (get-rank %)) matching)]
+    (when-not (empty? indices)
+      (make-card (nth ranks (apply min indices)) suit))))
 (defn determine-winner [state]
   (let [lead-suit (get-lead-suit state)
         table-cards (get-table-cards state)

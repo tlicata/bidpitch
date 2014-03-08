@@ -193,6 +193,13 @@
       (is (highest cards "D") "5D")
       (is (highest cards "S") "AS")
       (is (nil? (highest cards "H"))))))
+(deftest test-lowest
+  (testing "finding the lowest played card of a suit"
+    (let [cards ["7S" "JD" "KD" "AS" "2C"]]
+      (is (lowest cards "C") "2C")
+      (is (lowest cards "S") "7S")
+      (is (lowest cards "D") "JD")
+      (is (nil? (lowest cards "H"))))))
 
 (def hand-in-progress (-> empty-state
                           (add-player "tim" "louise" "sharon")
