@@ -186,6 +186,12 @@
         get-value (fn [sum card]
                     (+ sum (get values (get-rank card) 0)))]
     (reduce get-value 0 (flatten tricks))))
+(defn get-all-cards [state]
+  (mapcat #(flatten (get-player-tricks state %)) (get-players state)))
+(defn get-highest-trump [state]
+  (highest (get-all-cards state) (get-trump state)))
+(defn get-lowest-trump [state]
+  (lowest (get-all-cards state) (get-trump state)))
 
 (defn update-play [old-state player value]
   (let [trump (get-trump old-state)

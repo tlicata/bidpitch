@@ -251,6 +251,10 @@
     (is (= (tally-game-pts game-pts "tim") 0))
     (is (= (tally-game-pts game-pts "louise") 23))
     (is (= (tally-game-pts game-pts "sharon") 0))))
+(deftest test-get-all-cards
+  (testing "retrieving all cards played during a round"
+    (is (= (sort (get-all-cards game-pts))
+           (sort ["4C" "5S" "7D" "QD" "AC" "KC" "4D" "TH" "2C" "7S" "JC" "KS"])))))
 
 (deftest test-game-play
   (testing "actual game play"
