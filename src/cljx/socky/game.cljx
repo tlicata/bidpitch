@@ -192,6 +192,9 @@
   (highest (get-all-cards state) (get-trump state)))
 (defn get-lowest-trump [state]
   (lowest (get-all-cards state) (get-trump state)))
+(defn who-won-card [state card]
+  (let [players (get-players state)]
+    (first (drop-while #(nil? (index-of (flatten (get-player-tricks state %)) card)) players))))
 
 (defn update-play [old-state player value]
   (let [trump (get-trump old-state)

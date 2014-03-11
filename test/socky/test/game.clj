@@ -255,6 +255,18 @@
   (testing "retrieving all cards played during a round"
     (is (= (sort (get-all-cards game-pts))
            (sort ["4C" "5S" "7D" "QD" "AC" "KC" "4D" "TH" "2C" "7S" "JC" "KS"])))))
+(deftest test-who-won-card
+  (testing "who won the card in question"
+    (is (= (who-won-card game-pts "4D") "tim"))
+    (is (= (who-won-card game-pts "7S") "tim"))
+    (is (= (who-won-card game-pts "7D") "tim"))
+    (is (= (who-won-card game-pts "AC") "louise"))
+    (is (= (who-won-card game-pts "2C") "louise"))
+    (is (= (who-won-card game-pts "4C") "louise"))
+    (is (= (who-won-card game-pts "5S") "louise"))
+    (is (= (who-won-card game-pts "KC") "louise"))
+    (is (= (who-won-card game-pts "JC") "louise"))
+    (is (= (who-won-card game-pts "QH") nil))))
 
 (deftest test-game-play
   (testing "actual game play"
