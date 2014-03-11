@@ -195,6 +195,9 @@
 (defn who-won-card [state card]
   (let [players (get-players state)]
     (first (drop-while #(nil? (index-of (flatten (get-player-tricks state %)) card)) players))))
+(defn round-over? [state]
+  (let [players (get-players state)]
+    (every? #(empty? (get-player-cards state %)) players)))
 
 (defn update-play [old-state player value]
   (let [trump (get-trump old-state)

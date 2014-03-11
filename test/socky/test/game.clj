@@ -267,6 +267,12 @@
     (is (= (who-won-card game-pts "KC") "louise"))
     (is (= (who-won-card game-pts "JC") "louise"))
     (is (= (who-won-card game-pts "QH") nil))))
+(deftest test-round-over
+  (testing "determining if all cards have been played in a round"
+    (is (not (round-over? hand-in-progress)))
+    (is (not (round-over? hand-played)))
+    (is (not (round-over? non-bidder-lead)))
+    (is (round-over? game-pts))))
 
 (deftest test-game-play
   (testing "actual game play"
