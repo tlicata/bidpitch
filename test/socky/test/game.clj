@@ -251,6 +251,10 @@
     (is (= (tally-game-pts game-pts "tim") 0))
     (is (= (tally-game-pts game-pts "louise") 23))
     (is (= (tally-game-pts game-pts "sharon") 0))))
+(deftest test-most-game-pts
+  (testing "which player earned the most game points"
+    (is (= (most-game-pts game-pts) "louise"))
+    (is (nil? (most-game-pts empty-state)))))
 (deftest test-get-all-cards
   (testing "retrieving all cards played during a round"
     (is (= (sort (get-all-cards game-pts))
