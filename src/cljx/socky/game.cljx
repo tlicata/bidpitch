@@ -190,12 +190,12 @@
         pts (map (partial tally-game-pts state) players)]
     (when-not (empty? pts)
       (nth players (index-of pts (apply max pts))))))
-(defn get-all-cards [state]
+(defn get-all-tricks [state]
   (mapcat #(flatten (get-player-tricks state %)) (get-players state)))
 (defn get-highest-trump [state]
-  (highest (get-all-cards state) (get-trump state)))
+  (highest (get-all-tricks state) (get-trump state)))
 (defn get-lowest-trump [state]
-  (lowest (get-all-cards state) (get-trump state)))
+  (lowest (get-all-tricks state) (get-trump state)))
 (defn who-won-card [state card]
   (let [players (get-players state)]
     (first (drop-while #(nil? (index-of (flatten (get-player-tricks state %)) card)) players))))
