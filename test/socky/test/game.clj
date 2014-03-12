@@ -288,8 +288,7 @@
     (is (round-over? game-pts))))
 (deftest test-calc-points
   (testing "adding up scores from a round"
-    (let [scores (calc-points game-pts)]
-      (is (= (:points scores) {"louise" 4})))))
+    (is (= (:points game-pts) {"louise" 4}))))
 
 (deftest test-game-play
   (testing "actual game play"

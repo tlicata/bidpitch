@@ -223,6 +223,10 @@
     (if (< (get pts bidder) winning-bid)
       (add-scores state (assoc pts bidder (- 0 winning-bid)))
       (add-scores state pts))))
+(defn check-round-over [state]
+  (if (empty? (get-all-cards state))
+    (calc-points state)
+    state))
 
 (defn update-play [old-state player value]
   (let [trump (get-trump old-state)
@@ -232,7 +236,8 @@
           (remove-card player value)
           (add-table-card value)
           (check-trump (get-suit value))
-          (check-hand-winner player)))))
+          (check-hand-winner player)
+          (check-round-over)))))
 
 (defn advance-state [old-state player action value]
   (let [bids (get-bids old-state)
