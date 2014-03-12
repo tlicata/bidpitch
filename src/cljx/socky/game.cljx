@@ -49,7 +49,7 @@
     (assoc state :players (order-players players onus))))
 
 (def empty-state
-  {:bids []
+  {:bids {}
    :dealer nil
    :onus nil
    :players []
@@ -90,29 +90,27 @@
            (assoc :players ordered)))))
 
 ;; helper functions for managing bids
-(defn max-bid [bids]
-  (if (= (count bids) 0) 0 (apply max bids)))
+(defn max-bid-entry [state]
+  (let [bids (get-bids state)]
+    (if (empty? bids)
+      (first {nil 0})
+      (apply max-key val bids))))
+(defn max-bid [state]
+  (val (max-bid-entry state)))
 (defn highest-bidder [state]
-  (let [bids (get-bids state)
-        players (get-players state)
-        highest (index-of bids (max-bid bids))]
-    (when (not= highest -1)
-      (nth players highest))))
+  (key (max-bid-entry state)))
 (defn valid-bid? [state player value]
-  (let [bids (get-bids state)
-        dealer (get-dealer state)
-        leading (max-bid bids)
+  (let [leading (max-bid state)
         in-range (and (> value 1) (< value 5))]
-    (if (= (count bids) (player-index (get-players state) player))
-      (if (and (= player dealer) (= leading 0))
+    (if (= (count (get-bids state)) (player-index (get-players state) player))
+      (if (and (= player (get-dealer state)) (= leading 0))
         in-range        ;; stick the dealer if no bids
         (or (= value 0) ;; else bid must be in range and above max (or pass)
             (and (> value leading) in-range))))))
 (defn update-bid [old-state player value]
-  (let [bids (get-bids old-state)
-        players (get-players old-state)]
+  (let [players (get-players old-state)]
     (if (valid-bid? old-state player value)
-      (let [new-state (assoc old-state :bids (conj bids value))]
+      (let [new-state (assoc-in old-state [:bids player] value)]
         (if (= (count players) (count (get-bids new-state)))
           (-> new-state
               (assoc :onus (highest-bidder new-state))

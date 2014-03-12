@@ -51,13 +51,27 @@
         (is (nil? (get-player-cards shielded "sharon")))
         (is (nil? (get-player-cards shielded "louise")))))))
 
+(def biddy (-> empty-state (add-player "tim" "sharon" "louise" "bill") dealt-state))
+(def bid-ex0 (-> biddy (bid "sharon" 2) (bid "louise" 3) (bid "bill" 0) (bid "tim" 0)))
+(def bid-ex1 (-> biddy (bid "sharon" 0) (bid "louise" 2) (bid "bill" 0) (bid "tim" 0)))
+(def bid-ex2 (-> biddy (bid "sharon" 0) (bid "louise" 0) (bid "bill" 3) (bid "tim" 0)))
+(def bid-ex3 (-> biddy (bid "sharon" 0) (bid "louise" 2)))
+
 (deftest test-max-bid
   (testing "getting maximum bid out of all bids"
-    (is (= (max-bid [1 2 3 0]) 3))
-    (is (= (max-bid [0 0 0 2]) 2))
-    (is (= (max-bid [3 0 0 0]) 3))
-    (is (= (max-bid [0 2]) 2))
-    (is (= (max-bid []) 0))))
+    (is (= 3 (max-bid bid-ex0)))
+    (is (= 2 (max-bid bid-ex1)))
+    (is (= 3 (max-bid bid-ex2)))
+    (is (= 2 (max-bid bid-ex3)))
+    (is (= 0 (max-bid empty-state)))))
+
+(deftest test-highest-bidder
+  (testing "seeing who was the highest bidder"
+    (is (= (highest-bidder bid-ex0) "louise"))
+    (is (= (highest-bidder bid-ex1) "louise"))
+    (is (= (highest-bidder bid-ex2) "bill"))
+    (is (= (highest-bidder bid-ex3) "louise"))
+    (is (nil? (highest-bidder empty-state)))))
 
 (deftest test-valid-bid
   (testing "is a given bid allowed"
@@ -112,15 +126,6 @@
           (is (not (valid-bid? louise-jump "tim" 2)))
           ;; dealer *must* bid if no one else has
           (is (not (valid-bid? all-pass "tim" 0))))))))
-
-(deftest test-highest-bidder
-  (testing "seeing who was the highest bidder"
-    (let [base (-> empty-state
-                   (add-player "mike" "paul" "rob" "bob"))]
-      (is (= (highest-bidder (assoc base :bids [0 0 2 3])) "bob"))
-      (is (= (highest-bidder (assoc base :bids [3 0 0 0])) "mike"))
-      (is (= (highest-bidder (assoc base :bids [0 0 3 0])) "rob"))
-      (is (= (highest-bidder (assoc base :bids [0 3 0 0])) "paul")))))
 
 (def cards {:player-cards {"tim" {:cards ["5D" "6H" "AS" "3C" "JH"]}
                            "sharon" {:cards ["2C" "3D" "7C" "9H" "TS"]}
@@ -294,7 +299,7 @@
       (is (nil? (advance-state initial-state "sharon" "bid" 5)))
       (let [next-state (advance-state initial-state "sharon" "bid" 2)]
         (is (= (:onus next-state) "louise"))
-        (is (= (:bids next-state) [2]))
+        (is (= (:bids next-state) {"sharon" 2}))
         ;; only louise can act
         (is (nil? (advance-state next-state "rob" "bid" "3")))
         ;; louise can only bid
@@ -306,13 +311,13 @@
           (is (not (nil? bid-3)))
           ;; then the onus should be on rob
           (is (= (:onus bid-3) "rob"))
-          (is (= (:bids bid-3) [2 3])))
+          (is (= (:bids bid-3) {"sharon" 2, "louise" 3})))
         (let [pass (advance-state next-state "louise" "bid" 0)]
           ;; louise can pass (implemented as bidding 0)
           (is (not (nil? pass)))
           ;; onus should still be on rob
           (is (= (:onus pass) "rob"))
-          (is (= (:bids pass) [2 0]))
+          (is (= (:bids pass) {"sharon" 2, "louise" 0}))
           ;; rob must bid more than sharon
           (is (nil? (advance-state pass "rob" "bid" 2)))
           ;; rob can pass
