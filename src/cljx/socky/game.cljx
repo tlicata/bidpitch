@@ -203,7 +203,8 @@
   (let [players (get-players state)]
     (every? #(empty? (get-player-cards state %)) players)))
 (defn add-scores [state scores]
-  (update-in state [:points] #(merge-with + % scores)))
+  (let [no-jack (dissoc scores nil)]
+    (update-in state [:points] #(merge-with + % no-jack))))
 (defn calc-points [state]
   (let [high-card (who-won-card state (get-highest-trump state))
         low-card (who-won-card state (get-lowest-trump state))
