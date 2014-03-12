@@ -54,6 +54,7 @@
    :onus nil
    :players []
    :player-cards {}
+   :points {}
    :table-cards []
    :trump nil})
 
@@ -201,6 +202,24 @@
 (defn round-over? [state]
   (let [players (get-players state)]
     (every? #(empty? (get-player-cards state %)) players)))
+(defn add-scores [state scores]
+  (update-in state [:points] #(merge-with + % scores)))
+(defn calc-points [state]
+  (let [high-card (who-won-card state (get-highest-trump state))
+        low-card (who-won-card state (get-lowest-trump state))
+        jack-card (who-won-card state (make-card "J" (get-trump state)))
+        most-points (most-game-pts state)
+        one-or-inc #(if (nil? %) 1 (inc %))
+        bidder (highest-bidder state)
+        winning-bid (max-bid (get-bids state))
+        pts (-> {}
+                (update-in [high-card] one-or-inc)
+                (update-in [low-card] one-or-inc)
+                (update-in [jack-card] one-or-inc)
+                (update-in [most-points] one-or-inc))]
+    (if (< (get pts bidder) winning-bid)
+      (add-scores state (assoc pts bidder (- 0 winning-bid)))
+      (add-scores state pts))))
 
 (defn update-play [old-state player value]
   (let [trump (get-trump old-state)

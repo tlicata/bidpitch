@@ -282,6 +282,10 @@
     (is (not (round-over? hand-played)))
     (is (not (round-over? non-bidder-lead)))
     (is (round-over? game-pts))))
+(deftest test-calc-points
+  (testing "adding up scores from a round"
+    (let [scores (calc-points game-pts)]
+      (is (= (:points scores) {"louise" 4})))))
 
 (deftest test-game-play
   (testing "actual game play"
