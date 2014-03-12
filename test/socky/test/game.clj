@@ -260,6 +260,10 @@
   (testing "which player earned the most game points"
     (is (= (most-game-pts game-pts) "louise"))
     (is (nil? (most-game-pts empty-state)))))
+(deftest test-get-all-cards
+  (testing "get all cards yet to be played"
+    (is (= (sort (get-all-cards hand-in-progress))
+           (sort ["4C" "5S" "7D" "QD" "KC" "4D" "TH" "7S" "JC" "KS"])))))
 (deftest test-get-all-tricks
   (testing "retrieving all cards played during a round"
     (is (= (sort (get-all-tricks game-pts))
