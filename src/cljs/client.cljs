@@ -15,18 +15,28 @@
 (defn send-message [msg]
   (put! @websocket (or msg "bid:pass")))
 
-(defn app [data owner]
+(defn card-view [data owner]
+  (reify
+    om/IRender
+    (render [this]
+      (dom/li nil data))))
+
+(defn hand-view [data owner]
   (reify
     om/IRender
     (render [_]
-      (dom/div nil (prn-str data)))))
+      (let [player-cards (first (:player-cards data))]
+        (if (not (nil? player-cards))
+          (let [cards (vec (:cards (val player-cards)))]
+            (apply dom/ul nil (om/build-all card-view cards)))
+          (dom/div nil ""))))))
 
 (set! (.-onload js/window)
       (fn []
         (let [target (.getElementById js/document "content")]
           (go
            (reset! websocket (<! (ws-ch websocket-url)))
-           (om/root state app target)
+           (om/root hand-view state {:target target})
            (send-message "state")
            (loop []
              (when-let [msg (<! @websocket)]
