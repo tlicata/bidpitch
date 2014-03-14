@@ -10,28 +10,25 @@
 (def websocket-url "ws://localhost:8080/socky")
 (def websocket (atom (chan)))
 
+(def state (atom game/empty-state))
+
 (defn send-message [msg]
   (put! @websocket (or msg "bid:pass")))
 
 (defn app [data owner]
   (reify
-    om/IWillMount
-    (will-mount [_]
-      (go-loop []
-               (when-let [msg (<! @websocket)]
-                 (.log js/console "message received" (:message msg))
-                 (om/set-state! owner :message (:message msg))
-                 (recur))))
     om/IRender
     (render [_]
-      (dom/div nil
-               (let [msg (om/get-state owner :message)]
-                 (.log js/console "render")
-                 (or msg (prn-str game/empty-state)))))))
+      (dom/div nil (prn-str data)))))
 
 (set! (.-onload js/window)
       (fn []
         (let [target (.getElementById js/document "content")]
           (go
            (reset! websocket (<! (ws-ch websocket-url)))
-           (om/root {} app target)))))
+           (om/root state app target)
+           (send-message "state")
+           (loop []
+             (when-let [msg (<! @websocket)]
+               (reset! state (read-string (:message msg)))
+               (recur)))))))
