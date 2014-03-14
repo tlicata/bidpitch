@@ -31,12 +31,25 @@
             (apply dom/ul nil (om/build-all card-view cards)))
           (dom/div nil ""))))))
 
+(defn state-view [data owner]
+  (reify
+    om/IRender
+    (render [_] (dom/p nil (prn-str data)))))
+
+(defn game-view [data owner]
+  (reify
+    om/IRender
+    (render [_]
+      (dom/div nil
+               (om/build hand-view data)
+               (om/build state-view data)))))
+
 (set! (.-onload js/window)
       (fn []
         (let [target (.getElementById js/document "content")]
           (go
            (reset! websocket (<! (ws-ch websocket-url)))
-           (om/root hand-view state {:target target})
+           (om/root game-view state {:target target})
            (send-message "state")
            (loop []
              (when-let [msg (<! @websocket)]
