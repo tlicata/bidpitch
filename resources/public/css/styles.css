@@ -10,3 +10,22 @@ a {
     font-size: 16px;
     margin-right: 20px;
 }
+
+.card {
+    background-position: -260px -370px;
+    display: inline-block;
+    height: 314px;
+    width: 100px;
+}
+.card:last-child {
+    width: 226px;
+}
+
+.hand {
+    bottom: -115px;
+    position: fixed;
+    margin-left: 50%;
+}
+.hand ul {
+    margin-left: -50%;
+}

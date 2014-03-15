@@ -19,8 +19,12 @@
   (reify
     om/IRender
     (render [this]
-      (dom/li nil (dom/img #js {:src (str "/img/cards/individual/" card ".svg")
-                                :alt card})))))
+      (let [url (str "url(/img/cards/individual/" card ".svg)")
+            play (str "play:" card)
+            handler (fn [_] (socky.client.send-message play))]
+        (dom/li #js {:style #js {:backgroundImage url}
+                     :className "card"
+                     :onClick handler})))))
 
 (defn hand-view [data owner]
   (reify
@@ -29,7 +33,9 @@
       (let [player-cards (first (:player-cards data))]
         (if (not (nil? player-cards))
           (let [cards (vec (:cards (val player-cards)))]
-            (apply dom/ul nil (om/build-all card-view cards)))
+            (dom/div
+             #js {:className "hand"}
+             (apply dom/ul nil (om/build-all card-view cards))))
           (dom/div nil ""))))))
 
 (defn state-view [data owner]

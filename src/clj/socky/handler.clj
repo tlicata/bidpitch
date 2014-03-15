@@ -34,6 +34,7 @@
   (html5
    [:head
     [:title "Bid Pitch"]
+    (include-css "/css/styles.css")
     (include-js "/js/lib/react-0.8.0.js" "/js/bin/main.js")]
    [:body [:div#content]]))
 
