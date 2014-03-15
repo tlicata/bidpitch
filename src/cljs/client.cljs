@@ -15,11 +15,12 @@
 (defn send-message [msg]
   (put! @websocket (or msg "bid:pass")))
 
-(defn card-view [data owner]
+(defn card-view [card owner]
   (reify
     om/IRender
     (render [this]
-      (dom/li nil data))))
+      (dom/li nil (dom/img #js {:src (str "/img/cards/individual/" card ".svg")
+                                :alt card})))))
 
 (defn hand-view [data owner]
   (reify
