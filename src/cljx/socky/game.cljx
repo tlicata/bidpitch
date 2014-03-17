@@ -225,10 +225,19 @@
       (add-scores state pts))))
 (defn clear-bids [state]
   (assoc state :bids {}))
+(defn clear-trump [state]
+  (assoc state :trump nil))
 (defn check-round-over [state]
   (if (empty? (get-all-cards state))
-    (-> state calc-points clear-bids)
-    state))
+    (let [players (get-players state)
+          dealer (get-dealer state)]
+      (-> state
+          calc-points
+          clear-bids
+          clear-trump
+          add-cards
+          (dealt-state (next-player players dealer))))
+      state))
 
 (defn update-play [old-state player value]
   (let [trump (get-trump old-state)
