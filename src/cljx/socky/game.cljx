@@ -223,9 +223,11 @@
     (if (< (get pts bidder) winning-bid)
       (add-scores state (assoc pts bidder (- 0 winning-bid)))
       (add-scores state pts))))
+(defn clear-bids [state]
+  (assoc state :bids {}))
 (defn check-round-over [state]
   (if (empty? (get-all-cards state))
-    (calc-points state)
+    (-> state calc-points clear-bids)
     state))
 
 (defn update-play [old-state player value]
