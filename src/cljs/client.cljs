@@ -4,17 +4,32 @@
             [cljs.reader :refer [read-string]]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
-            [socky.game :as game])
+            [socky.cards :refer [get-rank get-suit ranks suits]]
+            [socky.game :refer [empty-state index-of]])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
 (def websocket-url "ws://localhost:8080/socky")
 (def websocket (atom (chan)))
 
-(def state (atom game/empty-state))
+(def state (atom empty-state))
 
 (defn send-message [msg]
   (put! @websocket (or msg "bid:pass")))
 
+(defn sort-cards [card1 card2]
+  (let [suit1 (get-suit card1)
+        suit2 (get-suit card2)
+        rank1 (get-rank card1)
+        rank2 (get-rank card2)]
+    (if (= suit1 suit2)
+      (if (> (index-of ranks rank1)
+             (index-of ranks rank2))
+        1 -1)
+      (if (> (index-of suits suit1)
+             (index-of suits suit2))
+        1 -1))))
+(defn sort-hand [cards]
+  (vec (sort sort-cards cards)))
 (defn card-view [card owner]
   (reify
     om/IRender
@@ -32,7 +47,7 @@
     (render [_]
       (let [player-cards (first (:player-cards data))]
         (if (not (nil? player-cards))
-          (let [cards (vec (:cards (val player-cards)))]
+          (let [cards (sort-hand (:cards (val player-cards)))]
             (dom/div
              #js {:className "hand"}
              (apply dom/ul nil (om/build-all card-view cards))))
