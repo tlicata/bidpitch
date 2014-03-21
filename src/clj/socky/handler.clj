@@ -73,12 +73,17 @@
 (def sockets (atom {}))
 (def game-state (atom game/empty-state))
 
+(defn convert-bid-to-int [str]
+  (try
+    (Integer/parseInt str)
+    (catch NumberFormatException e -1)))
+
 (defn player-join [name]
   (when-let [new-state (game/add-player @game-state name)]
     (reset! game-state new-state)))
 
 (defn player-bid [name value]
-  (when-let [new-state (game/bid @game-state name (Integer. value))]
+  (when-let [new-state (game/bid @game-state name (convert-bid-to-int value))]
     (reset! game-state new-state)))
 
 (defn player-play [name value]
