@@ -16,9 +16,6 @@ To start a web server for the application, run:
 
 ## TODO
 
-- try "bid:" and catch NaN error
-- can get set? no
-
 ## License
 
 Copyright © 2014 FIXME
