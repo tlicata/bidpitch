@@ -107,7 +107,7 @@
       (go-loop []
         (if-let [{:keys [message]} (<! channel)]
           (let [[msg val val2] (split message #":")]
-            (println (str "message received: " message))
+            (println (str "message received: " message "  " username))
             (cond
              (= msg "join") (do (player-join username) (update-all))
              (= msg "bid") (do (player-bid username val) (update-all))
