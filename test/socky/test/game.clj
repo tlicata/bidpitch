@@ -1,7 +1,8 @@
 (ns socky.test.game
   (:use clojure.test
         socky.cards
-        socky.game))
+        socky.game
+        socky.test.scenarios))
 
 (deftest test-deal
   (testing "dealing cards to players"
@@ -288,7 +289,8 @@
     (is (round-over? game-pts))))
 (deftest test-calc-points
   (testing "adding up scores from a round"
-    (is (= (:points game-pts) {"louise" 4}))))
+    (is (= (:points game-pts) {"louise" 4 "tim" 0 "sharon" 0}))
+    (is (= (:points dont-make-bid) {"tim" 4 "sharon" 0 "louise" -3}))))
 
 (deftest test-game-play
   (testing "actual game play"

@@ -214,8 +214,8 @@
         most-points (most-game-pts state)
         one-or-inc #(if (nil? %) 1 (inc %))
         bidder (highest-bidder state)
-        winning-bid (max-bid (get-bids state))
-        pts (-> {}
+        winning-bid (max-bid state)
+        pts (-> (zipmap (get-players state) (repeat 0))
                 (update-in [high-card] one-or-inc)
                 (update-in [low-card] one-or-inc)
                 (update-in [jack-card] one-or-inc)
