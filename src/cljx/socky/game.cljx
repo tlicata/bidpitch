@@ -201,9 +201,6 @@
 (defn who-won-card [state card]
   (let [players (get-players state)]
     (first (drop-while #(nil? (index-of (flatten (get-player-tricks state %)) card)) players))))
-(defn round-over? [state]
-  (let [players (get-players state)]
-    (every? #(empty? (get-player-cards state %)) players)))
 (defn add-scores [state scores]
   (let [no-jack (dissoc scores nil)]
     (update-in state [:points] #(merge-with + % no-jack))))
@@ -227,8 +224,10 @@
   (assoc state :bids {}))
 (defn clear-trump [state]
   (assoc state :trump nil))
+(defn round-over? [state]
+  (empty? (get-all-cards state)))
 (defn check-round-over [state]
-  (if (empty? (get-all-cards state))
+  (if (round-over? state)
     (let [players (get-players state)
           dealer (get-dealer state)]
       (-> state
