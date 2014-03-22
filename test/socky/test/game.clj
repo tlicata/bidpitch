@@ -288,6 +288,14 @@
     (is (not (round-over? hand-played)))
     (is (not (round-over? non-bidder-lead)))
     (is (round-over? game-pts))))
+(deftest test-game-over
+  (testing "has someone won the game"
+    (is (not (game-over? {:points {"tim" 0 "louise" 0 "sharon" 0}})))
+    (is (not (game-over? {:points {"tim" 0 "louise" 0 "sharon" -3}})))
+    (is (not (game-over? {:points {"tim" 5 "louise" 8 "sharon" 10}})))
+    (is (game-over? {:points {"tim" 5 "louise" 8 "sharon" 11}}))
+    (is (game-over? {:points {"tim" 5 "louise" 13 "sharon" 11}}))
+    (is (not (game-over? {:points {"tim" 5 "louise" 11 "sharon" 11}})))))
 (deftest test-calc-points
   (testing "adding up scores from a round"
     (is (= (:points game-pts) {"louise" 4 "tim" 0 "sharon" 0}))

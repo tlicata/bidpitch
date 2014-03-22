@@ -236,8 +236,9 @@
   (empty? (get-all-cards state)))
 (defn game-over? [state]
   (let [points (:points state)
-        winning-pts (sort (filter #(>= % 11) (vals points)))]
-    winning-pts))
+        winning-pts (filter #(>= % 11) (vals points))]
+    (and (not (empty? winning-pts))
+         (= (count winning-pts) (count (into #{} winning-pts))))))
 (defn declare-winner [state]
   state)
 (defn check-round-over [state]
