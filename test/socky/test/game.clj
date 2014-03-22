@@ -226,10 +226,11 @@
                           (play "tim" "5S")
                           (play "louise" "KC")
                           (play "sharon" "JC")))
-(def game-pts (-> non-bidder-lead
-                  (play "louise" "TH")
-                  (play "sharon" "KS")
-                  (play "tim" "QD")))
+(def game-pts (binding [reconcile false]
+                (-> non-bidder-lead
+                    (play "louise" "TH")
+                    (play "sharon" "KS")
+                    (play "tim" "QD"))))
 
 (deftest test-award-trick-to-winner
   (testing "put table-cards into winner's tricks pile"

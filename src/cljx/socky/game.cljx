@@ -1,5 +1,13 @@
 (ns socky.game
-  (:require [socky.cards :refer [create-deck get-suit get-rank make-card ranks suits]]))
+  (:require [pallet.thread-expr :refer [when->]]
+            [socky.cards :refer [create-deck get-suit get-rank make-card ranks suits]]))
+
+; Determines whether or not advance-state will infer additional
+; state changes based on the initial change. For instance, if all
+; the cards are played, a new hand should be started. Binding this
+; value to false will prevent the new hand from being automatically
+; dealt. This is only used for testing purposes.
+(def ^:dynamic reconcile true)
 
 ; Helper functions for dealing cards
 (defn deal-cards [deck num-players]
@@ -232,10 +240,11 @@
           dealer (get-dealer state)]
       (-> state
           calc-points
-          clear-bids
-          clear-trump
-          add-cards
-          (dealt-state (next-player players dealer))))
+          (when-> reconcile
+                  clear-bids
+                  clear-trump
+                  add-cards
+                  (dealt-state (next-player players dealer)))))
       state))
 
 (defn update-play [old-state player value]
