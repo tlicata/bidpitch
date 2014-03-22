@@ -1,6 +1,6 @@
 (ns socky.game
   (:require [socky.cards :refer [create-deck get-suit get-rank make-card ranks suits]])
-  (#+clj :require #+cljs :require-macros  [pallet.thread-expr :refer [when->]]))
+  (#+clj :require #+cljs :require-macros  [pallet.thread-expr :refer [if-> when->]]))
 
 ; Determines whether or not advance-state will infer additional
 ; state changes based on the initial change. For instance, if all
@@ -234,17 +234,25 @@
   (assoc state :trump nil))
 (defn round-over? [state]
   (empty? (get-all-cards state)))
+(defn game-over? [state]
+  (let [points (:points state)
+        winning-pts (sort (filter #(>= % 11) (vals points)))]
+    winning-pts))
+(defn declare-winner [state]
+  state)
 (defn check-round-over [state]
   (if (round-over? state)
     (let [players (get-players state)
           dealer (get-dealer state)]
       (-> state
           calc-points
-          (when-> *reconcile*
-                  clear-bids
-                  clear-trump
-                  add-cards
-                  (dealt-state (next-player players dealer)))))
+          (if-> (game-over? state)
+                declare-winner
+                (when-> *reconcile*
+                        clear-bids
+                        clear-trump
+                        add-cards
+                        (dealt-state (next-player players dealer))))))
       state))
 
 (defn update-play [old-state player value]
