@@ -1,6 +1,6 @@
 (ns socky.game
-  (:require [pallet.thread-expr :refer [when->]]
-            [socky.cards :refer [create-deck get-suit get-rank make-card ranks suits]]))
+  (:require [socky.cards :refer [create-deck get-suit get-rank make-card ranks suits]])
+  (#+clj :require #+cljs :require-macros  [pallet.thread-expr :refer [when->]]))
 
 ; Determines whether or not advance-state will infer additional
 ; state changes based on the initial change. For instance, if all
