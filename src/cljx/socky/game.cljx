@@ -7,7 +7,7 @@
 ; the cards are played, a new hand should be started. Binding this
 ; value to false will prevent the new hand from being automatically
 ; dealt. This is only used for testing purposes.
-(def ^:dynamic reconcile true)
+(def ^:dynamic *reconcile* true)
 
 ; Helper functions for dealing cards
 (defn deal-cards [deck num-players]
@@ -240,7 +240,7 @@
           dealer (get-dealer state)]
       (-> state
           calc-points
-          (when-> reconcile
+          (when-> *reconcile*
                   clear-bids
                   clear-trump
                   add-cards
