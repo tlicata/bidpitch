@@ -111,12 +111,12 @@
         (if-let [{:keys [message]} (<! channel)]
           (let [[msg val val2] (split message #":")]
             (println (str "message received: " message "  " username))
-            (cond
-             (= msg "join") (player-join username)
-             (= msg "bid") (player-bid username val)
-             (= msg "play") (player-play username val)
-             (= msg "start") (player-start)
-             (= msg "state") (>! channel (prn-str (game/shield @game-state username)))
+            (condp = msg
+             "join" (player-join username)
+             "bid" (player-bid username val)
+             "play" (player-play username val)
+             "start" (player-start)
+             "state" (>! channel (prn-str (game/shield @game-state username)))
              :else (>! channel "unknown message type"))
             (recur))
           (println (str "channel closed")))))))
