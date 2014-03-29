@@ -240,7 +240,9 @@
     (and (not (empty? winning-pts))
          (= (count winning-pts) (count (into #{} winning-pts))))))
 (defn declare-winner [state]
-  (assoc state :winner "tbd"))
+  (if (game-over? state)
+    (assoc state :winner (key (apply max-key val (:points state))))
+    state))
 (defn check-round-over [state]
   (if (round-over? state)
     (let [players (get-players state)
