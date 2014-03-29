@@ -296,6 +296,13 @@
     (is (game-over? {:points {"tim" 5 "louise" 8 "sharon" 11}}))
     (is (game-over? {:points {"tim" 5 "louise" 13 "sharon" 11}}))
     (is (not (game-over? {:points {"tim" 5 "louise" 11 "sharon" 11}})))))
+(deftest test-declare-winner
+  (testing "indicating who won the game"
+    (is (= "tim" (:winner (declare-winner {:points {"tim" 11 "louise" 10 "sharon" -3}}))))
+    (is (= "louise" (:winner (declare-winner {:points {"tim" 11 "louise" 12 "sharon" -3}}))))
+    (is (= "sharon" (:winner (declare-winner {:points {"tim" 11 "louise" 12 "sharon" 13}}))))
+    (is (nil? (:winner (declare-winner {:points {"tim" 1 "louise" 2 "sharon" 3}}))))
+    (is (nil? (:winner (declare-winner {:points {"tim" 11 "louise" 11 "sharon" 11}}))))))
 (deftest test-calc-points
   (testing "adding up scores from a round"
     (is (= (:points game-pts) {"louise" 4 "tim" 0 "sharon" 0}))
