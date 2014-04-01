@@ -59,9 +59,10 @@
     (render [_]
       (let [player-cards (first (:player-cards data))]
         (if (not (nil? player-cards))
-          (let [cards (sort-hand (:cards (val player-cards)))]
+          (let [cards (sort-hand (:cards (val player-cards)))
+                class (str "hand" (if (my-turn? data) " onus" ""))]
             (dom/div
-             #js {:className "hand"}
+             #js {:className class}
              (apply dom/ul nil (om/build-all card-view cards))))
           (dom/div nil ""))))))
 
