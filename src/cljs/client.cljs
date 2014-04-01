@@ -11,7 +11,7 @@
 (def websocket-url "ws://localhost:8080/socky")
 (def websocket (atom (chan)))
 
-(def state (atom empty-state))
+(def game-state (atom empty-state))
 
 (defn send-message [msg]
   (put! @websocket (or msg "bid:pass")))
@@ -97,9 +97,9 @@
         (let [target (.getElementById js/document "content")]
           (go
            (reset! websocket (<! (ws-ch websocket-url)))
-           (om/root game-view state {:target target})
+           (om/root game-view game-state {:target target})
            (send-message "state")
            (loop []
              (when-let [msg (<! @websocket)]
-               (reset! state (read-string (:message msg)))
+               (reset! game-state (read-string (:message msg)))
                (recur)))))))
