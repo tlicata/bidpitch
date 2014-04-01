@@ -21,6 +21,13 @@
     #js {}
     #js {:display "none"}))
 
+(defn my-turn? [state]
+  (= (:onus state) (:me state)))
+(defn my-turn-to-bid? [state]
+  (and (my-turn? state) (bidding-stage? state)))
+(defn my-turn-to-play? [state]
+  (and (my-turn? state) (not (bidding-stage? state))))
+
 (defn sort-cards [card1 card2]
   (let [suit1 (get-suit card1)
         suit2 (get-suit card2)
@@ -65,13 +72,11 @@
   (reify
     om/IRender
     (render [_]
-      (let [my-bid (and (bidding-stage? data)
-                        (= (:onus data) (:me data)))]
-        (dom/div #js {:style (display my-bid)}
-                 (bid-button data 0 "pass")
-                 (bid-button data 2 "2")
-                 (bid-button data 3 "3")
-                 (bid-button data 4 "4"))))))
+      (dom/div #js {:style (display (my-turn-to-bid? data))}
+               (bid-button data 0 "pass")
+               (bid-button data 2 "2")
+               (bid-button data 3 "3")
+               (bid-button data 4 "4")))))
 
 (defn state-view [data owner]
   (reify
