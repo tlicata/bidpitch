@@ -5,7 +5,7 @@
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [socky.cards :refer [get-rank get-suit ranks suits]]
-            [socky.game :refer [empty-state index-of]])
+            [socky.game :refer [bidding-stage? empty-state index-of]])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
 (def websocket-url "ws://localhost:8080/socky")
@@ -15,6 +15,11 @@
 
 (defn send-message [msg]
   (put! @websocket (or msg "bid:pass")))
+
+(defn display [show]
+  (if show
+    #js {}
+    #js {:display "none"}))
 
 (defn sort-cards [card1 card2]
   (let [suit1 (get-suit card1)
@@ -53,6 +58,15 @@
              (apply dom/ul nil (om/build-all card-view cards))))
           (dom/div nil ""))))))
 
+(defn bid-view [data owner]
+  (reify
+    om/IRender
+    (render [_]
+      (let [my-bid (and (bidding-stage? data)
+                        (= (:onus data) (:me data)))]
+        (dom/p #js {:style (display my-bid)}
+               "bid, you fool")))))
+
 (defn state-view [data owner]
   (reify
     om/IRender
@@ -64,6 +78,7 @@
     (render [_]
       (dom/div nil
                (om/build hand-view data)
+               (om/build bid-view data)
                (om/build state-view data)))))
 
 (set! (.-onload js/window)
