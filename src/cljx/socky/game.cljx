@@ -84,7 +84,9 @@
   ([state player cards]
      (assoc-in state [:player-cards player] {:cards cards :tricks []})))
 (defn shield [state user]
-  (assoc state :player-cards (select-keys (:player-cards state) [user])))
+  (-> state
+      (assoc :player-cards (select-keys (:player-cards state) [user]))
+      (assoc :me user)))
 
 (defn dealt-state
   ([state]
