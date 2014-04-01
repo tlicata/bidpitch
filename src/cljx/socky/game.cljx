@@ -99,6 +99,8 @@
            (assoc :players ordered)))))
 
 ;; helper functions for managing bids
+(defn bidding-stage? [state]
+  (< (count (get-bids state)) (count (get-players state))))
 (defn max-bid-entry [state]
   (let [bids (get-bids state)]
     (if (empty? bids)
@@ -271,16 +273,12 @@
           (check-round-over)))))
 
 (defn advance-state [old-state player action value]
-  (let [bids (get-bids old-state)
-        onus (:onus old-state)
-        players (get-players old-state)
-        bidding-complete (= (count bids) (count players))]
-    (when (= onus player)
-      (if bidding-complete
-        (when (= action "play")
-          (update-play old-state player value))
-        (when (= action "bid")
-           (update-bid old-state player value))))))
+  (when (= (:onus old-state) player)
+    (if (bidding-stage? old-state)
+      (when (= action "bid")
+        (update-bid old-state player value))
+      (when (= action "play")
+        (update-play old-state player value)))))
 
 (defn bid [state player value]
   (advance-state state player "bid" value))
