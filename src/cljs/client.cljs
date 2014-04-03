@@ -47,8 +47,8 @@
     om/IRender
     (render [this]
       (let [url (str "url(/img/cards/individual/" card ".svg)")
-            play (str "play:" card)
-            handler (fn [_] (socky.client.send-message play))]
+            msg (str "play:" card)
+            handler #(socky.client.send-message msg)]
         (dom/li #js {:style #js {:backgroundImage url}
                      :className "card"
                      :onClick handler})))))
