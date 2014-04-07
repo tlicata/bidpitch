@@ -88,6 +88,12 @@
       (assoc :player-cards (select-keys (:player-cards state) [user]))
       (assoc :me user)))
 
+(defn game-started? [state]
+  (not (nil? (get-dealer state))))
+(defn can-join? [state player]
+  (and (not (game-started? state))
+       (not (has-player? state player))
+       (< (count (get-players state)) 8)))
 (defn dealt-state
   ([state]
      (dealt-state state (first (get-players state))))
