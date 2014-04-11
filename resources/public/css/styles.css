@@ -28,10 +28,14 @@ ul {
 }
 
 .hand {
-    bottom: -115px;
+    bottom: -260px;
     position: fixed;
     margin-left: 50%;
 }
 .hand ul {
     margin-left: -50%;
+}
+
+.hand.onus {
+    bottom: -115px;
 }
