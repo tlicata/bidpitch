@@ -1,16 +1,22 @@
 body {
-    background-color: white;
+    background-color: green;
     color: #CCC;
     font-family: sans-serif;
-    font-size: 20px;
 }
 
 a {
     color: #999;
-    font-size: 16px;
     margin-right: 20px;
 }
 
+button {
+    padding: 1em;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+}
 .card {
     background-position: -260px -370px;
     display: inline-block;
