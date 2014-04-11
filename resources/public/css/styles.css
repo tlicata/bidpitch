@@ -44,8 +44,12 @@ ul {
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 8px;
     display: inline-block;
-    margin: 1em 0;
+    margin-bottom: 1em;
     padding: 1em;
+}
+.points span {
+    display: inline-block;
+    margin-top: 1em;
 }
 .points li {
     display: inline;

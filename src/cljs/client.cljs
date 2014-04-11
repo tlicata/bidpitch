@@ -93,10 +93,13 @@
   (reify
     om/IRender
     (render [_]
-      (let [points (:points data)]
-        (apply dom/ul #js {:className "points"
-                           :style (display (not (empty? points)))}
-                (om/build-all points-li points))))))
+      (let [points (:points data)
+            winner (:winner data)]
+        (dom/div #js {:className "points"
+                      :style (display (not (empty? points)))}
+                 (apply dom/ul nil (om/build-all points-li points))
+                 (dom/span #js {:style (display (not (nil? winner)))}
+                           (str winner " wins!")))))))
 
 (defn state-view [data owner]
   (reify
@@ -112,7 +115,8 @@
                (om/build hand-view data)
                (om/build points-view data)
                (om/build bid-view data)
-               (om/build state-view data)))))
+               ;; (om/build state-view data)
+               ))))
 
 (set! (.-onload js/window)
       (fn []
