@@ -87,6 +87,17 @@
                (bid-button data 3 "3")
                (bid-button data 4 "4")))))
 
+(defn points-li [data owner]
+  (dom/li nil (str (key data) ": " (val data))))
+(defn points-view [data owner]
+  (reify
+    om/IRender
+    (render [_]
+      (let [points (:points data)]
+        (apply dom/ul #js {:className "points"
+                           :style (display (not (empty? points)))}
+                (om/build-all points-li points))))))
+
 (defn state-view [data owner]
   (reify
     om/IRender
@@ -99,6 +110,7 @@
       (dom/div nil
                (om/build join-view data)
                (om/build hand-view data)
+               (om/build points-view data)
                (om/build bid-view data)
                (om/build state-view data)))))
 
