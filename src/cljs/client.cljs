@@ -5,7 +5,7 @@
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [socky.cards :refer [get-rank get-suit ranks suits]]
-            [socky.game :refer [bidding-stage? can-join? empty-state index-of valid-bid?]])
+            [socky.game :refer [bidding-stage? can-join? empty-state game-over? index-of valid-bid?]])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
 (def websocket-url "ws://localhost:8080/socky")
@@ -98,8 +98,11 @@
         (dom/div #js {:className "points"
                       :style (display (not (empty? points)))}
                  (apply dom/ul nil (om/build-all points-li points))
-                 (dom/span #js {:style (display (not (nil? winner)))}
-                           (str winner " wins!")))))))
+                 (dom/div #js {:style (display (not (nil? winner)))}
+                           (str winner " wins!"))
+                 (dom/button #js {:style (display (game-over? data))
+                                  :onClick #(send-message "start")}
+                             "New Game"))))))
 
 (defn state-view [data owner]
   (reify

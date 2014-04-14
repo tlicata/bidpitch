@@ -47,9 +47,8 @@ ul {
     margin-bottom: 1em;
     padding: 1em;
 }
-.points span {
-    display: inline-block;
-    margin-top: 1em;
+.points div {
+    margin: 1em 0;
 }
 .points li {
     display: inline;
