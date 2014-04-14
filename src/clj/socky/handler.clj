@@ -92,6 +92,7 @@
 
 (defn player-start []
   (when-let [new-state (-> @game-state
+                           game/clear-points
                            game/add-cards
                            game/dealt-state)]
     (reset! game-state new-state)))

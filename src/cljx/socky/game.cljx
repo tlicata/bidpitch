@@ -64,7 +64,8 @@
    :player-cards {}
    :points {}
    :table-cards []
-   :trump nil})
+   :trump nil
+   :winner nil})
 
 (defn has-player? [state player]
   (some #{player} (get-players state)))
@@ -88,6 +89,14 @@
       (assoc :player-cards (select-keys (:player-cards state) [user]))
       (assoc :me user)))
 
+(defn clear-bids [state]
+  (assoc state :bids {}))
+(defn clear-trump [state]
+  (assoc state :trump nil))
+(defn clear-points [state]
+  (-> state
+      (assoc :points {})
+      (assoc :winner nil)))
 (defn game-started? [state]
   (not (nil? (get-dealer state))))
 (defn can-join? [state player]
@@ -102,6 +111,8 @@
            onus (next-player players dealer)
            ordered (order-players players onus)]
        (-> state
+           clear-bids
+           clear-trump
            (assoc :dealer dealer)
            (assoc :onus onus)
            (assoc :players ordered)))))
@@ -238,10 +249,6 @@
     (if (< (get pts bidder) winning-bid)
       (add-scores state (assoc pts bidder (- 0 winning-bid)))
       (add-scores state pts))))
-(defn clear-bids [state]
-  (assoc state :bids {}))
-(defn clear-trump [state]
-  (assoc state :trump nil))
 (defn round-over? [state]
   (empty? (get-all-cards state)))
 (defn game-over? [state]
@@ -263,8 +270,6 @@
                  (if-> (game-over? new-state)
                        declare-winner
                        (when-> *reconcile*
-                               clear-bids
-                               clear-trump
                                add-cards
                                (dealt-state (next-player players dealer)))))))
       state))
