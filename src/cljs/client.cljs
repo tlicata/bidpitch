@@ -5,13 +5,13 @@
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [socky.cards :refer [get-rank get-suit ranks suits]]
-            [socky.game :as game :refer [bidding-stage? can-join? empty-state game-over? index-of valid-bid?]])
+            [socky.game :as game])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
 (def websocket-url "ws://localhost:8080/socky")
 (def websocket (atom (chan)))
 
-(def game-state (atom empty-state))
+(def game-state (atom game/empty-state))
 
 (defn send-message [msg]
   (put! @websocket (or msg "bid:pass")))
@@ -24,9 +24,9 @@
 (defn my-turn? [state]
   (= (:onus state) (:me state)))
 (defn my-turn-to-bid? [state]
-  (and (my-turn? state) (bidding-stage? state)))
+  (and (my-turn? state) (game/bidding-stage? state)))
 (defn my-turn-to-play? [state]
-  (and (my-turn? state) (not (bidding-stage? state))))
+  (and (my-turn? state) (not (game/bidding-stage? state))))
 
 (defn sort-cards [card1 card2]
   (let [suit1 (get-suit card1)
@@ -34,11 +34,11 @@
         rank1 (get-rank card1)
         rank2 (get-rank card2)]
     (if (= suit1 suit2)
-      (if (> (index-of ranks rank1)
-             (index-of ranks rank2))
+      (if (> (game/index-of ranks rank1)
+             (game/index-of ranks rank2))
         1 -1)
-      (if (> (index-of suits suit1)
-             (index-of suits suit2))
+      (if (> (game/index-of suits suit1)
+             (game/index-of suits suit2))
         1 -1))))
 (defn sort-hand [cards]
   (vec (sort sort-cards cards)))
@@ -70,12 +70,12 @@
   (reify
     om/IRender
     (render [_]
-      (dom/button #js {:style (display (can-join? data (:me data)))
+      (dom/button #js {:style (display (game/can-join? data (:me data)))
                        :onClick #(send-message "join")}
                   "join"))))
 
 (defn bid-button [data val txt]
-  (dom/button #js {:style (display (valid-bid? data (:me data) val))
+  (dom/button #js {:style (display (game/valid-bid? data (:me data) val))
                    :onClick #(send-message (str "bid:" val))} txt))
 (defn bid-view [data owner]
   (reify
@@ -100,7 +100,7 @@
                  (apply dom/ul nil (om/build-all points-li points))
                  (dom/div #js {:style (display (not (nil? winner)))}
                            (str winner " wins!"))
-                 (dom/button #js {:style (display (game-over? data))
+                 (dom/button #js {:style (display (game/game-over? data))
                                   :onClick #(send-message "start")}
                              "New Game"))))))
 
