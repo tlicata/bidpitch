@@ -32,7 +32,7 @@ ul {
 .hand ul {
     margin-left: -50%;
 }
-.hand li {
+.tablecards li, .hand li {
     display: inline-block;
     overflow: hidden;
 }

@@ -113,7 +113,8 @@
     om/IRender
     (render [_]
       (let [table-cards (game/get-table-cards data)]
-        (apply dom/ul #js {:style (display (seq table-cards))}
+        (apply dom/ul #js {:className "tablecards"
+                           :style (display (seq table-cards))}
                (om/build-all table-card-li table-cards))))))
 
 
