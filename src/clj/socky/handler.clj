@@ -54,12 +54,6 @@
    [:body
     [:p "Join a game, fool"]]))
 
-(defn page-dummy []
-  (html5
-   [:head
-    [:title "HttpKit Dummy"]]
-   [:body [:div#content [:p "Dummy"]]]))
-
 (defn page-login []
   (html5
    [:head
@@ -135,9 +129,7 @@
   (GET "/game-join" []
        (friend/authenticated (page-game-join)))
   (GET "/socky" []
-       (friend/authenticated websocket-handler))
-  (GET "/test-auth" []
-       (friend/authenticated (page-dummy))))
+       (friend/authenticated websocket-handler)))
 
 (defroutes fall-through-routes
   (route/resources "/")
