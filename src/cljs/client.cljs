@@ -42,16 +42,18 @@
         1 -1))))
 (defn sort-hand [cards]
   (vec (sort sort-cards cards)))
+
+(defn card-ui [card]
+  (let [url (str "url(/img/cards/individual/" card ".svg)")]
+    (dom/span #js {:style #js {:backgroundImage url}
+                   :className "card"})))
 (defn card-view [card owner]
   (reify
     om/IRender
     (render [this]
-      (let [url (str "url(/img/cards/individual/" card ".svg)")
-            msg (str "play:" card)
+      (let [msg (str "play:" card)
             handler #(socky.client.send-message msg)]
-        (dom/li #js {:style #js {:backgroundImage url}
-                     :className "card"
-                     :onClick handler})))))
+        (dom/li #js {:onClick handler} (card-ui card))))))
 
 (defn hand-view [data owner]
   (reify

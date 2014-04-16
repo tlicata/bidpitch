@@ -21,9 +21,6 @@ ul {
     background-position: -260px -370px;
     display: inline-block;
     height: 314px;
-    width: 100px;
-}
-.card:last-child {
     width: 226px;
 }
 
@@ -35,7 +32,13 @@ ul {
 .hand ul {
     margin-left: -50%;
 }
-
+.hand li {
+    display: inline-block;
+    overflow: hidden;
+}
+.hand li:not(:last-child) {
+    width: 100px;
+}
 .hand.onus {
     bottom: -115px;
 }
