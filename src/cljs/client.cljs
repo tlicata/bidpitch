@@ -106,13 +106,16 @@
                                   :onClick #(send-message "start")}
                              "New Game"))))))
 
+(defn table-card-li [data owner]
+  (dom/li nil (card-ui data)))
 (defn table-cards-view [data owner]
   (reify
     om/IRender
     (render [_]
       (let [table-cards (game/get-table-cards data)]
-        (dom/p #js {:style (display (not (empty? table-cards)))}
-               (prn-str table-cards))))))
+        (apply dom/ul #js {:style (display (seq table-cards))}
+               (om/build-all table-card-li table-cards))))))
+
 
 (defn state-view [data owner]
   (reify
