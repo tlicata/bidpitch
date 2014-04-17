@@ -59,13 +59,13 @@
     (Integer/parseInt str)
     (catch NumberFormatException e -1)))
 
-(defn player-join [name]
+(defn player-join! [name]
   (update-game-state! game/add-player name))
-(defn player-bid [name value]
+(defn player-bid! [name value]
   (update-game-state! game/bid name (convert-bid-to-int value)))
-(defn player-play [name value]
+(defn player-play! [name value]
   (update-game-state! game/play name value))
-(defn player-start []
+(defn player-start! []
   (update-game-state! game/restart))
 
 (defn websocket-handler [request]
@@ -77,10 +77,10 @@
           (let [[msg val val2] (split message #":")]
             (println (str "message received: " message "  " username))
             (condp = msg
-             "join" (player-join username)
-             "bid" (player-bid username val)
-             "play" (player-play username val)
-             "start" (player-start)
+             "join" (player-join! username)
+             "bid" (player-bid! username val)
+             "play" (player-play! username val)
+             "start" (player-start!)
              "state" (>! channel (prn-str (game/shield @game-state username)))
              :else (>! channel "unknown message type"))
             (recur))
