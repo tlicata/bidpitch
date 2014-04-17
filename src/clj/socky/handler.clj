@@ -62,6 +62,12 @@
 (def sockets (atom {}))
 (def game-state (atom game/empty-state))
 
+(defn update-clients! []
+  (doseq [[user data] @sockets]
+    (put! (:socket data) (prn-str (game/shield @game-state user)))))
+(add-watch game-state nil (fn [key ref old-state new-state]
+                            (update-clients!)))
+
 (defn convert-bid-to-int [str]
   (try
     (Integer/parseInt str)
@@ -85,13 +91,6 @@
                            game/add-cards
                            game/dealt-state)]
     (reset! game-state new-state)))
-
-(defn update-all []
-  (doseq [[user data] @sockets]
-    (put! (:socket data) (prn-str (game/shield @game-state user)))))
-
-(add-watch game-state nil (fn [key ref old-state new-state]
-                            (update-all)))
 
 (defn websocket-handler [request]
   (with-channel request channel
