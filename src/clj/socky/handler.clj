@@ -15,11 +15,6 @@
             [socky.game :as game]
             [socky.users :refer [users]]))
 
-(defn- include-cljs [path]
-  (list
-   (javascript-tag "var CLOSURE_NO_DEPS = true;")
-   (include-js path)))
-
 (defn page-home []
   (html5
    [:head
