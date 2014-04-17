@@ -51,7 +51,7 @@
                             (update-clients!)))
 
 (defn update-game-state! [func & vals]
-  (when-let [new-state (apply func (merge [@game-state] vals))]
+  (when-let [new-state (apply func (concat [@game-state] vals))]
     (reset! game-state new-state)))
 
 (defn convert-bid-to-int [str]
