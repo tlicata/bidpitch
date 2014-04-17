@@ -68,29 +68,23 @@
 (add-watch game-state nil (fn [key ref old-state new-state]
                             (update-clients!)))
 
+(defn update-game-state! [func & vals]
+  (when-let [new-state (apply func (merge [@game-state] vals))]
+    (reset! game-state new-state)))
+
 (defn convert-bid-to-int [str]
   (try
     (Integer/parseInt str)
     (catch NumberFormatException e -1)))
 
 (defn player-join [name]
-  (when-let [new-state (game/add-player @game-state name)]
-    (reset! game-state new-state)))
-
+  (update-game-state! game/add-player name))
 (defn player-bid [name value]
-  (when-let [new-state (game/bid @game-state name (convert-bid-to-int value))]
-    (reset! game-state new-state)))
-
+  (update-game-state! game/bid name (convert-bid-to-int value)))
 (defn player-play [name value]
-  (when-let [new-state (game/play @game-state name value)]
-    (reset! game-state new-state)))
-
+  (update-game-state! game/play name value))
 (defn player-start []
-  (when-let [new-state (-> @game-state
-                           game/clear-points
-                           game/add-cards
-                           game/dealt-state)]
-    (reset! game-state new-state)))
+  (update-game-state! game/restart))
 
 (defn websocket-handler [request]
   (with-channel request channel

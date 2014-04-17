@@ -116,6 +116,8 @@
            (assoc :dealer dealer)
            (assoc :onus onus)
            (assoc :players ordered)))))
+(defn restart [state]
+  (-> state clear-points add-cards dealt-state))
 
 ;; helper functions for managing bids
 (defn bidding-stage? [state]
