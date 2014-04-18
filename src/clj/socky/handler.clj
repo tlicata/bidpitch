@@ -15,20 +15,13 @@
             [socky.game :as game]
             [socky.users :refer [users]]))
 
-(defn- include-cljs [path]
-  (list
-   (javascript-tag "var CLOSURE_NO_DEPS = true;")
-   (include-js path)))
-
 (defn page-home []
   (html5
    [:head
     [:title "Bid Pitch - Home"]
     (include-css "/css/styles.css")]
    [:body
-    [:p "Welcome to Bid Pitch"]
-    (link-to "/game-create" "create game")
-    (link-to "/game-join" "join game")]))
+    [:p "Welcome to Bid Pitch"]]))
 
 (defn page-game []
   (html5
@@ -37,22 +30,6 @@
     (include-css "/css/styles.css")
     (include-js "/js/lib/react-0.8.0.js" "/js/bin/main.js")]
    [:body [:div#content]]))
-
-(defn page-game-create []
-  (html5
-   [:head
-    [:title "Bid Pitch - Create Game"]
-    (include-css "/css/styles.css")]
-   [:body
-    [:p "Make a game, fool"]]))
-
-(defn page-game-join []
-  (html5
-   [:head
-    [:title "Bid Pitch - Join Game"]
-    (include-css "/css/styles.css")]
-   [:body
-    [:p "Join a game, fool"]]))
 
 (defn page-login []
   (html5
@@ -67,36 +44,29 @@
 (def sockets (atom {}))
 (def game-state (atom game/empty-state))
 
+(defn update-clients! []
+  (doseq [[user data] @sockets]
+    (put! (:socket data) (prn-str (game/shield @game-state user)))))
+(add-watch game-state nil (fn [key ref old-state new-state]
+                            (update-clients!)))
+
+(defn update-game-state! [func & vals]
+  (when-let [new-state (apply func (concat [@game-state] vals))]
+    (reset! game-state new-state)))
+
 (defn convert-bid-to-int [str]
   (try
     (Integer/parseInt str)
     (catch NumberFormatException e -1)))
 
-(defn player-join [name]
-  (when-let [new-state (game/add-player @game-state name)]
-    (reset! game-state new-state)))
-
-(defn player-bid [name value]
-  (when-let [new-state (game/bid @game-state name (convert-bid-to-int value))]
-    (reset! game-state new-state)))
-
-(defn player-play [name value]
-  (when-let [new-state (game/play @game-state name value)]
-    (reset! game-state new-state)))
-
-(defn player-start []
-  (when-let [new-state (-> @game-state
-                           game/clear-points
-                           game/add-cards
-                           game/dealt-state)]
-    (reset! game-state new-state)))
-
-(defn update-all []
-  (doseq [[user data] @sockets]
-    (put! (:socket data) (prn-str (game/shield @game-state user)))))
-
-(add-watch game-state nil (fn [key ref old-state new-state]
-                            (update-all)))
+(defn player-join! [name]
+  (update-game-state! game/add-player name))
+(defn player-bid! [name value]
+  (update-game-state! game/bid name (convert-bid-to-int value)))
+(defn player-play! [name value]
+  (update-game-state! game/play name value))
+(defn player-start! []
+  (update-game-state! game/restart))
 
 (defn websocket-handler [request]
   (with-channel request channel
@@ -107,10 +77,10 @@
           (let [[msg val val2] (split message #":")]
             (println (str "message received: " message "  " username))
             (condp = msg
-             "join" (player-join username)
-             "bid" (player-bid username val)
-             "play" (player-play username val)
-             "start" (player-start)
+             "join" (player-join! username)
+             "bid" (player-bid! username val)
+             "play" (player-play! username val)
+             "start" (player-start!)
              "state" (>! channel (prn-str (game/shield @game-state username)))
              :else (>! channel "unknown message type"))
             (recur))
@@ -124,10 +94,6 @@
 (defroutes logged-in-routes
   (GET "/game" []
        (friend/authenticated (page-game)))
-  (GET "/game-create" []
-       (friend/authenticated (page-game-create)))
-  (GET "/game-join" []
-       (friend/authenticated (page-game-join)))
   (GET "/socky" []
        (friend/authenticated websocket-handler)))
 
