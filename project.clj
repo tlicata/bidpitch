@@ -11,10 +11,10 @@
                  [http-kit "2.1.16"]
                  [jarohen/chord "0.2.2"]
                  [om "0.5.2"]]
-  :plugins [[lein-ring "0.8.10"]
-            [lein-cljsbuild "0.3.3"]
+  :plugins [[lein-cljsbuild "0.3.3"]
             [com.keminglabs/cljx "0.3.1"]]
   :hooks [leiningen.cljsbuild cljx.hooks]
+  :main socky.handler
   :source-paths ["src/clj" "target/generated-src/clj"]
   :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
                                   [ring-mock "0.1.5"]]}}
