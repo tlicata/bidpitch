@@ -43,6 +43,11 @@ To start a web server for the application, run:
 
 ## TODO
 
+- Start view shows who has joined
+- Bidder goes out
+- Teams
+- Switch players/teams after game
+
 ## License
 
 Copyright © 2014 FIXME
