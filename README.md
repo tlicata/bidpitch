@@ -1,15 +1,13 @@
 # Bid Pitch
 
-An implementation of the [Bid Pitch][pitch] card game. The hope was that it
-would allow me and my family to play online when we were not all in
-the same geographic region.  Based on  [Lockport, NY][lockport] local
-rules.
+An implementation of the [Bid Pitch][pitch] card game. The goal is to
+allow me and my family to play online while we're scattered across the
+country.  Based on [Lockport, NY][lockport] local rules.
 
-
-Another goal of this project was to make use of technologies I find
-interesting. The server is written in [Clojure][clj] and the client is
-written in [ClojureScript][cljs]. Game logic is shared between them by the
-very convenient [cljx][cljx].
+Another goal of this project is to make use of interesting
+technologies. The server is written in [Clojure][clj] and the client
+is written in [ClojureScript][cljs]. Game logic is shared between them
+by using [cljx][cljx].
 
 Websockets handle most of the client-server communication.
 [Http-kit][httpkit] provides good websocket implementation and James
