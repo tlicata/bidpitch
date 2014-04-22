@@ -76,6 +76,22 @@
                        :onClick #(send-message "join")}
                   "join"))))
 
+(defn start-view [data owner]
+  (reify
+    om/IRender
+    (render [_]
+      (let [players (game/get-players data)
+            leader (= (:me data) (first players))
+            more-than-one (> (count players) 1)
+            started (game/game-started? data)]
+        (dom/div #js {:style (display (and leader (not started)))}
+                 (dom/p nil (if more-than-one
+                              "You're the leader, start when everyone's here"
+                              "Waiting for more people to join"))
+                 (dom/button #js {:style (display more-than-one)
+                                  :onClick #(send-message "start")}
+                             "Start"))))))
+
 (defn bid-button [data val txt]
   (dom/button #js {:style (display (game/valid-bid? data (:me data) val))
                    :onClick #(send-message (str "bid:" val))} txt))
@@ -129,6 +145,7 @@
     (render [_]
       (dom/div nil
                (om/build join-view data)
+               (om/build start-view data)
                (om/build hand-view data)
                (om/build points-view data)
                (om/build bid-view data)
