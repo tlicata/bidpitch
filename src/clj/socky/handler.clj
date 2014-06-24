@@ -23,7 +23,7 @@
    [:head
     [:title "Bid Pitch - Home"]
     (include-css "/css/styles.css")]
-   [:body.home
+   [:body.page.home
     [:div.row1
      [:h1 "Bid Pitch"]]
     [:div.row2

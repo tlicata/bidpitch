@@ -29,16 +29,18 @@ h1 {
     color: white;
 }
 
-/* home page */
-body.home {
+/* pages */
+body.page {
     text-align: center;
 }
-body.home .row1 {
+body.page .row1 {
     margin-top: 30px;
 }
-body.home .row1, body.home .row2 {
+body.page .row1, body.page .row2 {
     margin-bottom: 30px;
 }
+
+/* home page */
 body.home .row2 div {
     margin: 5px;
 }
