@@ -4,13 +4,46 @@ body {
     font-family: sans-serif;
 }
 
-a {
-    color: #999;
-    margin-right: 20px;
-}
-
 button {
     padding: 1em;
+}
+h1 {
+    margin: 0;
+}
+
+/* buttons */
+.button {
+    border: #CCC solid 2px;
+    color: #CCC;
+    display: inline-block;
+    min-width: 100px;
+    padding: 5px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+}
+.button:hover {
+    border-color: white;
+    color: white;
+}
+
+/* home page */
+body.home {
+    text-align: center;
+}
+body.home .row1 {
+    margin-top: 30px;
+}
+body.home .row1, body.home .row2 {
+    margin-bottom: 30px;
+}
+body.home .row2 div {
+    margin: 5px;
+}
+body.home a.howto {
+    color: #CCC;
 }
 
 ul {

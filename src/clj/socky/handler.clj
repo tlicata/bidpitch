@@ -15,15 +15,22 @@
             [socky.game :as game]
             [socky.users :refer [users]]))
 
+(defn button [link text]
+  [:a.button {:href link} text])
+
 (defn page-home []
   (html5
    [:head
     [:title "Bid Pitch - Home"]
     (include-css "/css/styles.css")]
-   [:body
-    [:p "Welcome to Bid Pitch"]
-    (link-to "/game-create" "create game")
-    (link-to "/game-join" "join game")]))
+   [:body.home
+    [:div.row1
+     [:h1.row1 "Bid Pitch"]]
+    [:div.row2
+     [:div (button "/game-create" "Start Game")]
+     [:div (button "/game-join" "Join Game")]]
+    [:div.row3
+     [:a.howto {:href ""} "How to play"]]]))
 
 (defn page-game []
   (html5
