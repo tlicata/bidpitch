@@ -48,6 +48,11 @@ body.home a.howto {
     color: #CCC;
 }
 
+/* create game page */
+body.create .row2 input {
+    margin-top: 5px;
+}
+
 ul {
     margin: 0;
     padding: 0;

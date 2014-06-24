@@ -45,8 +45,16 @@
    [:head
     [:title "Bid Pitch - Create Game"]
     (include-css "/css/styles.css")]
-   [:body
-    [:p "Make a game, fool"]]))
+   [:body.page.create
+    [:div.row1
+     [:h1 "Create game"]]
+    [:form {:method "POST"}
+     [:div.row2
+      [:label {:for "title"} "Give your game a name:"]
+      [:br]
+      [:input {:type "text" :name "title"}]]
+     [:div.row3
+      [:input {:type "submit"}]]]]))
 
 (defn page-game-join []
   (html5
@@ -93,6 +101,10 @@
 (defn player-start! []
   (update-game-state! game/restart))
 
+(defn game-create! [title]
+  (println (str "creating game: " title))
+  (resp/redirect "/"))
+
 (defn websocket-handler [request]
   (with-channel request channel
     (when-let [username (:username (friend/current-authentication))]
@@ -120,7 +132,9 @@
   (GET "/game" []
        (friend/authenticated (page-game)))
   (GET "/game-create" []
-       (friend/authenticated (page-game-create)))
+       (page-game-create))
+  (POST "/game-create" [title]
+        (game-create! title))
   (GET "/game-join" []
        (friend/authenticated (page-game-join)))
   (GET "/socky" []
