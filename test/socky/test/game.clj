@@ -181,7 +181,7 @@
 (deftest test-add-table-card
   (testing "playing a card to the table"
     (let [state (add-table-card empty-state "4C")]
-      (= (get-table-cards state) ["4C"]))))
+      (is (= (get-table-cards state) ["4C"])))))
 
 (deftest test-clear-table-cards
   (testing "clearing the table after a hand"
@@ -195,16 +195,16 @@
 (deftest test-highest
   (testing "finding the highest played card of a suit"
     (let [cards ["4C" "5D" "JD" "KS" "AS"]]
-      (is (highest cards "C") "4C")
-      (is (highest cards "D") "5D")
-      (is (highest cards "S") "AS")
+      (is (= (highest cards "C") "4C"))
+      (is (= (highest cards "D") "JD"))
+      (is (= (highest cards "S") "AS"))
       (is (nil? (highest cards "H"))))))
 (deftest test-lowest
   (testing "finding the lowest played card of a suit"
     (let [cards ["7S" "JD" "KD" "AS" "2C"]]
-      (is (lowest cards "C") "2C")
-      (is (lowest cards "S") "7S")
-      (is (lowest cards "D") "JD")
+      (is (= (lowest cards "C") "2C"))
+      (is (= (lowest cards "S") "7S"))
+      (is (= (lowest cards "D") "JD"))
       (is (nil? (lowest cards "H"))))))
 
 (def hand-in-progress (-> empty-state
@@ -243,7 +243,7 @@
     ;; correctly sort out state for completed hand
     (let [resolved (check-hand-winner hand-played "tim")]
       ;; onus is on the winner
-      (is (:onus resolved) "louise")
+      (is (= (:onus resolved) "louise"))
       ;; louise got the trick
       (is (= (get-player-tricks resolved "louise") [["AC" "2C" "4C"]]))
       ;; table cards were cleared
