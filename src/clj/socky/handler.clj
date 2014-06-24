@@ -25,7 +25,7 @@
     (include-css "/css/styles.css")]
    [:body.home
     [:div.row1
-     [:h1.row1 "Bid Pitch"]]
+     [:h1 "Bid Pitch"]]
     [:div.row2
      [:div (button "/game-create" "Start Game")]
      [:div (button "/game-join" "Join Game")]]
