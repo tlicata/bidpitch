@@ -50,7 +50,7 @@
      [:h1 "Create game"]]
     [:form {:method "POST"}
      [:div.row2
-      [:label {:for "title"} "Give your game a name:"]
+      [:label {:for "title"} "What do you want to call it?"]
       [:br]
       [:input {:type "text" :name "title"}]]
      [:div.row3
