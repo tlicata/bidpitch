@@ -30,7 +30,9 @@
      [:div (button "/game-create" "Start Game")]
      [:div (button "/game-join" "Join Game")]]
     [:div.row3
-     [:a.howto {:href ""} "How to play"]]]))
+     [:a.howto {:href "http://en.wikipedia.org/wiki/Pitch_(card_game)"} "How to play"]
+     [:p.small "(Hint: Auction Pitch with"]
+     [:p.small "High, Low, Jack, and Game)"]]]))
 
 (defn page-game []
   (html5
