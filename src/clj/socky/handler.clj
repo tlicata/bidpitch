@@ -52,7 +52,7 @@
      [:h1 "Create game"]]
     [:form {:method "POST"}
      [:div.row2
-      [:label {:for "title"} "What do you want to call it?"]
+      [:label {:for "title"} "What do you want to call your game?"]
       [:br]
       [:input {:type "text" :name "title"}]]
      [:div.row3
