@@ -10,8 +10,10 @@
             [compojure.route :as route]
             [hiccup.page :refer [html5 include-css include-js]]
             [hiccup.element :refer [javascript-tag link-to]]
+            [hiccup.util :refer [escape-html]]
             [org.httpkit.server :as httpkit]
             [ring.util.response :as resp]
+            [socky.db :as db]
             [socky.game :as game]
             [socky.users :refer [users]]))
 
@@ -63,8 +65,13 @@
    [:head
     [:title "Bid Pitch - Join Game"]
     (include-css "/css/styles.css")]
-   [:body
-    [:p "Join a game, fool"]]))
+   [:body.page
+    [:div.row1
+     [:h1 "Join game"]]
+    [:div.row2
+     (vec (cons :ul (map (fn [game]
+                           [:li (escape-html (:name game))])
+                         (db/game-all))))]]))
 
 (defn page-login []
   (html5
@@ -105,6 +112,7 @@
 
 (defn game-create! [title]
   (println (str "creating game: " title))
+  (db/game-add title)
   (resp/redirect "/"))
 
 (defn websocket-handler [request]
@@ -138,7 +146,7 @@
   (POST "/game-create" [title]
         (game-create! title))
   (GET "/game-join" []
-       (friend/authenticated (page-game-join)))
+       (page-game-join))
   (GET "/socky" []
        (friend/authenticated websocket-handler)))
 
