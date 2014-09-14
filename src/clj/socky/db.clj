@@ -1,7 +1,7 @@
 (ns socky.db
   (:require [clojure.java.jdbc :as jdbc]))
 
-(def pg-db "postgresql://localhost:5432/mydb")
+(def pg-db "postgresql://localhost:5432/bidpitch_dev")
 (def games-table "games")
 
 (def create-games-table-sql
