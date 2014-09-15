@@ -14,7 +14,8 @@
                  [om "0.5.2"]
                  [postgresql "9.1-901.jdbc4"]]
   :plugins [[lein-cljsbuild "0.3.3"]
-            [com.keminglabs/cljx "0.3.1"]]
+            [com.keminglabs/cljx "0.3.1"]
+            [ragtime/ragtime.lein "0.3.7"]]
   :hooks [leiningen.cljsbuild cljx.hooks]
   :main socky.handler
   :source-paths ["src/clj" "target/generated-src/clj"]
