@@ -12,7 +12,8 @@
                  [http-kit "2.1.16"]
                  [jarohen/chord "0.2.2"]
                  [om "0.5.2"]
-                 [postgresql "9.1-901.jdbc4"]]
+                 [postgresql "9.1-901.jdbc4"]
+                 [ragtime/ragtime.sql.files "0.3.7"]]
   :plugins [[lein-cljsbuild "0.3.3"]
             [com.keminglabs/cljx "0.3.1"]
             [ragtime/ragtime.lein "0.3.7"]]
@@ -30,4 +31,6 @@
                    :rules :clj}
                   {:source-paths ["src/cljx"]
                    :output-path "target/generated-src/cljs"
-                   :rules :cljs}]})
+                   :rules :cljs}]}
+  :ragtime {:migrations ragtime.sql.files/migrations
+            :database "jdbc:postgresql://localhost:5432/bidpitch_dev"})
