@@ -8,7 +8,8 @@
             [socky.game :as game])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
-(def websocket-url "ws://localhost:8080/socky")
+(def host (.-host (.-location js/window)))
+(def websocket-url (str "ws://" host "/socky"))
 (def websocket (atom (chan)))
 
 (def game-state (atom game/empty-state))
