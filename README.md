@@ -41,6 +41,10 @@ To start a web server for the application, run:
 
     lein run
 
+## Migrations
+
+- Migrations can be generated with script/create-migration.sh
+
 ## TODO
 
 - Start view shows who has joined
