@@ -10,18 +10,31 @@
             [compojure.route :as route]
             [hiccup.page :refer [html5 include-css include-js]]
             [hiccup.element :refer [javascript-tag link-to]]
+            [hiccup.util :refer [escape-html]]
             [org.httpkit.server :as httpkit]
             [ring.util.response :as resp]
+            [socky.db :as db]
             [socky.game :as game]
             [socky.users :refer [users]]))
+
+(defn button [link text]
+  [:a.button {:href link} text])
 
 (defn page-home []
   (html5
    [:head
     [:title "Bid Pitch - Home"]
     (include-css "/css/styles.css")]
-   [:body
-    [:p "Welcome to Bid Pitch"]]))
+   [:body.page.home
+    [:div.row1
+     [:h1 "Bid Pitch"]]
+    [:div.row2
+     [:div (button "/game-create" "Start Game")]
+     [:div (button "/game-join" "Join Game")]]
+    [:div.row3
+     [:a.howto {:href "http://en.wikipedia.org/wiki/Pitch_(card_game)"} "How to play"]
+     [:p.small "(Hint: Auction Pitch with"]
+     [:p.small "High, Low, Jack, and Game)"]]]))
 
 (defn page-game []
   (html5
@@ -30,6 +43,35 @@
     (include-css "/css/styles.css")
     (include-js "/js/lib/react-0.8.0.js" "/js/bin/main.js")]
    [:body [:div#content]]))
+
+(defn page-game-create []
+  (html5
+   [:head
+    [:title "Bid Pitch - Create Game"]
+    (include-css "/css/styles.css")]
+   [:body.page.create
+    [:div.row1
+     [:h1 "Create game"]]
+    [:form {:method "POST"}
+     [:div.row2
+      [:label {:for "title"} "What do you want to call your game?"]
+      [:br]
+      [:input {:type "text" :name "title"}]]
+     [:div.row3
+      [:input {:type "submit"}]]]]))
+
+(defn page-game-join []
+  (html5
+   [:head
+    [:title "Bid Pitch - Join Game"]
+    (include-css "/css/styles.css")]
+   [:body.page
+    [:div.row1
+     [:h1 "Join game"]]
+    [:div.row2
+     (vec (cons :ul (map (fn [game]
+                           [:li (escape-html (:name game))])
+                         (db/game-all))))]]))
 
 (defn page-login []
   (html5
@@ -68,6 +110,11 @@
 (defn player-start! []
   (update-game-state! game/restart))
 
+(defn game-create! [title]
+  (println (str "creating game: " title))
+  (db/game-add title)
+  (resp/redirect "/"))
+
 (defn websocket-handler [request]
   (with-channel request channel
     (when-let [username (:username (friend/current-authentication))]
@@ -94,6 +141,12 @@
 (defroutes logged-in-routes
   (GET "/game" []
        (friend/authenticated (page-game)))
+  (GET "/game-create" []
+       (page-game-create))
+  (POST "/game-create" [title]
+        (game-create! title))
+  (GET "/game-join" []
+       (page-game-join))
   (GET "/socky" []
        (friend/authenticated websocket-handler)))
 

@@ -4,13 +4,63 @@ body {
     font-family: sans-serif;
 }
 
-a {
-    color: #999;
-    margin-right: 20px;
-}
-
 button {
     padding: 1em;
+}
+h1 {
+    margin: 0;
+}
+
+/* buttons */
+.button, input[type="submit"] {
+    background: none;
+    border: #CCC solid 2px;
+    color: #CCC;
+    display: inline-block;
+    font-size: 1em;
+    min-width: 100px;
+    padding: 5px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+}
+.button:hover, input[type="submit"]:hover {
+    border-color: white;
+    color: white;
+}
+
+/* pages */
+body.page {
+    text-align: center;
+}
+body.page .row1 {
+    margin-top: 30px;
+}
+body.page .row1, body.page .row2 {
+    margin-bottom: 30px;
+}
+
+/* home page */
+body.home .row2 div {
+    margin: 5px;
+}
+body.home a.howto {
+    color: #CCC;
+}
+body.home p.small {
+    font-size: .65em;
+    margin: 0;
+    color: #999;
+}
+body.home p.small:first-of-type {
+    margin-top: 5px;
+}
+
+/* create game page */
+body.create .row2 input {
+    margin-top: 5px;
 }
 
 ul {
