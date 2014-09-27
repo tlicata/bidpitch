@@ -2,7 +2,7 @@
 
 An implementation of the [Bid Pitch][pitch] card game. The goal is to
 allow me and my family to play online while we're scattered across the
-country.  Based on [Lockport, NY][lockport] local rules :)
+country.  Based on [Lockport, NY][lockport] local rules.
 
 Another goal of this project is to make use of interesting
 technologies. The server is written in [Clojure][clj] and the client
@@ -16,7 +16,7 @@ wrapper. I'm not sure if it was necessary but it was very convenient.
 
 Also on the front-end I experimented with Facebook's [React.js][react]
 and David Nolen's [Om][om] for a UI rendered by pure functions. Also
-not necessary, but I couldn't imagine going back to a life without them.
+not necessary, but they were very nice.
 
 [pitch]: http://en.wikipedia.org/wiki/Pitch_(card_game)
 [lockport]: http://en.wikipedia.org/wiki/Lockport_(city),_New_York
