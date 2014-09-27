@@ -29,8 +29,8 @@
     [:div.row1
      [:h1 "Bid Pitch"]]
     [:div.row2
-     [:div (button "/game-create" "Start Game")]
-     [:div (button "/game-join" "Join Game")]]
+     [:div (button "/games/new" "Start Game")]
+     [:div (button "/games/" "Join Game")]]
     [:div.row3
      [:a.howto {:href "http://en.wikipedia.org/wiki/Pitch_(card_game)"} "How to play"]
      [:p.small "(Hint: Auction Pitch with"]
@@ -52,7 +52,7 @@
    [:body.page.create
     [:div.row1
      [:h1 "Create game"]]
-    [:form {:method "POST"}
+    [:form {:method "POST" :action "/games/"}
      [:div.row2
       [:label {:for "title"} "What do you want to call your game?"]
       [:br]
@@ -70,7 +70,7 @@
      [:h1 "Join game"]]
     [:div.row2
      (vec (cons :ul (map (fn [game]
-                           [:li (escape-html (:name game))])
+                           [:li (link-to (str (:id game)) (escape-html (:name game)))])
                          (db/game-all))))]]))
 
 (defn page-login []
@@ -139,13 +139,13 @@
   (GET "/logout" [] (friend/logout* (resp/redirect "/"))))
 
 (defroutes logged-in-routes
-  (GET "/game" []
-       (friend/authenticated (page-game)))
-  (GET "/game-create" []
+  (GET "/games/new" []
        (page-game-create))
-  (POST "/game-create" [title]
+  (GET "/games/:id" [id]
+       (friend/authenticated (page-game)))
+  (POST "/games/" [title]
         (game-create! title))
-  (GET "/game-join" []
+  (GET "/games/" []
        (page-game-join))
   (GET "/socky" []
        (friend/authenticated websocket-handler)))
