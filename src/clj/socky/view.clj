@@ -6,11 +6,15 @@
 (defn button [link text]
   [:a.button {:href link} text])
 
+(defn meta-viewport []
+  [:meta {:name "viewport" :content "width=device-width"}])
+
 (defn page-home []
   (html5
    [:head
     [:title "Bid Pitch - Home"]
-    (include-css "/css/styles.css")]
+    (include-css "/css/styles.css")
+    (meta-viewport)]
    [:body.page.home
     [:div.row1
      [:h1 "Bid Pitch"]]
@@ -27,7 +31,8 @@
    [:head
     [:title "Bid Pitch"]
     (include-css "/css/styles.css")
-    (include-js "/js/lib/react-0.8.0.js" "/js/bin/main.js")]
+    (include-js "/js/lib/react-0.8.0.js" "/js/bin/main.js")
+    (meta-viewport)]
    [:body
     [:p (str "Game: " id)]
     [:div#content]]))
@@ -36,7 +41,8 @@
   (html5
    [:head
     [:title "Bid Pitch - Create Game"]
-    (include-css "/css/styles.css")]
+    (include-css "/css/styles.css")
+    (meta-viewport)]
    [:body.page.create
     [:div.row1
      [:h1 "Create game"]]
@@ -52,7 +58,8 @@
   (html5
    [:head
     [:title "Bid Pitch - Join Game"]
-    (include-css "/css/styles.css")]
+    (include-css "/css/styles.css")
+    (meta-viewport)]
    [:body.page
     [:div.row1
      [:h1 "Join game"]]
@@ -64,7 +71,8 @@
 (defn page-login []
   (html5
    [:head
-    [:title "Login"]]
+    [:title "Login"]
+    (meta-viewport)]
    [:body
     [:form {:method "POST" :action "login"}
      [:div "Username" [:input {:type "text" :name "username"}]]
