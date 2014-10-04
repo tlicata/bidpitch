@@ -14,8 +14,7 @@
             [org.httpkit.server :as httpkit]
             [ring.util.response :as resp]
             [socky.db :as db]
-            [socky.game :as game]
-            [socky.users :refer [users]]))
+            [socky.game :as game]))
 
 (defn button [link text]
   [:a.button {:href link} text])
@@ -157,7 +156,7 @@
 (defroutes all-routes
   app-routes
   (-> logged-in-routes
-      (friend/authenticate {:credential-fn (partial creds/bcrypt-credential-fn users)
+      (friend/authenticate {:credential-fn (partial creds/bcrypt-credential-fn db/player-get)
                             :workflows [(workflows/interactive-form)]}))
   fall-through-routes)
 
