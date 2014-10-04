@@ -8,79 +8,11 @@
             [clojure.string :refer [split]]
             [compojure.handler :as handler]
             [compojure.route :as route]
-            [hiccup.page :refer [html5 include-css include-js]]
-            [hiccup.element :refer [javascript-tag link-to]]
-            [hiccup.util :refer [escape-html]]
             [org.httpkit.server :as httpkit]
             [ring.util.response :as resp]
             [socky.db :as db]
-            [socky.game :as game]))
-
-(defn button [link text]
-  [:a.button {:href link} text])
-
-(defn page-home []
-  (html5
-   [:head
-    [:title "Bid Pitch - Home"]
-    (include-css "/css/styles.css")]
-   [:body.page.home
-    [:div.row1
-     [:h1 "Bid Pitch"]]
-    [:div.row2
-     [:div (button "/games/new" "Start Game")]
-     [:div (button "/games/" "Join Game")]]
-    [:div.row3
-     [:a.howto {:href "http://en.wikipedia.org/wiki/Pitch_(card_game)"} "How to play"]
-     [:p.small "(Hint: Auction Pitch with"]
-     [:p.small "High, Low, Jack, and Game)"]]]))
-
-(defn page-game []
-  (html5
-   [:head
-    [:title "Bid Pitch"]
-    (include-css "/css/styles.css")
-    (include-js "/js/lib/react-0.8.0.js" "/js/bin/main.js")]
-   [:body [:div#content]]))
-
-(defn page-game-create []
-  (html5
-   [:head
-    [:title "Bid Pitch - Create Game"]
-    (include-css "/css/styles.css")]
-   [:body.page.create
-    [:div.row1
-     [:h1 "Create game"]]
-    [:form {:method "POST" :action "/games/"}
-     [:div.row2
-      [:label {:for "title"} "What do you want to call your game?"]
-      [:br]
-      [:input {:type "text" :name "title"}]]
-     [:div.row3
-      [:input {:type "submit"}]]]]))
-
-(defn page-game-join []
-  (html5
-   [:head
-    [:title "Bid Pitch - Join Game"]
-    (include-css "/css/styles.css")]
-   [:body.page
-    [:div.row1
-     [:h1 "Join game"]]
-    [:div.row2
-     (vec (cons :ul (map (fn [game]
-                           [:li (link-to (str (:id game)) (escape-html (:name game)))])
-                         (db/game-all))))]]))
-
-(defn page-login []
-  (html5
-   [:head
-    [:title "Login"]]
-   [:body
-    [:form {:method "POST" :action "login"}
-     [:div "Username" [:input {:type "text" :name "username"}]]
-     [:div "Password" [:input {:type "password" :name "password"}]]
-     [:div [:input {:type "submit" :class "button" :value "Login"}]]]]))
+            [socky.game :as game]
+            [socky.view :as view]))
 
 (def sockets (atom {}))
 (def game-state (atom game/empty-state))
@@ -133,19 +65,19 @@
           (println (str "channel closed")))))))
 
 (defroutes app-routes
-  (GET "/" [] (page-home))
-  (GET "/login" [] (page-login))
+  (GET "/" [] (view/page-home))
+  (GET "/login" [] (view/page-login))
   (GET "/logout" [] (friend/logout* (resp/redirect "/"))))
 
 (defroutes logged-in-routes
   (GET "/games/new" []
-       (page-game-create))
+       (view/page-game-create))
   (GET "/games/:id" [id]
-       (friend/authenticated (page-game)))
+       (friend/authenticated (view/page-game id)))
   (POST "/games/" [title]
         (game-create! title))
   (GET "/games/" []
-       (page-game-join))
+       (view/page-game-join (db/game-all)))
   (GET "/socky" []
        (friend/authenticated websocket-handler)))
 
