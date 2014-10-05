@@ -41,11 +41,6 @@
 (defn player-start! []
   (update-game! game/restart))
 
-(defn game-create! [title]
-  (println (str "creating game: " title))
-  (db/game-add title)
-  (resp/redirect "/"))
-
 (defn websocket-handler [request]
   (with-channel request channel
     (when-let [username (:username (friend/current-authentication))]
@@ -75,7 +70,8 @@
   (GET "/games/:id" [id]
        (friend/authenticated (view/page-game id)))
   (POST "/games/" [title]
-        (game-create! title))
+        (db/game-add title)
+        (resp/redirect "/"))
   (GET "/games/" []
        (view/page-game-join (db/game-all)))
   (GET "/socky" []
