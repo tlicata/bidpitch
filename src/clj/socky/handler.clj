@@ -23,7 +23,7 @@
 (add-watch game-state nil (fn [key ref old-state new-state]
                             (update-clients!)))
 
-(defn update-game-state! [func & vals]
+(defn update-game! [func & vals]
   (when-let [new-state (apply func (concat [@game-state] vals))]
     (reset! game-state new-state)))
 
@@ -33,13 +33,13 @@
     (catch NumberFormatException e -1)))
 
 (defn player-join! [name]
-  (update-game-state! game/add-player name))
+  (update-game! game/add-player name))
 (defn player-bid! [name value]
-  (update-game-state! game/bid name (convert-bid-to-int value)))
+  (update-game! game/bid name (convert-bid-to-int value)))
 (defn player-play! [name value]
-  (update-game-state! game/play name value))
+  (update-game! game/play name value))
 (defn player-start! []
-  (update-game-state! game/restart))
+  (update-game! game/restart))
 
 (defn game-create! [title]
   (println (str "creating game: " title))
