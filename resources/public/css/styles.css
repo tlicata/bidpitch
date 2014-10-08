@@ -75,22 +75,20 @@ ul {
 }
 
 .hand {
-    bottom: -260px;
-    position: fixed;
-    margin-left: 50%;
-}
-.hand ul {
-    margin-left: -50%;
+    opacity: .82;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    white-space: nowrap;
 }
 .tablecards li, .hand li {
     display: inline-block;
     overflow: hidden;
 }
 .hand li:not(:last-child) {
-    width: 100px;
+    width: 53px;
 }
 .hand.onus {
-    bottom: -115px;
+    opacity: 1;
 }
 
 .points {
