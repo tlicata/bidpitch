@@ -135,6 +135,16 @@
                            :style (display (seq table-cards))}
                (om/build-all table-card-li table-cards))))))
 
+(defn players-li [data owner]
+  (dom/li nil data))
+(defn players-view [data owner]
+  (reify
+    om/IRender
+    (render [_]
+      (let [players (game/get-players data)]
+        (apply dom/ul #js {:className "players"
+                           :style (display (seq players))}
+               (om/build-all players-li players))))))
 
 (defn state-view [data owner]
   (reify
@@ -148,6 +158,7 @@
       (dom/div nil
                (om/build join-view data)
                (om/build start-view data)
+               (om/build players-view data)
                (om/build hand-view data)
                (om/build points-view data)
                (om/build bid-view data)
