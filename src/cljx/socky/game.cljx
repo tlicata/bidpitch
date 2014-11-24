@@ -170,7 +170,7 @@
   (assoc state :table-cards (conj (:table-cards state) card)))
 (defn clear-table-cards [state]
   (assoc state :table-cards []))
-(defn check-trump [state suit]
+(defn trump-if-none [state suit]
   (if (nil? (get-trump state))
     (assoc state :trump suit)
     state))
@@ -285,7 +285,7 @@
       (-> old-state
           (remove-card player value)
           (add-table-card value)
-          (check-trump (get-suit value))
+          (trump-if-none (get-suit value))
           (check-hand-winner player)
           (check-round-over)))))
 
