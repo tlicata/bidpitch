@@ -76,7 +76,7 @@ ul {
 
 .hand {
     opacity: .82;
-    overflow-x: scroll;
+    overflow-x: auto;
     overflow-y: hidden;
     white-space: nowrap;
 }
