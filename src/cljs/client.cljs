@@ -164,4 +164,5 @@
            (loop []
              (when-let [msg (<! @websocket)]
                (reset! game-state (read-string (:message msg)))
-               (recur)))))))
+               (recur)))
+           (.alert js/window "server disconnected")))))
