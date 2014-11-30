@@ -41,7 +41,7 @@
 (defn player-start! []
   (update-game! game/restart))
 
-(defn websocket-handler [request]
+(defn websocket-handler [request game]
   (with-channel request channel
     (when-let [username (:username (friend/current-authentication))]
       (swap! sockets assoc username {:socket channel})
@@ -74,8 +74,8 @@
         (resp/redirect "/"))
   (GET "/games/" []
        (view/page-game-join (db/game-all)))
-  (GET "/socky" []
-       (friend/authenticated websocket-handler)))
+  (GET "/games/:id/socky" [id :as request]
+       (friend/authenticated (websocket-handler request id))))
 
 (defroutes fall-through-routes
   (route/resources "/")

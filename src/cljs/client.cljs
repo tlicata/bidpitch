@@ -9,7 +9,8 @@
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
 (def host (.-host (.-location js/window)))
-(def websocket-url (str "ws://" host "/socky"))
+(def path (.-pathname (.-location js/window)))
+(def websocket-url (str "ws://" host  path "/socky"))
 (def websocket (atom (chan)))
 
 (def game-state (atom game/empty-state))
