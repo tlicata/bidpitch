@@ -15,49 +15,64 @@
             [socky.view :as view]))
 
 (def sockets (atom {}))
-(def game-state (atom game/empty-state))
+(def games (atom {}))
 
-(defn update-clients! []
-  (doseq [[user data] @sockets]
-    (put! (:socket data) (prn-str (game/shield @game-state user)))))
-(add-watch game-state nil (fn [key ref old-state new-state]
-                            (update-clients!)))
+(defn get-sockets [game-id]
+  (get @sockets game-id))
+(defn add-socket! [game-id username channel]
+  (swap! sockets assoc-in [game-id username] {:socket channel}))
+(defn remove-socket! [game-id username]
+  (swap! sockets update-in [game-id] dissoc username))
 
-(defn update-game! [func & vals]
-  (when-let [new-state (apply func (concat [@game-state] vals))]
-    (reset! game-state new-state)))
+(defn get-game [game-id]
+  (get @games game-id))
+(defn add-game! [game-id]
+  (when-not (get-game game-id)
+    (swap! games assoc game-id game/empty-state)))
+
+(defn update-clients! [game-id]
+  (let [game-state (get-game game-id)]
+    (doseq [[user data] (get-sockets game-id)]
+      (put! (:socket data) (prn-str (game/shield game-state user))))))
+(defn update-game! [game-id func & vals]
+  (when-let [new-state (apply func (concat [(get-game game-id)] vals))]
+    (swap! games assoc game-id new-state)
+    (update-clients! game-id)))
 
 (defn convert-bid-to-int [str]
   (try
     (Integer/parseInt str)
     (catch NumberFormatException e -1)))
 
-(defn player-join! [name]
-  (update-game! game/add-player name))
-(defn player-bid! [name value]
-  (update-game! game/bid name (convert-bid-to-int value)))
-(defn player-play! [name value]
-  (update-game! game/play name value))
-(defn player-start! []
-  (update-game! game/restart))
+(defn player-join! [game-id name]
+  (update-game! game-id game/add-player name))
+(defn player-bid! [game-id name value]
+  (update-game! game-id game/bid name (convert-bid-to-int value)))
+(defn player-play! [game-id name value]
+  (update-game! game-id game/play name value))
+(defn player-start! [game-id]
+  (update-game! game-id game/restart))
 
-(defn websocket-handler [request]
+(defn websocket-handler [request game-id]
   (with-channel request channel
     (when-let [username (:username (friend/current-authentication))]
-      (swap! sockets assoc username {:socket channel})
+      (add-socket! game-id username channel)
+      (add-game! game-id)
       (go-loop []
         (if-let [{:keys [message]} (<! channel)]
           (let [[msg val val2] (split message #":")]
-            (println (str "message received: " message "  " username))
+            (println (str "message received: " game-id " " message "  " username))
             (condp = msg
-             "join" (player-join! username)
-             "bid" (player-bid! username val)
-             "play" (player-play! username val)
-             "start" (player-start!)
-             "state" (>! channel (prn-str (game/shield @game-state username)))
+             "join" (player-join! game-id username)
+             "bid" (player-bid! game-id username val)
+             "play" (player-play! game-id username val)
+             "start" (player-start! game-id)
+             "state" (>! channel (prn-str (game/shield (get-game game-id) username)))
              :else (>! channel "unknown message type"))
             (recur))
-          (println (str "channel closed")))))))
+          (do
+            (remove-socket! game-id username)
+            (println (str "channel closed by " username))))))))
 
 (defroutes app-routes
   (GET "/" [] (view/page-home))
@@ -74,8 +89,8 @@
         (resp/redirect "/"))
   (GET "/games/" []
        (view/page-game-join (db/game-all)))
-  (GET "/socky" []
-       (friend/authenticated websocket-handler)))
+  (GET "/games/:id/socky" [id :as request]
+       (friend/authenticated (websocket-handler request id))))
 
 (defroutes fall-through-routes
   (route/resources "/")
