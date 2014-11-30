@@ -41,10 +41,10 @@
 (defn player-start! []
   (update-game! game/restart))
 
-(defn websocket-handler [request game]
+(defn websocket-handler [request game-id]
   (with-channel request channel
     (when-let [username (:username (friend/current-authentication))]
-      (swap! sockets assoc-in [game username] {:socket channel})
+      (swap! sockets assoc-in [game-id username] {:socket channel})
       (go-loop []
         (if-let [{:keys [message]} (<! channel)]
           (let [[msg val val2] (split message #":")]
@@ -58,7 +58,7 @@
              :else (>! channel "unknown message type"))
             (recur))
           (do
-            (swap! sockets update-in [game] dissoc username)
+            (swap! sockets update-in [game-id] dissoc username)
             (println (str "channel closed"))))))))
 
 (defroutes app-routes
