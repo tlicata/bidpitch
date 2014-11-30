@@ -29,15 +29,15 @@
 (defn add-game! [game-id]
   (when-not (get-game game-id)
     (swap! games assoc game-id game/empty-state)))
-(defn update-game! [game-id func & vals]
-  (when-let [new-state (apply func (concat [(get-game game-id)] vals))]
-    (swap! games assoc game-id new-state)
-    (update-clients! game-id)))
 
 (defn update-clients! [game-id]
   (let [game-state (get-game game-id)]
     (doseq [[user data] (get-sockets game-id)]
       (put! (:socket data) (prn-str (game/shield game-state user))))))
+(defn update-game! [game-id func & vals]
+  (when-let [new-state (apply func (concat [(get-game game-id)] vals))]
+    (swap! games assoc game-id new-state)
+    (update-clients! game-id)))
 
 (defn convert-bid-to-int [str]
   (try
