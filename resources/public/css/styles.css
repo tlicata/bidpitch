@@ -18,7 +18,8 @@ h1 {
     color: #CCC;
     display: inline-block;
     font-size: 1em;
-    min-width: 100px;
+    margin-right: .5em;
+    min-width: 3em;
     padding: 5px;
     text-align: center;
     text-decoration: none;
@@ -48,6 +49,9 @@ body.home .row2 div {
 }
 body.home a.howto {
     color: #CCC;
+}
+body.home .button {
+    min-width: 100px;
 }
 body.home p.small {
     font-size: .65em;

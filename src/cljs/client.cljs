@@ -74,7 +74,8 @@
   (reify
     om/IRender
     (render [_]
-      (dom/button #js {:style (display (game/can-join? data (:me data)))
+      (dom/button #js {:className "button"
+                       :style (display (game/can-join? data (:me data)))
                        :onClick #(send-message "join")}
                   "join"))))
 
@@ -90,12 +91,14 @@
                  (dom/p nil (if more-than-one
                               "You're the leader, start when everyone's here"
                               "Waiting for more people to join"))
-                 (dom/button #js {:style (display more-than-one)
+                 (dom/button #js {:className "button"
+                                  :style (display more-than-one)
                                   :onClick #(send-message "start")}
                              "Start"))))))
 
 (defn bid-button [data val txt]
-  (dom/button #js {:style (display (game/valid-bid? data (:me data) val))
+  (dom/button #js {:className "button"
+                   :style (display (game/valid-bid? data (:me data) val))
                    :onClick #(send-message (str "bid:" val))} txt))
 (defn bid-view [data owner]
   (reify
@@ -120,7 +123,8 @@
                  (apply dom/ul nil (om/build-all points-li points))
                  (dom/div #js {:style (display (not (nil? winner)))}
                            (str winner " wins!"))
-                 (dom/button #js {:style (display (game/game-over? data))
+                 (dom/button #js {:className "button"
+                                  :style (display (game/game-over? data))
                                   :onClick #(send-message "start")}
                              "New Game"))))))
 
