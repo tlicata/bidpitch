@@ -257,11 +257,15 @@
   (testing "adding up points for game"
     (is (= (tally-game-pts game-pts "tim") 0))
     (is (= (tally-game-pts game-pts "louise") 23))
-    (is (= (tally-game-pts game-pts "sharon") 0))))
+    (is (= (tally-game-pts game-pts "sharon") 0))
+    (is (= (tally-game-pts tied-game-pts "tim") 4))
+    (is (= (tally-game-pts tied-game-pts "sharon") 4))
+    (is (= (tally-game-pts tied-game-pts "louise") 4))))
 (deftest test-most-game-pts
   (testing "which player earned the most game points"
     (is (= (most-game-pts game-pts) "louise"))
-    (is (nil? (most-game-pts empty-state)))))
+    (is (nil? (most-game-pts empty-state)))
+    (is (nil? (most-game-pts tied-game-pts)))))
 (deftest test-get-all-cards
   (testing "get all cards yet to be played"
     (is (= (sort (get-all-cards hand-in-progress))

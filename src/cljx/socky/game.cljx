@@ -220,7 +220,9 @@
   (let [players (get-players state)
         pts (map (partial tally-game-pts state) players)]
     (when-not (empty? pts)
-      (nth players (index-of pts (apply max pts))))))
+      (let [most (apply max pts)]
+        (when (= (count (filter #{most} pts)) 1)
+          (nth players (index-of pts most)))))))
 (defn get-all-cards [state]
   (mapcat #(flatten (get-player-cards state %)) (get-players state)))
 (defn get-all-tricks [state]
