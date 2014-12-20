@@ -9,6 +9,11 @@
 ; dealt. This is only used for testing purposes.
 (def ^:dynamic *reconcile* true)
 
+; The maximum number of players in a game. The theoretical max is 8,
+; since 8 x 6 = 48 cards. Some sources say 7. We may limit it to 4
+; to ease development.
+(def MAX_PLAYERS 8)
+
 ; Helper functions for dealing cards
 (defn deal-cards [deck num-players]
   (take num-players (partition 6 deck)))
@@ -102,7 +107,7 @@
 (defn can-join? [state player]
   (and (not (game-started? state))
        (not (has-player? state player))
-       (< (count (get-players state)) 8)))
+       (< (count (get-players state)) MAX_PLAYERS)))
 (defn dealt-state
   ([state]
      (dealt-state state (first (get-players state))))
