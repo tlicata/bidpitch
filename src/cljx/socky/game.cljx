@@ -21,6 +21,11 @@
 ; Getters from state
 (defn get-players [state]
   (:players state))
+(defn get-players-with-nils [state]
+  (let [players (get-players state)
+        non-empty (if (empty? players) [nil] players)
+        n MAX_PLAYERS]
+    (first (partition n n (repeat nil) non-empty))))
 (defn get-player-state [state player]
   (get (:player-cards state) player))
 (defn get-player-cards [state player]
