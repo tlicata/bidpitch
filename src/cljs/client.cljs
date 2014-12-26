@@ -70,31 +70,33 @@
              (apply dom/ul nil (om/build-all card-view cards))))
           (dom/div nil ""))))))
 
-(defn join-view [data owner]
-  (reify
-    om/IRender
-    (render [_]
-      (dom/button #js {:className "button"
-                       :style (display (game/can-join? data (:me data)))
-                       :onClick #(send-message "join")}
-                  "join"))))
-
 (defn start-view [data owner]
   (reify
     om/IRender
     (render [_]
       (let [players (game/get-players data)
-            leader (= (:me data) (first players))
-            more-than-one (> (count players) 1)
-            started (game/game-started? data)]
-        (dom/div #js {:style (display (and leader (not started)))}
-                 (dom/p nil (if more-than-one
-                              "You're the leader, start when everyone's here"
-                              "Waiting for more people to join"))
+            me (:me data)
+            is-leader (= me (first players))
+            started (game/game-started? data)
+            can-join (game/can-join? data me)
+            can-leave (game/can-leave? data me)
+            can-start (and is-leader (not started) (> (count players) 1))]
+        (dom/div #js {:style (display (not started))}
+                 (dom/p nil (if can-start
+                              "You're the leader, start when you're satisfied with the participant list."
+                              (if can-join "" "Waiting for others to join...")))
                  (dom/button #js {:className "button"
-                                  :style (display more-than-one)
+                                  :style (display can-start)
                                   :onClick #(send-message "start")}
-                             "Start"))))))
+                             "Start")
+                 (dom/button #js {:className "button"
+                                  :style (display can-join)
+                                  :onClick #(send-message "join")}
+                             "Join")
+                 (dom/button #js {:className "button"
+                                  :style (display can-leave)
+                                  :onClick #(send-message "leave")}
+                             "Leave"))))))
 
 (defn bid-button [data val txt]
   (dom/button #js {:className "button"
@@ -140,15 +142,16 @@
                (om/build-all table-card-li table-cards))))))
 
 (defn players-li [data owner]
-  (dom/li nil data))
+  (dom/li nil (if (nil? data) "_____" data)))
 (defn players-view [data owner]
   (reify
     om/IRender
     (render [_]
-      (let [players (game/get-players data)]
-        (apply dom/ul #js {:className "players"
-                           :style (display (seq players))}
-               (om/build-all players-li players))))))
+      (let [players-and-nils (game/get-players-with-nils data)]
+        (dom/div #js {:style (display (not (game/game-started? data)))}
+                 (dom/h3 nil "Players")
+                 (apply dom/ol nil
+                        (om/build-all players-li players-and-nils)))))))
 
 (defn state-view [data owner]
   (reify
@@ -160,9 +163,8 @@
     om/IRender
     (render [_]
       (dom/div nil
-               (om/build join-view data)
-               (om/build start-view data)
                (om/build players-view data)
+               (om/build start-view data)
                (om/build hand-view data)
                (om/build points-view data)
                (om/build bid-view data)

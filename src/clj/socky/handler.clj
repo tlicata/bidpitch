@@ -46,6 +46,8 @@
 
 (defn player-join! [game-id name]
   (update-game! game-id game/add-player name))
+(defn player-leave! [game-id name]
+  (update-game! game-id game/remove-player name))
 (defn player-bid! [game-id name value]
   (update-game! game-id game/bid name (convert-bid-to-int value)))
 (defn player-play! [game-id name value]
@@ -64,6 +66,7 @@
             (println (str "message received: " game-id " " message "  " username))
             (condp = msg
              "join" (player-join! game-id username)
+             "leave" (player-leave! game-id username)
              "bid" (player-bid! game-id username val)
              "play" (player-play! game-id username val)
              "start" (player-start! game-id)

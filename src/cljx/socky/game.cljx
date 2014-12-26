@@ -115,6 +115,9 @@
   (and (not (game-started? state))
        (not (has-player? state player))
        (< (count (get-players state)) MAX_PLAYERS)))
+(defn can-leave? [state player]
+  (and (not (game-started? state))
+       (has-player? state player)))
 (defn dealt-state
   ([state]
      (dealt-state state (first (get-players state))))
