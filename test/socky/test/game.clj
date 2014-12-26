@@ -38,6 +38,14 @@
       (is (= (order-players players "rob")
              ["rob" "tim" "paul" "mike"])))))
 
+(deftest test-remove-player
+  (testing "remove a player before game has started"
+    (let [players ["bob" "anne" "rob" "leah"]
+          state (-> empty-state (add-players players))]
+      (is (= (get-players state) players))
+      (let [minus (remove-player state "rob")]
+        (is (= (get-players minus) ["bob" "anne" "leah"]))))))
+
 (deftest test-shield
   (testing "hide opponent/teammate data from a player"
     (let [state (-> empty-state

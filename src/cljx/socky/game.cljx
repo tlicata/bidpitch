@@ -84,6 +84,8 @@
     (update-in state [:players] concat dedupe)))
 (defn add-player [state & players]
   (add-players state players))
+(defn remove-player [state player]
+  (update-in state [:players] #(remove #{player} %)))
 (defn add-cards
   ;; deal random cards
   ([state]
