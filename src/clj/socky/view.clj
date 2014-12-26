@@ -34,7 +34,6 @@
     (include-js "/js/lib/react-0.8.0.js" "/js/bin/main.js")
     (meta-viewport)]
    [:body
-    [:p (str "Game: " id)]
     [:div#content]]))
 
 (defn page-game-create []
