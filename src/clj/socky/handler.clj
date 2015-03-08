@@ -1,9 +1,6 @@
 (ns socky.handler
   (:use compojure.core)
-  (:require [cemerick.friend :as friend]
-            [cemerick.friend.workflows :as workflows]
-            [cemerick.friend.credentials :as creds]
-            [chord.http-kit :refer [with-channel]]
+  (:require [chord.http-kit :refer [with-channel]]
             [clojure.core.async :refer [<! >! go go-loop put!]]
             [clojure.string :refer [split]]
             [compojure.handler :as handler]
@@ -57,7 +54,7 @@
 
 (defn websocket-handler [request game-id]
   (with-channel request channel
-    (when-let [username (:username (friend/current-authentication))]
+    (when-let [username "anonymous"]
       (add-socket! game-id username channel)
       (add-game! game-id)
       (go-loop []
@@ -79,35 +76,22 @@
 
 (defroutes app-routes
   (GET "/" [] (view/page-home))
-  (GET "/login" [] (view/page-login))
-  (GET "/logout" [] (friend/logout* (resp/redirect "/"))))
-
-(defroutes logged-in-routes
   (GET "/games/new" []
        (view/page-game-create))
   (GET "/games/:id" [id]
-       (friend/authenticated (view/page-game id)))
+       (view/page-game id))
   (POST "/games/" [title]
         (db/game-add title)
         (resp/redirect "/"))
   (GET "/games/" []
        (view/page-game-join (db/game-all)))
   (GET "/games/:id/socky" [id :as request]
-       (friend/authenticated (websocket-handler request id))))
-
-(defroutes fall-through-routes
+       (websocket-handler request id))
   (route/resources "/")
   (route/not-found "Not Found"))
 
-(defroutes all-routes
-  app-routes
-  (-> logged-in-routes
-      (friend/authenticate {:credential-fn (partial creds/bcrypt-credential-fn db/player-get)
-                            :workflows [(workflows/interactive-form)]}))
-  fall-through-routes)
-
 (def app
-  (handler/site all-routes))
+  (handler/site app-routes))
 
 (defonce server (atom nil))
 (defn stop-server []
