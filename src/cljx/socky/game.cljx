@@ -14,6 +14,10 @@
 ; to ease development.
 (def MAX_PLAYERS 8)
 
+;; Wanted to define `can-leave?` below `remove-player` to keep related
+;; functions grouped together.
+(declare can-leave?)
+
 ; Helper functions for dealing cards
 (defn deal-cards [deck num-players]
   (take num-players (partition 6 deck)))
@@ -85,7 +89,8 @@
 (defn add-player [state & players]
   (add-players state players))
 (defn remove-player [state player]
-  (update-in state [:players] #(remove #{player} %)))
+  (when (can-leave? state player)
+    (update-in state [:players] #(remove #{player} %))))
 (defn add-cards
   ;; deal random cards
   ([state]

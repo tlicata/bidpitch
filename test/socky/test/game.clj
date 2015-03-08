@@ -39,12 +39,16 @@
              ["rob" "tim" "paul" "mike"])))))
 
 (deftest test-remove-player
-  (testing "remove a player before game has started"
+  (testing "remove a player ONLY before game has started"
     (let [players ["bob" "anne" "rob" "leah"]
           state (-> empty-state (add-players players))]
       (is (= (get-players state) players))
       (let [minus (remove-player state "rob")]
-        (is (= (get-players minus) ["bob" "anne" "leah"]))))))
+        (is (= (get-players minus) ["bob" "anne" "leah"])))
+      (is (nil? (remove-player state "joe")))
+      (let [started (-> state (add-cards) (dealt-state))
+            cant-remove (remove-player started "bob")]
+        (is (nil? cant-remove))))))
 
 (deftest test-shield
   (testing "hide opponent/teammate data from a player"
