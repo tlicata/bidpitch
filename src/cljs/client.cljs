@@ -181,10 +181,15 @@
             (.alert js/window "It works better if you enter a name. Refresh to try again.")
             (go
               (reset! websocket (<! (ws-ch websocket-url)))
-              (om/root game-view game-state {:target target})
               (send-message name)
-              (loop []
-                (when-let [msg (<! @websocket)]
-                  (reset! game-state (read-string (:message msg)))
-                  (recur)))
-              (.alert js/window "server disconnected"))))))
+              (let [{message :message} (<! @websocket)]
+                (if (= message "taken")
+                  (.alert js/window "Name already taken. Refresh to try again.")
+                  (do
+                    (reset! game-state (read-string message))
+                    (om/root game-view game-state {:target target})
+                    (loop []
+                      (when-let [msg (<! @websocket)]
+                        (reset! game-state (read-string (:message msg)))
+                        (recur)))
+                    (.alert js/window "server disconnected")))))))))

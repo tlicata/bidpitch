@@ -17,7 +17,8 @@
 (defn get-sockets [game-id]
   (get @sockets game-id))
 (defn add-socket! [game-id username channel]
-  (swap! sockets assoc-in [game-id username] {:socket channel}))
+  (when-not (get-in @sockets [game-id username])
+    (swap! sockets assoc-in [game-id username] {:socket channel})))
 (defn remove-socket! [game-id username]
   (swap! sockets update-in [game-id] dissoc username))
 
@@ -56,27 +57,29 @@
   (with-channel request channel
     (go
       (let [{username :message} (<! channel)]
-        (println (str "channel for user: " username))
-        (add-socket! game-id username channel)
         (add-game! game-id)
-        (>! channel (prn-str (game/shield (get-game game-id) username)))
-        (loop []
-          (if-let [{:keys [message]} (<! channel)]
-            (let [[msg val val2] (split message #":")]
-              (println (str "message received: " game-id " " message "  " username))
-              (condp = msg
-                "join" (player-join! game-id username)
-                "leave" (player-leave! game-id username)
-                "bid" (player-bid! game-id username val)
-                "play" (player-play! game-id username val)
-                "start" (player-start! game-id)
-                "state" (>! channel (prn-str (game/shield (get-game game-id) username)))
-                :else (>! channel "unknown message type"))
-              (recur))
-            (do
-              (player-leave! game-id username)
-              (remove-socket! game-id username)
-              (println (str "channel closed by " username)))))))))
+        (if (add-socket! game-id username channel)
+          (do
+            (println (str "channel for user: " username))
+            (>! channel (prn-str (game/shield (get-game game-id) username)))
+            (loop []
+              (if-let [{:keys [message]} (<! channel)]
+                (let [[msg val val2] (split message #":")]
+                  (println (str "message received: " game-id " " message "  " username))
+                  (condp = msg
+                    "join" (player-join! game-id username)
+                    "leave" (player-leave! game-id username)
+                    "bid" (player-bid! game-id username val)
+                    "play" (player-play! game-id username val)
+                    "start" (player-start! game-id)
+                    "state" (>! channel (prn-str (game/shield (get-game game-id) username)))
+                    :else (>! channel "unknown message type"))
+                  (recur))
+                (do
+                  (player-leave! game-id username)
+                  (remove-socket! game-id username)
+                  (println (str "channel closed by " username))))))
+          (>! channel "taken"))))))
 
 (defroutes app-routes
   (GET "/" [] (view/page-home))
