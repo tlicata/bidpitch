@@ -129,7 +129,7 @@
                  (dom/button #js {:className "button"
                                   :style (display (game/game-over? data))
                                   :onClick #(send-message "start")}
-                             "One more time"))))))
+                             "Play again!"))))))
 
 (defn table-card-li [data owner]
   (dom/li nil (card-ui data)))
