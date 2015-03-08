@@ -187,6 +187,7 @@
                   (.alert js/window "Name already taken. Refresh to try again.")
                   (do
                     (reset! game-state (read-string message))
+                    (send-message "join")
                     (om/root game-view game-state {:target target})
                     (loop []
                       (when-let [msg (<! @websocket)]
