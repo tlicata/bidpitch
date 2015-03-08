@@ -19,9 +19,11 @@
     [:div.row1
      [:h1 "Bid Pitch"]]
     [:div.row2
-     [:div (button "/games/new" "Start Game")]
-     [:div (button "/games/" "Join Game")]]
+     [:form {:action "/games/" :method "POST"}
+      [:input {:type "submit" :value "Play a game"}]]]
     [:div.row3
+     [:a.howto {:href "https://github.com/tlicata/bidpitch"} "What is this"]]
+    [:div.row4
      [:a.howto {:href "http://en.wikipedia.org/wiki/Pitch_(card_game)"} "How to play"]
      [:p.small "(Hint: Auction Pitch with"]
      [:p.small "High, Low, Jack, and Game)"]]]))

@@ -54,25 +54,29 @@
 
 (defn websocket-handler [request game-id]
   (with-channel request channel
-    (when-let [username "anonymous"]
-      (add-socket! game-id username channel)
-      (add-game! game-id)
-      (go-loop []
-        (if-let [{:keys [message]} (<! channel)]
-          (let [[msg val val2] (split message #":")]
-            (println (str "message received: " game-id " " message "  " username))
-            (condp = msg
-             "join" (player-join! game-id username)
-             "leave" (player-leave! game-id username)
-             "bid" (player-bid! game-id username val)
-             "play" (player-play! game-id username val)
-             "start" (player-start! game-id)
-             "state" (>! channel (prn-str (game/shield (get-game game-id) username)))
-             :else (>! channel "unknown message type"))
-            (recur))
-          (do
-            (remove-socket! game-id username)
-            (println (str "channel closed by " username))))))))
+    (go
+      (let [{username :message} (<! channel)]
+        (println (str "channel for user: " username))
+        (add-socket! game-id username channel)
+        (add-game! game-id)
+        (>! channel (prn-str (game/shield (get-game game-id) username)))
+        (loop []
+          (if-let [{:keys [message]} (<! channel)]
+            (let [[msg val val2] (split message #":")]
+              (println (str "message received: " game-id " " message "  " username))
+              (condp = msg
+                "join" (player-join! game-id username)
+                "leave" (player-leave! game-id username)
+                "bid" (player-bid! game-id username val)
+                "play" (player-play! game-id username val)
+                "start" (player-start! game-id)
+                "state" (>! channel (prn-str (game/shield (get-game game-id) username)))
+                :else (>! channel "unknown message type"))
+              (recur))
+            (do
+              (player-leave! game-id username)
+              (remove-socket! game-id username)
+              (println (str "channel closed by " username)))))))))
 
 (defroutes app-routes
   (GET "/" [] (view/page-home))
@@ -80,9 +84,9 @@
        (view/page-game-create))
   (GET "/games/:id" [id]
        (view/page-game id))
-  (POST "/games/" [title]
-        (db/game-add title)
-        (resp/redirect "/"))
+  (POST "/games/" []
+        (let [{:keys [id]} (db/game-add)]
+          (resp/redirect (str "/games/" id))))
   (GET "/games/" []
        (view/page-game-join (db/game-all)))
   (GET "/games/:id/socky" [id :as request]

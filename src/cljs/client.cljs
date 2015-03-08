@@ -2,6 +2,7 @@
   (:require [chord.client :refer [ws-ch]]
             [cljs.core.async :refer [<! >! chan put!]]
             [cljs.reader :refer [read-string]]
+            [clojure.string :refer [blank?]]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [socky.cards :refer [get-rank get-suit ranks suits]]
@@ -174,13 +175,16 @@
 
 (set! (.-onload js/window)
       (fn []
-        (let [target (.getElementById js/document "content")]
-          (go
-           (reset! websocket (<! (ws-ch websocket-url)))
-           (om/root game-view game-state {:target target})
-           (send-message "state")
-           (loop []
-             (when-let [msg (<! @websocket)]
-               (reset! game-state (read-string (:message msg)))
-               (recur)))
-           (.alert js/window "server disconnected")))))
+        (let [target (.getElementById js/document "content")
+              name (.prompt js/window "Enter your name")]
+          (if (blank? name)
+            (.alert js/window "It works better if you enter a name. Refresh to try again.")
+            (go
+              (reset! websocket (<! (ws-ch websocket-url)))
+              (om/root game-view game-state {:target target})
+              (send-message name)
+              (loop []
+                (when-let [msg (<! @websocket)]
+                  (reset! game-state (read-string (:message msg)))
+                  (recur)))
+              (.alert js/window "server disconnected"))))))
