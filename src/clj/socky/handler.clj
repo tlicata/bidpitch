@@ -83,15 +83,11 @@
 
 (defroutes app-routes
   (GET "/" [] (view/page-home))
-  (GET "/games/new" []
-       (view/page-game-create))
-  (GET "/games/:id" [id]
-       (view/page-game id))
   (POST "/games/" []
         (let [{:keys [id]} (db/game-add)]
           (resp/redirect (str "/games/" id))))
-  (GET "/games/" []
-       (view/page-game-join (db/game-all)))
+  (GET "/games/:id" [id]
+       (view/page-game id))
   (GET "/games/:id/socky" [id :as request]
        (websocket-handler request id))
   (route/resources "/")
