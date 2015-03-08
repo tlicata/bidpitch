@@ -16,7 +16,7 @@
 (def game-state (atom game/empty-state))
 
 (defn send-message [msg]
-  (put! @websocket (or msg "bid:pass")))
+  (put! @websocket msg))
 
 (defn display [show]
   (if show
