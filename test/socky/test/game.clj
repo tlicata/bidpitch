@@ -38,11 +38,22 @@
       (is (= (order-players players "rob")
              ["rob" "tim" "paul" "mike"])))))
 
+(deftest test-add-player
+  (testing "add a NEW player ONLY before game has started"
+    (let [players ["carl" "alex"]
+          state (-> empty-state (add-players players))
+          started (-> state add-cards dealt-state)]
+      (is (= (get-players state) players))
+      (let [joined (add-player state "tim")
+            failed (add-player started "tim")
+            failtoo (add-player state "alex")]
+        (is (= (get-players joined) ["carl" "alex" "tim"]))
+        (is (= (count (get-players failed)) (count players)))
+        (is (= (count (get-players failtoo)) (count players)))))))
 (deftest test-remove-player
   (testing "remove a player ONLY before game has started"
     (let [players ["bob" "anne" "rob" "leah"]
           state (-> empty-state (add-players players))]
-      (is (= (get-players state) players))
       (let [minus (remove-player state "rob")]
         (is (= (get-players minus) ["bob" "anne" "leah"])))
       (is (nil? (remove-player state "joe")))

@@ -15,7 +15,9 @@
 (def MAX_PLAYERS 8)
 
 ;; Wanted to define `can-leave?` below `remove-player` to keep related
-;; functions grouped together.
+;; functions grouped together. Do the same for `can-join?` and
+;; `add-players`.
+(declare can-join?)
 (declare can-leave?)
 
 ; Helper functions for dealing cards
@@ -84,7 +86,7 @@
 (defn has-player? [state player]
   (some #{player} (get-players state)))
 (defn add-players [state players]
-  (let [dedupe (filter #(not (has-player? state %)) players)]
+  (let [dedupe (filter (partial can-join? state) players)]
     (update-in state [:players] concat dedupe)))
 (defn add-player [state & players]
   (add-players state players))
