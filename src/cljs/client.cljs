@@ -2,6 +2,7 @@
   (:require [chord.client :refer [ws-ch]]
             [cljs.core.async :refer [<! >! chan put!]]
             [cljs.reader :refer [read-string]]
+            [clojure.string :refer [blank?]]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [socky.cards :refer [get-rank get-suit ranks suits]]
@@ -128,7 +129,7 @@
                  (dom/button #js {:className "button"
                                   :style (display (game/game-over? data))
                                   :onClick #(send-message "start")}
-                             "One more time"))))))
+                             "Play again!"))))))
 
 (defn table-card-li [data owner]
   (dom/li nil (card-ui data)))
@@ -174,13 +175,22 @@
 
 (set! (.-onload js/window)
       (fn []
-        (let [target (.getElementById js/document "content")]
-          (go
-           (reset! websocket (<! (ws-ch websocket-url)))
-           (om/root game-view game-state {:target target})
-           (send-message "state")
-           (loop []
-             (when-let [msg (<! @websocket)]
-               (reset! game-state (read-string (:message msg)))
-               (recur)))
-           (.alert js/window "server disconnected")))))
+        (let [target (.getElementById js/document "content")
+              name (.prompt js/window "Enter your name")]
+          (if (blank? name)
+            (.alert js/window "It works better if you enter a name. Refresh to try again.")
+            (go
+              (reset! websocket (<! (ws-ch websocket-url)))
+              (send-message name)
+              (let [{message :message} (<! @websocket)]
+                (if (= message "taken")
+                  (.alert js/window "Name already taken. Refresh to try again.")
+                  (do
+                    (reset! game-state (read-string message))
+                    (send-message "join")
+                    (om/root game-view game-state {:target target})
+                    (loop []
+                      (when-let [msg (<! @websocket)]
+                        (reset! game-state (read-string (:message msg)))
+                        (recur)))
+                    (.alert js/window "server disconnected")))))))))

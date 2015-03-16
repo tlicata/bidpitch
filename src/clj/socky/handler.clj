@@ -1,9 +1,6 @@
 (ns socky.handler
   (:use compojure.core)
-  (:require [cemerick.friend :as friend]
-            [cemerick.friend.workflows :as workflows]
-            [cemerick.friend.credentials :as creds]
-            [chord.http-kit :refer [with-channel]]
+  (:require [chord.http-kit :refer [with-channel]]
             [clojure.core.async :refer [<! >! go go-loop put!]]
             [clojure.string :refer [split]]
             [compojure.handler :as handler]
@@ -20,7 +17,8 @@
 (defn get-sockets [game-id]
   (get @sockets game-id))
 (defn add-socket! [game-id username channel]
-  (swap! sockets assoc-in [game-id username] {:socket channel}))
+  (when-not (get-in @sockets [game-id username])
+    (swap! sockets assoc-in [game-id username] {:socket channel})))
 (defn remove-socket! [game-id username]
   (swap! sockets update-in [game-id] dissoc username))
 
@@ -39,7 +37,7 @@
     (swap! games assoc game-id new-state)
     (update-clients! game-id)))
 
-(defn convert-bid-to-int [str]
+(defn convert-str-to-int [str]
   (try
     (Integer/parseInt str)
     (catch NumberFormatException e -1)))
@@ -49,7 +47,7 @@
 (defn player-leave! [game-id name]
   (update-game! game-id game/remove-player name))
 (defn player-bid! [game-id name value]
-  (update-game! game-id game/bid name (convert-bid-to-int value)))
+  (update-game! game-id game/bid name (convert-str-to-int value)))
 (defn player-play! [game-id name value]
   (update-game! game-id game/play name value))
 (defn player-start! [game-id]
@@ -57,57 +55,47 @@
 
 (defn websocket-handler [request game-id]
   (with-channel request channel
-    (when-let [username (:username (friend/current-authentication))]
-      (add-socket! game-id username channel)
-      (add-game! game-id)
-      (go-loop []
-        (if-let [{:keys [message]} (<! channel)]
-          (let [[msg val val2] (split message #":")]
-            (println (str "message received: " game-id " " message "  " username))
-            (condp = msg
-             "join" (player-join! game-id username)
-             "leave" (player-leave! game-id username)
-             "bid" (player-bid! game-id username val)
-             "play" (player-play! game-id username val)
-             "start" (player-start! game-id)
-             "state" (>! channel (prn-str (game/shield (get-game game-id) username)))
-             :else (>! channel "unknown message type"))
-            (recur))
+    (go
+      (let [{username :message} (<! channel)]
+        (add-game! game-id)
+        (if (add-socket! game-id username channel)
           (do
-            (remove-socket! game-id username)
-            (println (str "channel closed by " username))))))))
+            (println (str "channel for user: " username))
+            (>! channel (prn-str (game/shield (get-game game-id) username)))
+            (loop []
+              (if-let [{:keys [message]} (<! channel)]
+                (let [[msg val val2] (split message #":")]
+                  (println (str "message received: " game-id " " message "  " username))
+                  (condp = msg
+                    "join" (player-join! game-id username)
+                    "leave" (player-leave! game-id username)
+                    "bid" (player-bid! game-id username val)
+                    "play" (player-play! game-id username val)
+                    "start" (player-start! game-id)
+                    "state" (>! channel (prn-str (game/shield (get-game game-id) username)))
+                    :else (>! channel "unknown message type"))
+                  (recur))
+                (do
+                  (player-leave! game-id username)
+                  (remove-socket! game-id username)
+                  (println (str "channel closed by " username))))))
+          (>! channel "taken"))))))
 
 (defroutes app-routes
   (GET "/" [] (view/page-home))
-  (GET "/login" [] (view/page-login))
-  (GET "/logout" [] (friend/logout* (resp/redirect "/"))))
-
-(defroutes logged-in-routes
-  (GET "/games/new" []
-       (view/page-game-create))
+  (POST "/games/" []
+        (let [{:keys [id]} (db/game-add)]
+          (resp/redirect (str "/games/" id))))
   (GET "/games/:id" [id]
-       (friend/authenticated (view/page-game id)))
-  (POST "/games/" [title]
-        (db/game-add title)
-        (resp/redirect "/"))
-  (GET "/games/" []
-       (view/page-game-join (db/game-all)))
+       (when (db/game-get (convert-str-to-int id))
+         (view/page-game id)))
   (GET "/games/:id/socky" [id :as request]
-       (friend/authenticated (websocket-handler request id))))
-
-(defroutes fall-through-routes
+       (websocket-handler request id))
   (route/resources "/")
   (route/not-found "Not Found"))
 
-(defroutes all-routes
-  app-routes
-  (-> logged-in-routes
-      (friend/authenticate {:credential-fn (partial creds/bcrypt-credential-fn db/player-get)
-                            :workflows [(workflows/interactive-form)]}))
-  fall-through-routes)
-
 (def app
-  (handler/site all-routes))
+  (handler/site app-routes))
 
 (defonce server (atom nil))
 (defn stop-server []
