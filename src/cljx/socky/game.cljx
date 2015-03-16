@@ -301,15 +301,13 @@
       state))
 
 (defn update-play [old-state player value]
-  (let [trump (get-trump old-state)
-        suit (get-suit value)]
-    (when (valid-play? old-state player value)
-      (-> old-state
-          (remove-card player value)
-          (add-table-card value)
-          (trump-if-none (get-suit value))
-          (check-hand-winner player)
-          (check-round-over)))))
+  (when (valid-play? old-state player value)
+    (-> old-state
+        (remove-card player value)
+        (add-table-card value)
+        (trump-if-none (get-suit value))
+        (check-hand-winner player)
+        (check-round-over))))
 
 (defn advance-state [old-state player action value]
   (when (= (:onus old-state) player)
