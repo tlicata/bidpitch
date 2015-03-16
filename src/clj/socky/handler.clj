@@ -37,7 +37,7 @@
     (swap! games assoc game-id new-state)
     (update-clients! game-id)))
 
-(defn convert-bid-to-int [str]
+(defn convert-str-to-int [str]
   (try
     (Integer/parseInt str)
     (catch NumberFormatException e -1)))
@@ -47,7 +47,7 @@
 (defn player-leave! [game-id name]
   (update-game! game-id game/remove-player name))
 (defn player-bid! [game-id name value]
-  (update-game! game-id game/bid name (convert-bid-to-int value)))
+  (update-game! game-id game/bid name (convert-str-to-int value)))
 (defn player-play! [game-id name value]
   (update-game! game-id game/play name value))
 (defn player-start! [game-id]
