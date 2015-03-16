@@ -87,7 +87,8 @@
         (let [{:keys [id]} (db/game-add)]
           (resp/redirect (str "/games/" id))))
   (GET "/games/:id" [id]
-       (view/page-game id))
+       (when (db/game-get (convert-str-to-int id))
+         (view/page-game id)))
   (GET "/games/:id/socky" [id :as request]
        (websocket-handler request id))
   (route/resources "/")
