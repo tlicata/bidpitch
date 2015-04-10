@@ -48,6 +48,8 @@
   (get-suit (first (get-table-cards state))))
 (defn get-dealer [state]
   (:dealer state))
+(defn get-onus [state]
+  (:onus state))
 
 ; Utility functions to get next player
 (defn index-of [vect item]
@@ -68,7 +70,7 @@
         start-and-after (drop-while is-not-start players)]
     (concat start-and-after before-start)))
 (defn order-around-onus [state]
-  (let [onus (:onus state)
+  (let [onus (get-onus state)
         players (get-players state)]
     (assoc state :players (order-players players onus))))
 
@@ -310,7 +312,7 @@
         (check-round-over))))
 
 (defn advance-state [old-state player action value]
-  (when (= (:onus old-state) player)
+  (when (= (get-onus old-state) player)
     (if (bidding-stage? old-state)
       (when (= action "bid")
         (update-bid old-state player value))

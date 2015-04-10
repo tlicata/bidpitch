@@ -25,7 +25,7 @@
     #js {:display "none"}))
 
 (defn my-turn? [state]
-  (= (:onus state) (:me state)))
+  (= (game/get-onus state) (:me state)))
 (defn my-turn-to-bid? [state]
   (and (my-turn? state) (game/bidding-stage? state)))
 (defn my-turn-to-play? [state]
