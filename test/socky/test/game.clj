@@ -174,6 +174,8 @@
     ;; leading cards are always valid
     (is (valid-play? (assoc cards :table-cards []) "tim" "5D"))
     (is (valid-play? (assoc cards :table-cards []) "tim" "AS"))
+    ;; unless they don't have that card
+    (is (not (valid-play? (assoc cards :table-cards []) "tim" "4D")))
     ;; following suits is always valid
     (is (valid-play? (assoc cards :table-cards ["AD"]) "tim" "5D"))
     (is (valid-play? (assoc cards :table-cards ["AC"]) "tim" "3C"))
@@ -204,7 +206,9 @@
 (deftest test-add-table-card
   (testing "playing a card to the table"
     (let [state (add-table-card empty-state "4C")]
-      (is (= (get-table-cards state) ["4C"])))))
+      (is (= (get-table-cards state) ["4C"]))
+      (let [again (add-table-card state "7S")]
+        (is (= (get-table-cards again) ["4C" "7S"]))))))
 
 (deftest test-clear-table-cards
   (testing "clearing the table after a hand"
