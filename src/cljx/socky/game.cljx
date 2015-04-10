@@ -215,7 +215,7 @@
         highest-lead-suit (highest table-cards lead-suit)
         winning-card (or highest-trump highest-lead-suit)]
     (nth players (index-of table-cards winning-card))))
-(defn award-trick-to-winner [state]
+(defn award-hand-to-winner [state]
   (let [winner (who-won-hand state)]
     (-> state
         (update-in [:player-cards winner :tricks] conj (get-table-cards state))
@@ -228,7 +228,7 @@
         trump (get-trump state)]
     (if (= (count table-cards) (count players))
       (-> state
-          (award-trick-to-winner)
+          (award-hand-to-winner)
           (clear-table-cards))
       (assoc state :onus (next-player players player)))))
 ;; helper function for scoring tricks

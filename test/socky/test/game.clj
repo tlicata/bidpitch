@@ -255,7 +255,7 @@
                     (play "sharon" "KS")
                     (play "tim" "QD"))))
 
-(deftest test-award-trick-to-winner
+(deftest test-award-hand-to-winner
   (testing "put table-cards into winner's tricks pile"
     (is (= (get-player-tricks hand-played "louise") [["AC" "2C" "4C"]]))))
 
