@@ -206,7 +206,7 @@
         indices (map #(index-of ranks (get-rank %)) matching)]
     (when-not (empty? indices)
       (make-card (nth ranks (apply min indices)) suit))))
-(defn determine-winner [state]
+(defn who-won-hand [state]
   (let [lead-suit (get-lead-suit state)
         table-cards (get-table-cards state)
         trump (get-trump state)
@@ -216,7 +216,7 @@
         winning-card (or highest-trump highest-lead-suit)]
     (nth players (index-of table-cards winning-card))))
 (defn award-trick-to-winner [state]
-  (let [winner (determine-winner state)]
+  (let [winner (who-won-hand state)]
     (-> state
         (update-in [:player-cards winner :tricks] conj (get-table-cards state))
         (assoc :onus winner)
