@@ -256,9 +256,6 @@
 (defn who-won-card [state card]
   (let [players (get-players state)]
     (first (drop-while #(nil? (index-of (flatten (get-player-tricks state %)) card)) players))))
-(defn add-scores [state scores]
-  (let [no-jack (dissoc scores nil)]
-    (update-in state [:points] #(merge-with + % no-jack))))
 (defn calc-points [state]
   (let [high-card (who-won-card state (get-highest-trump state))
         low-card (who-won-card state (get-lowest-trump state))
@@ -267,14 +264,15 @@
         one-or-inc #(if (nil? %) 1 (inc %))
         bidder (highest-bidder state)
         winning-bid (max-bid state)
-        pts (-> (zipmap (get-players state) (repeat 0))
-                (update-in [high-card] one-or-inc)
-                (update-in [low-card] one-or-inc)
-                (update-in [jack-card] one-or-inc)
-                (update-in [most-points] one-or-inc))]
+        no-jack (-> (zipmap (get-players state) (repeat 0))
+                    (update-in [high-card] one-or-inc)
+                    (update-in [low-card] one-or-inc)
+                    (update-in [jack-card] one-or-inc)
+                    (update-in [most-points] one-or-inc))
+        pts (dissoc no-jack nil)]
     (if (< (get pts bidder) winning-bid)
-      (add-scores state (assoc pts bidder (- 0 winning-bid)))
-      (add-scores state pts))))
+      (assoc pts bidder (- 0 winning-bid))
+      pts)))
 (defn round-over? [state]
   (empty? (get-all-cards state)))
 (defn game-over? [state]
@@ -282,6 +280,10 @@
         winning-pts (filter #(>= % 11) (vals points))]
     (and (not (empty? winning-pts))
          (= (count winning-pts) (count (into #{} winning-pts))))))
+
+;; Modify the state object
+(defn add-scores [state]
+  (update-in state [:points] #(merge-with + % (calc-points state))))
 (defn declare-winner [state]
   (if (game-over? state)
     (assoc state :winner (key (apply max-key val (:points state))))
@@ -291,7 +293,7 @@
     (let [players (get-players state)
           dealer (get-dealer state)]
       (-> state
-          calc-points
+          add-scores
           (arg-> [new-state]
                  (if-> (game-over? new-state)
                        declare-winner
