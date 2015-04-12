@@ -301,6 +301,10 @@
                                add-cards
                                (dealt-state (next-player players dealer)))))))
       state))
+(defn do-reconcile [state player]
+  (-> state
+      (check-hand-winner player)
+      (check-round-over)))
 
 (defn update-play [old-state player value]
   (when (valid-play? old-state player value)
@@ -308,8 +312,7 @@
         (remove-card player value)
         (add-table-card value)
         (trump-if-none (get-suit value))
-        (check-hand-winner player)
-        (check-round-over))))
+        (do-reconcile player))))
 
 (defn advance-state [old-state player action value]
   (when (= (get-onus old-state) player)
