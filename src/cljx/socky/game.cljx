@@ -228,15 +228,9 @@
         (assoc :onus winner)
         (order-around-onus))))
 (defn check-hand-winner [state player]
-  (let [lead-suit (get-lead-suit state)
-        players (get-players state)
-        table-cards (get-table-cards state)
-        trump (get-trump state)]
-    (if (everyone-played? state)
-      (-> state
-          (award-hand-to-winner)
-          (clear-table-cards))
-      (assoc state :onus (next-player players player)))))
+  (if (everyone-played? state)
+    (-> state award-hand-to-winner clear-table-cards)
+    (assoc state :onus (next-player (get-players state) player))))
 ;; helper function for scoring tricks
 (defn tally-game-pts [state player]
   (let [tricks (get-player-tricks state player)
