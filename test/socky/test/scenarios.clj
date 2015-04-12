@@ -25,7 +25,7 @@
                        (play "sharon" "6D")
                        (play "louise" "3S")))
 
-(def tied-game-pts (binding [*reconcile* false]
+(def tied-game-pts (binding [*reconcile-end-game* false]
                      (-> empty-state
                          (add-player "tim" "sharon" "louise")
                          (add-cards "tim" ["AD" "2C" "3C"])

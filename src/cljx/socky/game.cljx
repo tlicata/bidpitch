@@ -7,7 +7,8 @@
 ; the cards are played, a new hand should be started. Binding this
 ; value to false will prevent the new hand from being automatically
 ; dealt. This is only used for testing purposes.
-(def ^:dynamic *reconcile* true)
+(def ^:dynamic *reconcile-end-game* true)
+(def ^:dynamic *reconcile-hand-over* true)
 
 ; The maximum number of players in a game. The theoretical max is 8,
 ; since 8 x 6 = 48 cards. Some sources say 7. We may limit it to 4
@@ -188,16 +189,6 @@
              (= suit lead-suit) ;; following suit is always valid
              (= suit (get-trump old-state)) ;; trump is always valid
              (empty? (cards-by-suit old-state player lead-suit))))))
-(defn remove-card [state player card]
-  (update-in state [:player-cards player :cards] #(remove #{card} %)))
-(defn add-table-card [state card]
-  (assoc state :table-cards (conj (:table-cards state) card)))
-(defn clear-table-cards [state]
-  (assoc state :table-cards []))
-(defn trump-if-none [state suit]
-  (if (nil? (get-trump state))
-    (assoc state :trump suit)
-    state))
 (defn highest [cards suit]
   (let [matching (filter #(= suit (get-suit %)) cards)
         indices (map #(index-of ranks (get-rank %)) matching)]
@@ -209,8 +200,9 @@
     (when-not (empty? indices)
       (make-card (nth ranks (apply min indices)) suit))))
 (defn everyone-played? [state]
-  (= (count (get-table-cards state))
-     (count (get-players state))))
+  (let [num-players (count (get-players state))]
+    (and (> num-players 0)
+         (= num-players (count (get-table-cards state))))))
 (defn who-won-hand [state]
   (let [lead-suit (get-lead-suit state)
         table-cards (get-table-cards state)
@@ -221,16 +213,6 @@
         winning-card (or highest-trump highest-lead-suit)]
     (when (everyone-played? state)
       (nth players (index-of table-cards winning-card)))))
-(defn award-hand-to-winner [state]
-  (let [winner (who-won-hand state)]
-    (-> state
-        (update-in [:player-cards winner :tricks] conj (get-table-cards state))
-        (assoc :onus winner)
-        (order-around-onus))))
-(defn check-hand-winner [state player]
-  (if (everyone-played? state)
-    (-> state award-hand-to-winner clear-table-cards)
-    (assoc state :onus (next-player (get-players state) player))))
 ;; helper function for scoring tricks
 (defn tally-game-pts [state player]
   (let [tricks (get-player-tricks state player)
@@ -280,8 +262,33 @@
         winning-pts (filter #(>= % 11) (vals points))]
     (and (not (empty? winning-pts))
          (= (count winning-pts) (count (into #{} winning-pts))))))
+(defn needs-reconcile? [state]
+  (and (not *reconcile-hand-over*) (everyone-played? state)))
 
-;; Modify the state object
+;; state modifying functions for play action
+(defn remove-card [state player card]
+  (update-in state [:player-cards player :cards] #(remove #{card} %)))
+(defn add-table-card [state card]
+  (assoc state :table-cards (conj (:table-cards state) card)))
+(defn clear-table-cards [state]
+  (assoc state :table-cards []))
+(defn trump-if-none [state suit]
+  (if (nil? (get-trump state))
+    (assoc state :trump suit)
+    state))
+(defn advance-onus [state]
+  (assoc state :onus (when-not (everyone-played? state)
+                       (next-player (get-players state) (get-onus state)))))
+(defn award-hand-to-winner [state]
+  (let [winner (who-won-hand state)]
+    (-> state
+        (update-in [:player-cards winner :tricks] conj (get-table-cards state))
+        (assoc :onus winner)
+        (order-around-onus))))
+(defn check-hand-over [state]
+  (if (everyone-played? state)
+    (-> state award-hand-to-winner clear-table-cards)
+    state))
 (defn add-scores [state]
   (update-in state [:points] #(merge-with + % (calc-points state))))
 (defn declare-winner [state]
@@ -297,10 +304,14 @@
           (arg-> [new-state]
                  (if-> (game-over? new-state)
                        declare-winner
-                       (when-> *reconcile*
+                       (when-> *reconcile-end-game*
                                add-cards
                                (dealt-state (next-player players dealer)))))))
       state))
+(defn do-reconcile [state]
+  (-> state
+      (check-hand-over)
+      (check-round-over)))
 
 (defn update-play [old-state player value]
   (when (valid-play? old-state player value)
@@ -308,8 +319,8 @@
         (remove-card player value)
         (add-table-card value)
         (trump-if-none (get-suit value))
-        (check-hand-winner player)
-        (check-round-over))))
+        (advance-onus)
+        (if-> *reconcile-hand-over* do-reconcile))))
 
 (defn advance-state [old-state player action value]
   (when (= (get-onus old-state) player)

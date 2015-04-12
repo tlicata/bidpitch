@@ -253,7 +253,7 @@
                           (play "tim" "5S")
                           (play "louise" "KC")
                           (play "sharon" "JC")))
-(def game-pts (binding [*reconcile* false]
+(def game-pts (binding [*reconcile-end-game* false]
                 (-> non-bidder-lead
                     (play "louise" "TH")
                     (play "sharon" "KS")
@@ -263,12 +263,12 @@
   (testing "put table-cards into winner's tricks pile"
     (is (= (get-player-tricks hand-played "louise") [["AC" "2C" "4C"]]))))
 
-(deftest test-check-hand-winner
+(deftest test-check-hand-over
   (testing "if everyone has played a card, resolve state"
     ;; leave an unfinished hand alone
-    (is (= hand-in-progress (check-hand-winner hand-in-progress "sharon")))
+    (is (= hand-in-progress (check-hand-over hand-in-progress)))
     ;; correctly sort out state for completed hand
-    (let [resolved (check-hand-winner hand-played "tim")]
+    (let [resolved (check-hand-over hand-played)]
       ;; onus is on the winner
       (is (= (:onus resolved) "louise"))
       ;; louise got the trick
