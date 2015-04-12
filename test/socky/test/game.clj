@@ -253,7 +253,7 @@
                           (play "tim" "5S")
                           (play "louise" "KC")
                           (play "sharon" "JC")))
-(def game-pts (binding [*reconcile* false]
+(def game-pts (binding [*reconcile-end-game* false]
                 (-> non-bidder-lead
                     (play "louise" "TH")
                     (play "sharon" "KS")

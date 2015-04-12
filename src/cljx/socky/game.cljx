@@ -7,7 +7,7 @@
 ; the cards are played, a new hand should be started. Binding this
 ; value to false will prevent the new hand from being automatically
 ; dealt. This is only used for testing purposes.
-(def ^:dynamic *reconcile* true)
+(def ^:dynamic *reconcile-end-game* true)
 
 ; The maximum number of players in a game. The theoretical max is 8,
 ; since 8 x 6 = 48 cards. Some sources say 7. We may limit it to 4
@@ -301,7 +301,7 @@
           (arg-> [new-state]
                  (if-> (game-over? new-state)
                        declare-winner
-                       (when-> *reconcile*
+                       (when-> *reconcile-end-game*
                                add-cards
                                (dealt-state (next-player players dealer)))))))
       state))
