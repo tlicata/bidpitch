@@ -261,7 +261,7 @@
     (and (not (empty? winning-pts))
          (= (count winning-pts) (count (into #{} winning-pts))))))
 
-;; Modify the state object
+;; state modifying functions for play action
 (defn remove-card [state player card]
   (update-in state [:player-cards player :cards] #(remove #{card} %)))
 (defn add-table-card [state card]
