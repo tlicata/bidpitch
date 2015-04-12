@@ -8,6 +8,7 @@
 ; value to false will prevent the new hand from being automatically
 ; dealt. This is only used for testing purposes.
 (def ^:dynamic *reconcile-end-game* true)
+(def ^:dynamic *reconcile-hand-over* true)
 
 ; The maximum number of players in a game. The theoretical max is 8,
 ; since 8 x 6 = 48 cards. Some sources say 7. We may limit it to 4
@@ -261,6 +262,8 @@
         winning-pts (filter #(>= % 11) (vals points))]
     (and (not (empty? winning-pts))
          (= (count winning-pts) (count (into #{} winning-pts))))))
+(defn needs-reconcile? [state]
+  (and (not *reconcile-hand-over*) (everyone-played? state)))
 
 ;; state modifying functions for play action
 (defn remove-card [state player card]
@@ -317,7 +320,7 @@
         (add-table-card value)
         (trump-if-none (get-suit value))
         (advance-onus)
-        (do-reconcile))))
+        (if-> *reconcile-hand-over* do-reconcile))))
 
 (defn advance-state [old-state player action value]
   (when (= (get-onus old-state) player)
