@@ -273,6 +273,9 @@
   (if (nil? (get-trump state))
     (assoc state :trump suit)
     state))
+(defn advance-onus [state]
+  (assoc state :onus (when-not (everyone-played? state)
+                       (next-player (get-players state) (get-onus state)))))
 (defn award-hand-to-winner [state]
   (let [winner (who-won-hand state)]
     (-> state
@@ -282,7 +285,7 @@
 (defn check-hand-winner [state player]
   (if (everyone-played? state)
     (-> state award-hand-to-winner clear-table-cards)
-    (assoc state :onus (next-player (get-players state) player))))
+    state))
 (defn add-scores [state]
   (update-in state [:points] #(merge-with + % (calc-points state))))
 (defn declare-winner [state]
@@ -313,6 +316,7 @@
         (remove-card player value)
         (add-table-card value)
         (trump-if-none (get-suit value))
+        (advance-onus)
         (do-reconcile player))))
 
 (defn advance-state [old-state player action value]
