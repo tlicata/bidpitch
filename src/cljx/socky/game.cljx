@@ -188,16 +188,6 @@
              (= suit lead-suit) ;; following suit is always valid
              (= suit (get-trump old-state)) ;; trump is always valid
              (empty? (cards-by-suit old-state player lead-suit))))))
-(defn remove-card [state player card]
-  (update-in state [:player-cards player :cards] #(remove #{card} %)))
-(defn add-table-card [state card]
-  (assoc state :table-cards (conj (:table-cards state) card)))
-(defn clear-table-cards [state]
-  (assoc state :table-cards []))
-(defn trump-if-none [state suit]
-  (if (nil? (get-trump state))
-    (assoc state :trump suit)
-    state))
 (defn highest [cards suit]
   (let [matching (filter #(= suit (get-suit %)) cards)
         indices (map #(index-of ranks (get-rank %)) matching)]
@@ -221,16 +211,6 @@
         winning-card (or highest-trump highest-lead-suit)]
     (when (everyone-played? state)
       (nth players (index-of table-cards winning-card)))))
-(defn award-hand-to-winner [state]
-  (let [winner (who-won-hand state)]
-    (-> state
-        (update-in [:player-cards winner :tricks] conj (get-table-cards state))
-        (assoc :onus winner)
-        (order-around-onus))))
-(defn check-hand-winner [state player]
-  (if (everyone-played? state)
-    (-> state award-hand-to-winner clear-table-cards)
-    (assoc state :onus (next-player (get-players state) player))))
 ;; helper function for scoring tricks
 (defn tally-game-pts [state player]
   (let [tricks (get-player-tricks state player)
@@ -282,6 +262,26 @@
          (= (count winning-pts) (count (into #{} winning-pts))))))
 
 ;; Modify the state object
+(defn remove-card [state player card]
+  (update-in state [:player-cards player :cards] #(remove #{card} %)))
+(defn add-table-card [state card]
+  (assoc state :table-cards (conj (:table-cards state) card)))
+(defn clear-table-cards [state]
+  (assoc state :table-cards []))
+(defn trump-if-none [state suit]
+  (if (nil? (get-trump state))
+    (assoc state :trump suit)
+    state))
+(defn award-hand-to-winner [state]
+  (let [winner (who-won-hand state)]
+    (-> state
+        (update-in [:player-cards winner :tricks] conj (get-table-cards state))
+        (assoc :onus winner)
+        (order-around-onus))))
+(defn check-hand-winner [state player]
+  (if (everyone-played? state)
+    (-> state award-hand-to-winner clear-table-cards)
+    (assoc state :onus (next-player (get-players state) player))))
 (defn add-scores [state]
   (update-in state [:points] #(merge-with + % (calc-points state))))
 (defn declare-winner [state]
