@@ -266,9 +266,9 @@
 (deftest test-check-hand-winner
   (testing "if everyone has played a card, resolve state"
     ;; leave an unfinished hand alone
-    (is (= hand-in-progress (check-hand-winner hand-in-progress "sharon")))
+    (is (= hand-in-progress (check-hand-winner hand-in-progress)))
     ;; correctly sort out state for completed hand
-    (let [resolved (check-hand-winner hand-played "tim")]
+    (let [resolved (check-hand-winner hand-played)]
       ;; onus is on the winner
       (is (= (:onus resolved) "louise"))
       ;; louise got the trick
