@@ -263,12 +263,12 @@
   (testing "put table-cards into winner's tricks pile"
     (is (= (get-player-tricks hand-played "louise") [["AC" "2C" "4C"]]))))
 
-(deftest test-check-hand-winner
+(deftest test-check-hand-over
   (testing "if everyone has played a card, resolve state"
     ;; leave an unfinished hand alone
-    (is (= hand-in-progress (check-hand-winner hand-in-progress)))
+    (is (= hand-in-progress (check-hand-over hand-in-progress)))
     ;; correctly sort out state for completed hand
-    (let [resolved (check-hand-winner hand-played)]
+    (let [resolved (check-hand-over hand-played)]
       ;; onus is on the winner
       (is (= (:onus resolved) "louise"))
       ;; louise got the trick

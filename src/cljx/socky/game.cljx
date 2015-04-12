@@ -285,7 +285,7 @@
         (update-in [:player-cards winner :tricks] conj (get-table-cards state))
         (assoc :onus winner)
         (order-around-onus))))
-(defn check-hand-winner [state]
+(defn check-hand-over [state]
   (if (everyone-played? state)
     (-> state award-hand-to-winner clear-table-cards)
     state))
@@ -310,7 +310,7 @@
       state))
 (defn do-reconcile [state]
   (-> state
-      (check-hand-winner)
+      (check-hand-over)
       (check-round-over)))
 
 (defn update-play [old-state player value]
