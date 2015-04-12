@@ -33,9 +33,14 @@
     (doseq [[user data] (get-sockets game-id)]
       (put! (:socket data) (prn-str (game/shield game-state user))))))
 (defn update-game! [game-id func & vals]
-  (when-let [new-state (apply func (concat [(get-game game-id)] vals))]
-    (swap! games assoc game-id new-state)
-    (update-clients! game-id)))
+  (binding [game/*reconcile-hand-over* false]
+    (when-let [new-state (apply func (concat [(get-game game-id)] vals))]
+      (swap! games assoc game-id new-state)
+      (when (game/needs-reconcile? new-state)
+        (future
+          (Thread/sleep 2000)
+          (update-game! game-id game/do-reconcile)))
+      (update-clients! game-id))))
 
 (defn convert-str-to-int [str]
   (try
