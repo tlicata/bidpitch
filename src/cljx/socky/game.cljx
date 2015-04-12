@@ -199,8 +199,9 @@
     (when-not (empty? indices)
       (make-card (nth ranks (apply min indices)) suit))))
 (defn everyone-played? [state]
-  (= (count (get-table-cards state))
-     (count (get-players state))))
+  (let [num-players (count (get-players state))]
+    (and (> num-players 0)
+         (= num-players (count (get-table-cards state))))))
 (defn who-won-hand [state]
   (let [lead-suit (get-lead-suit state)
         table-cards (get-table-cards state)
