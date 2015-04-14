@@ -181,7 +181,6 @@
           (if (blank? name)
             (.alert js/window "It works better if you enter a name. Refresh to try again.")
             (go
-              (.setItem js/localStorage "username" name)
               (reset! websocket (<! (ws-ch websocket-url)))
               (send-message name)
               (let [{message :message} (<! @websocket)]
@@ -189,6 +188,7 @@
                   (.alert js/window "Name already taken. Refresh to try again.")
                   (do
                     (reset! game-state (read-string message))
+                    (.setItem js/localStorage "username" name)
                     (send-message "join")
                     (om/root game-view game-state {:target target})
                     (loop []
