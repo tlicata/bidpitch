@@ -176,10 +176,12 @@
 (set! (.-onload js/window)
       (fn []
         (let [target (.getElementById js/document "content")
-              name (.prompt js/window "Enter your name")]
+              name (or (.getItem js/localStorage "username")
+                       (.prompt js/window "Enter your name"))]
           (if (blank? name)
             (.alert js/window "It works better if you enter a name. Refresh to try again.")
             (go
+              (.setItem js/localStorage "username" name)
               (reset! websocket (<! (ws-ch websocket-url)))
               (send-message name)
               (let [{message :message} (<! @websocket)]
