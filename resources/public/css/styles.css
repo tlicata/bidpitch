@@ -71,10 +71,6 @@ ul {
     margin: 0;
     padding: 0;
 }
-.card {
-    background-repeat: no-repeat;
-    display: inline-block;
-}
 
 .hand {
     opacity: .82;
