@@ -47,9 +47,8 @@
   (vec (sort sort-cards cards)))
 
 (defn card-ui [card]
-  (let [url (str "url(/img/cards/individual/" card ".svg)")]
-    (dom/span #js {:style #js {:backgroundImage url}
-                   :className "card"})))
+  (let [url (str "/img/cards/individual/" card ".svg")]
+    (dom/img #js {:src url :className "card"})))
 (defn card-view [card owner]
   (reify
     om/IRender
