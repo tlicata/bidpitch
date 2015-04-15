@@ -9,11 +9,11 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="744.09448"
-   height="1052.3622"
+   width="224.22508"
+   height="312.80777"
    id="svg4423"
    version="1.1"
-   inkscape:version="0.48.1 r9760"
+   inkscape:version="0.48.4 r9939"
    sodipodi:docname="5S.svg"
    style="display:inline">
   <sodipodi:namedview
@@ -24,8 +24,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994948"
-     inkscape:cx="320.31915"
-     inkscape:cy="547.66466"
+     inkscape:cx="60.384459"
+     inkscape:cy="177.88745"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -35,7 +35,7 @@
      inkscape:window-width="735"
      inkscape:window-height="925"
      inkscape:window-x="826"
-     inkscape:window-y="16"
+     inkscape:window-y="24"
      inkscape:window-maximized="0" />
   <defs
      id="defs4425" />
@@ -54,7 +54,8 @@
   <g
      id="layer1"
      inkscape:groupmode="layer"
-     inkscape:label="5S">
+     inkscape:label="5S"
+     transform="translate(-259.93469,-369.77721)">
     <g
        transform="translate(-1607.2251,92.135109)"
        id="g3551"

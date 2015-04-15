@@ -9,11 +9,11 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="744.09448819"
-   height="1052.3622047"
+   width="224.22508"
+   height="312.80777"
    id="svg4423"
    version="1.1"
-   inkscape:version="0.48.2 r9819"
+   inkscape:version="0.48.4 r9939"
    sodipodi:docname="KH.svg">
   <title
      id="title3000">Vectorized Playing Cards 1.0</title>
@@ -25,8 +25,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1"
-     inkscape:cx="368.44458"
-     inkscape:cy="593.00403"
+     inkscape:cx="108.50988"
+     inkscape:cy="223.22682"
      inkscape:document-units="px"
      inkscape:current-layer="CropMarks"
      showgrid="false"
@@ -36,7 +36,7 @@
      inkscape:window-width="1108"
      inkscape:window-height="1036"
      inkscape:window-x="794"
-     inkscape:window-y="0"
+     inkscape:window-y="24"
      inkscape:window-maximized="0" />
   <defs
      id="defs4425" />
@@ -66,7 +66,8 @@
   <g
      id="layer1"
      inkscape:groupmode="layer"
-     inkscape:label="KD">
+     inkscape:label="KD"
+     transform="translate(-259.9347,-369.77721)">
     <g
        transform="translate(-735.69963,-136.72448)"
        id="g3889"
@@ -120,7 +121,8 @@
   <g
      inkscape:groupmode="layer"
      inkscape:label="Printing Marks"
-     id="printing-marks">
+     id="printing-marks"
+     transform="translate(-259.9347,-369.77721)">
     <g
        id="CropMarks"
        inkscape:label="CropMarks" />

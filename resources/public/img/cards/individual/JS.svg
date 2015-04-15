@@ -9,11 +9,11 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="744.09448819"
-   height="1052.3622047"
+   width="224.22401"
+   height="312.80627"
    id="svg4423"
    version="1.1"
-   inkscape:version="0.48.2 r9819"
+   inkscape:version="0.48.4 r9939"
    sodipodi:docname="JS.svg">
   <title
      id="title3002">Vectorized Playing Cards 1.0</title>
@@ -25,8 +25,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4142136"
-     inkscape:cx="391.3889"
-     inkscape:cy="506.77327"
+     inkscape:cx="131.45366"
+     inkscape:cy="136.99533"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -36,7 +36,7 @@
      inkscape:window-width="1116"
      inkscape:window-height="1036"
      inkscape:window-x="786"
-     inkscape:window-y="0"
+     inkscape:window-y="24"
      inkscape:window-maximized="0"
      showguides="true"
      inkscape:guide-bbox="true" />
@@ -68,7 +68,8 @@
   <g
      id="layer1"
      inkscape:groupmode="layer"
-     inkscape:label="JC">
+     inkscape:label="JC"
+     transform="translate(-259.93524,-369.77796)">
     <g
        transform="matrix(0.99999525,0,0,0.99999525,-289.24049,-1384.0659)"
        id="g3941"
@@ -129,7 +130,8 @@
   <g
      inkscape:groupmode="layer"
      inkscape:label="Printing Marks"
-     id="printing-marks">
+     id="printing-marks"
+     transform="translate(-259.93524,-369.77796)">
     <g
        id="CropMarks"
        inkscape:label="CropMarks" />

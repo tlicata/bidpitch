@@ -9,11 +9,11 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="744.09448819"
-   height="1052.3622047"
+   width="224.22508"
+   height="312.80777"
    id="svg4423"
    version="1.1"
-   inkscape:version="0.48.2 r9819"
+   inkscape:version="0.48.4 r9939"
    sodipodi:docname="QD.svg">
   <sodipodi:namedview
      id="base"
@@ -23,8 +23,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1"
-     inkscape:cx="306.30029"
-     inkscape:cy="545.33666"
+     inkscape:cx="46.365593"
+     inkscape:cy="175.55945"
      inkscape:document-units="px"
      inkscape:current-layer="CropMarks"
      showgrid="false"
@@ -33,7 +33,7 @@
      inkscape:snap-page="true"
      inkscape:window-width="1674"
      inkscape:window-height="925"
-     inkscape:window-x="617"
+     inkscape:window-x="374"
      inkscape:window-y="74"
      inkscape:window-maximized="0" />
   <defs
@@ -53,7 +53,8 @@
   <g
      id="layer1"
      inkscape:groupmode="layer"
-     inkscape:label="QD">
+     inkscape:label="QD"
+     transform="translate(-259.9347,-369.7772)">
     <g
        transform="translate(-512.47111,486.83327)"
        id="g3839"
@@ -116,7 +117,8 @@
   <g
      inkscape:groupmode="layer"
      inkscape:label="Printing Marks"
-     id="printing-marks">
+     id="printing-marks"
+     transform="translate(-259.9347,-369.7772)">
     <g
        id="CropMarks"
        inkscape:label="CropMarks" />
