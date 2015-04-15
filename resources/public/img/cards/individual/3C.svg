@@ -9,11 +9,11 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="744.09448819"
-   height="1052.3622047"
+   width="224.22508"
+   height="312.80777"
    id="svg4423"
    version="1.1"
-   inkscape:version="0.48.1 r9760"
+   inkscape:version="0.48.4 r9939"
    sodipodi:docname="3C.svg">
   <defs
      id="defs4425" />
@@ -25,18 +25,18 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
-     inkscape:cx="356.74073"
-     inkscape:cy="479.40623"
+     inkscape:cx="96.805982"
+     inkscape:cy="109.62902"
      inkscape:document-units="px"
      inkscape:current-layer="g6673"
      showgrid="false"
      inkscape:snap-global="true"
      inkscape:snap-bbox="true"
      inkscape:snap-page="true"
-     inkscape:window-width="1920"
-     inkscape:window-height="1053"
-     inkscape:window-x="-9"
-     inkscape:window-y="-9"
+     inkscape:window-width="2048"
+     inkscape:window-height="1256"
+     inkscape:window-x="0"
+     inkscape:window-y="24"
      inkscape:window-maximized="1"
      inkscape:bbox-paths="false"
      inkscape:bbox-nodes="false"
@@ -58,7 +58,8 @@
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
-     id="layer1">
+     id="layer1"
+     transform="translate(-259.93475,-369.77721)">
     <g
        transform="translate(-1160.7685,92.135109)"
        style="display:inline"
@@ -70,12 +71,12 @@
            style="stroke:#000000;stroke-opacity:1">
           <g
              id="g8890-2"
-             style="display:inline;stroke:#000000;stroke-opacity:1"
+             style="stroke:#000000;stroke-opacity:1;display:inline"
              transform="translate(-5059.9561,3024.9515)">
             <rect
                ry="10.629921"
                rx="10.629921"
-               style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.99673343000000003;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
+               style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.99673343;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
                id="rect6351-1"
                width="223.22835"
                height="311.81104"

@@ -10,11 +10,11 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    sodipodi:docname="4C.svg"
-   inkscape:version="0.48.1 r9760"
+   inkscape:version="0.48.4 r9939"
    version="1.1"
    id="svg4423"
-   height="1052.3622047"
-   width="744.09448819">
+   height="312.80777"
+   width="224.22508">
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -23,18 +23,18 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994948"
-     inkscape:cx="120.87318"
-     inkscape:cy="635.57161"
+     inkscape:cx="-139.0615"
+     inkscape:cy="265.7944"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:snap-global="true"
      inkscape:snap-bbox="true"
      inkscape:snap-page="true"
-     inkscape:window-width="1920"
-     inkscape:window-height="1054"
-     inkscape:window-x="-9"
-     inkscape:window-y="-9"
+     inkscape:window-width="2048"
+     inkscape:window-height="1256"
+     inkscape:window-x="0"
+     inkscape:window-y="24"
      inkscape:window-maximized="1"
      inkscape:snap-bbox-midpoints="true" />
   <defs
@@ -54,7 +54,8 @@
   <g
      inkscape:label="4C"
      inkscape:groupmode="layer"
-     id="layer1">
+     id="layer1"
+     transform="translate(-259.93468,-369.77721)">
     <g
        style="display:inline"
        transform="translate(-1383.9966,92.135109)"

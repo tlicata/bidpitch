@@ -10,11 +10,11 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    sodipodi:docname="2H.svg"
-   inkscape:version="0.48.1 r9760"
+   inkscape:version="0.48.4 r9939"
    version="1.1"
    id="svg4423"
-   height="1052.3622047"
-   width="744.09448819">
+   height="312.80777"
+   width="224.22508">
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -23,8 +23,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994948"
-     inkscape:cx="248.48484"
-     inkscape:cy="492.08587"
+     inkscape:cx="-11.449893"
+     inkscape:cy="122.30866"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -53,7 +53,8 @@
   <g
      id="layer1"
      inkscape:groupmode="layer"
-     inkscape:label="2H">
+     inkscape:label="2H"
+     transform="translate(-259.93473,-369.77721)">
     <g
        transform="translate(-1313.6208,198.14981)"
        id="g8900"

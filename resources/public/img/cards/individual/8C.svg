@@ -9,11 +9,11 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="744.09448819"
-   height="1052.3622047"
+   width="224.22508"
+   height="312.80777"
    id="svg4423"
    version="1.1"
-   inkscape:version="0.48.1 r9760"
+   inkscape:version="0.48.4 r9939"
    sodipodi:docname="8C.svg">
   <sodipodi:namedview
      id="base"
@@ -23,8 +23,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.24748737"
-     inkscape:cx="-330.98954"
-     inkscape:cy="209.78623"
+     inkscape:cx="-590.92424"
+     inkscape:cy="-159.99098"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -53,7 +53,8 @@
   <g
      id="layer1"
      inkscape:groupmode="layer"
-     inkscape:label="8C">
+     inkscape:label="8C"
+     transform="translate(-259.9347,-369.7772)">
     <g
        transform="translate(380.17087,-760.44498)"
        id="g4753"

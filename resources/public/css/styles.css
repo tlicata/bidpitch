@@ -72,10 +72,8 @@ ul {
     padding: 0;
 }
 .card {
-    background-position: -260px -370px;
+    background-repeat: no-repeat;
     display: inline-block;
-    height: 314px;
-    width: 226px;
 }
 
 .hand {
@@ -86,7 +84,6 @@ ul {
 }
 .tablecards li, .hand li {
     display: inline-block;
-    overflow: hidden;
 }
 .hand li:not(:last-child) {
     width: 53px;
