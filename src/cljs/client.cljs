@@ -7,7 +7,8 @@
             [om.dom :as dom :include-macros true]
             [socky.cards :refer [get-rank get-suit ranks suits]]
             [socky.game :as game])
-  (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
+  (:require-macros [cljs.core.async.macros :refer [go go-loop]]
+                   [socky.cljs-macros :refer [om-render]]))
 
 (def host (.-host (.-location js/window)))
 (def path (.-pathname (.-location js/window)))
