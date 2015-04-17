@@ -113,7 +113,10 @@
                (bid-button data 4 "4")))))
 
 (defn points-li [data owner]
-  (dom/li nil (str (key data) ": " (val data))))
+  (reify
+    om/IRender
+    (render [_]
+      (dom/li nil (str (key data) ": " (val data))))))
 (defn points-view [data owner]
   (reify
     om/IRender
@@ -131,7 +134,10 @@
                              "Play again!"))))))
 
 (defn table-card-li [data owner]
-  (dom/li nil (card-ui data)))
+  (reify
+    om/IRender
+    (render [_]
+      (dom/li nil (card-ui data)))))
 (defn table-cards-view [data owner]
   (reify
     om/IRender
@@ -142,7 +148,10 @@
                (om/build-all table-card-li table-cards))))))
 
 (defn players-li [data owner]
-  (dom/li nil (if (nil? data) "_____" data)))
+  (reify
+    om/IRender
+    (render [_]
+      (dom/li nil (if (nil? data) "_____" data)))))
 (defn players-view [data owner]
   (reify
     om/IRender
