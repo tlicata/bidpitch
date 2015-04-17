@@ -7,7 +7,7 @@
                  [org.clojure/java.jdbc "0.3.3"]
                  [compojure "1.3.3"]
                  [com.palletops/thread-expr "1.3.0"]
-                 [hiccup "1.0.4"]
+                 [hiccup "1.0.5"]
                  [http-kit "2.1.16"]
                  [jarohen/chord "0.2.2"]
                  [om "0.5.2"]
