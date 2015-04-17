@@ -13,7 +13,7 @@
                  [org.omcljs/om "0.8.8"]
                  [postgresql "9.1-901.jdbc4"]
                  [ragtime/ragtime.sql.files "0.3.7"]]
-  :plugins [[lein-cljsbuild "0.3.3"]
+  :plugins [[lein-cljsbuild "1.0.5"]
             [com.keminglabs/cljx "0.3.1"]
             [ragtime/ragtime.lein "0.3.7"]]
   :hooks [leiningen.cljsbuild cljx.hooks]
