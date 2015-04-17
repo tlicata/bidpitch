@@ -10,7 +10,7 @@
                  [hiccup "1.0.5"]
                  [http-kit "2.1.16"]
                  [jarohen/chord "0.2.2"]
-                 [om "0.5.2"]
+                 [org.omcljs/om "0.8.8"]
                  [postgresql "9.1-901.jdbc4"]
                  [ragtime/ragtime.sql.files "0.3.7"]]
   :plugins [[lein-cljsbuild "0.3.3"]
