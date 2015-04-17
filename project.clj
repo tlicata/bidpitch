@@ -14,13 +14,14 @@
                  [postgresql "9.1-901.jdbc4"]
                  [ragtime/ragtime.sql.files "0.3.7"]]
   :plugins [[lein-cljsbuild "1.0.5"]
-            [com.keminglabs/cljx "0.3.1"]
             [ragtime/ragtime.lein "0.3.7"]]
-  :hooks [leiningen.cljsbuild cljx.hooks]
+  :hooks [leiningen.cljsbuild]
   :main socky.handler
   :source-paths ["src/clj" "target/generated-src/clj"]
+  :prep-tasks [["cljx" "once"] "javac" "compile"]
   :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
-                                  [ring-mock "0.1.5"]]}}
+                                  [ring-mock "0.1.5"]]
+                   :plugins [[com.keminglabs/cljx "0.6.0"]]}}
   :cljsbuild {:builds [{:source-paths ["src/cljs" "target/generated-src/cljs"]
                         :compiler {:output-to "resources/public/js/bin/main.js"
                                    :optimizations :whitespace
