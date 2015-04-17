@@ -28,7 +28,7 @@
    [:head
     [:title "Bid Pitch"]
     (include-css "/css/styles.css")
-    (include-js "/js/lib/react-0.8.0.js" "/js/bin/main.js")
+    (include-js "/js/bin/main.js")
     (meta-viewport)]
    [:body
     [:div#content]]))
