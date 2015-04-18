@@ -1,6 +1,8 @@
-(ns socky.cljs-macros)
+(ns socky.cljs-macros
+  (:require [om.core :as om]))
 
 (defmacro om-render [body]
-  (list 'reify
-        'om/IRender
-        (list 'render '[_] body)))
+  `(reify
+     om/IRender
+     (~'render [~'_] ~body)))
+
