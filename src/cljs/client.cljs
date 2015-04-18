@@ -8,7 +8,7 @@
             [socky.cards :refer [get-rank get-suit ranks suits]]
             [socky.game :as game])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]
-                   [socky.cljs-macros :refer [om-render]]))
+                   [socky.cljs-macros :refer [defview]]))
 
 (def host (.-host (.-location js/window)))
 (def path (.-pathname (.-location js/window)))
@@ -50,113 +50,102 @@
 (defn card-ui [card]
   (let [url (str "/img/cards/individual/" card ".svg?2")]
     (dom/img #js {:src url :className "card"})))
-(defn card-view [card owner]
-  (om-render
-   (let [msg (str "play:" card)
-         handler #(socky.client.send-message msg)]
-     (dom/li #js {:onClick handler} (card-ui card)))))
+(defview card-view
+  (let [msg (str "play:" data)
+        handler #(socky.client.send-message msg)]
+    (dom/li #js {:onClick handler} (card-ui data))))
 
-(defn hand-view [data owner]
-  (om-render
-   (let [player-cards (first (:player-cards data))]
-     (if (not (nil? player-cards))
-       (let [cards (sort-hand (:cards (val player-cards)))
-             class (str "hand" (if (my-turn? data) " onus" ""))]
-         (dom/div
-          #js {:className class}
-          (apply dom/ul nil (om/build-all card-view cards))))
-       (dom/div nil "")))))
+(defview hand-view
+  (let [player-cards (first (:player-cards data))]
+    (if (not (nil? player-cards))
+      (let [cards (sort-hand (:cards (val player-cards)))
+            class (str "hand" (if (my-turn? data) " onus" ""))]
+        (dom/div
+         #js {:className class}
+         (apply dom/ul nil (om/build-all card-view cards))))
+      (dom/div nil ""))))
 
-(defn start-view [data owner]
-  (om-render
-   (let [players (game/get-players data)
-         me (:me data)
-         is-leader (= me (first players))
-         started (game/game-started? data)
-         can-join (game/can-join? data me)
-         can-leave (game/can-leave? data me)
-         can-start (and is-leader (not started) (> (count players) 1))]
-     (dom/div #js {:style (display (not started))}
-              (dom/p nil (if can-start
-                           "You're the leader, start when you're satisfied with the participant list."
-                           (if can-join "" "Waiting for others to join...")))
-              (dom/button #js {:className "button"
-                               :style (display can-start)
-                               :onClick #(send-message "start")}
-                          "Start")
-              (dom/button #js {:className "button"
-                               :style (display can-join)
-                               :onClick #(send-message "join")}
-                          "Join")
-              (dom/button #js {:className "button"
-                               :style (display can-leave)
-                               :onClick #(send-message "leave")}
-                          "Leave")))))
+(defview start-view
+  (let [players (game/get-players data)
+        me (:me data)
+        is-leader (= me (first players))
+        started (game/game-started? data)
+        can-join (game/can-join? data me)
+        can-leave (game/can-leave? data me)
+        can-start (and is-leader (not started) (> (count players) 1))]
+    (dom/div #js {:style (display (not started))}
+             (dom/p nil (if can-start
+                          "You're the leader, start when you're satisfied with the participant list."
+                          (if can-join "" "Waiting for others to join...")))
+             (dom/button #js {:className "button"
+                              :style (display can-start)
+                              :onClick #(send-message "start")}
+                         "Start")
+             (dom/button #js {:className "button"
+                              :style (display can-join)
+                              :onClick #(send-message "join")}
+                         "Join")
+             (dom/button #js {:className "button"
+                              :style (display can-leave)
+                              :onClick #(send-message "leave")}
+                         "Leave"))))
 
 (defn bid-button [data val txt]
   (dom/button #js {:className "button"
                    :style (display (game/valid-bid? data (:me data) val))
                    :onClick #(send-message (str "bid:" val))} txt))
-(defn bid-view [data owner]
-  (om-render
-   (dom/div #js {:style (display (my-turn-to-bid? data))}
-            (bid-button data 0 "pass")
-            (bid-button data 2 "2")
-            (bid-button data 3 "3")
-            (bid-button data 4 "4"))))
+(defview bid-view
+  (dom/div #js {:style (display (my-turn-to-bid? data))}
+           (bid-button data 0 "pass")
+           (bid-button data 2 "2")
+           (bid-button data 3 "3")
+           (bid-button data 4 "4")))
 
-(defn points-li [data owner]
-  (om-render
-   (dom/li nil (str (key data) ": " (val data)))))
-(defn points-view [data owner]
-  (om-render
-   (let [points (:points data)
-         winner (:winner data)]
-     (dom/div #js {:className "points"
-                   :style (display (not (empty? points)))}
-              (apply dom/ul nil (om/build-all points-li points))
-              (dom/div #js {:style (display (not (nil? winner)))}
-                       (str winner " wins!"))
-              (dom/button #js {:className "button"
-                               :style (display (game/game-over? data))
-                               :onClick #(send-message "start")}
-                          "Play again!")))))
+(defview points-li
+  (dom/li nil (str (key data) ": " (val data))))
+(defview points-view
+  (let [points (:points data)
+        winner (:winner data)]
+    (dom/div #js {:className "points"
+                  :style (display (not (empty? points)))}
+             (apply dom/ul nil (om/build-all points-li points))
+             (dom/div #js {:style (display (not (nil? winner)))}
+                      (str winner " wins!"))
+             (dom/button #js {:className "button"
+                              :style (display (game/game-over? data))
+                              :onClick #(send-message "start")}
+                         "Play again!"))))
 
-(defn table-card-li [data owner]
-  (om-render
-   (dom/li nil (card-ui data))))
-(defn table-cards-view [data owner]
-  (om-render
-   (let [table-cards (game/get-table-cards data)]
-     (apply dom/ul #js {:className "tablecards"
-                        :style (display (seq table-cards))}
-            (om/build-all table-card-li table-cards)))))
+(defview table-card-li
+  (dom/li nil (card-ui data)))
+(defview table-cards-view
+  (let [table-cards (game/get-table-cards data)]
+    (apply dom/ul #js {:className "tablecards"
+                       :style (display (seq table-cards))}
+           (om/build-all table-card-li table-cards))))
 
-(defn players-li [data owner]
-  (om-render
-   (dom/li nil (if (nil? data) "_____" data))))
-(defn players-view [data owner]
-  (om-render
-   (let [players-and-nils (game/get-players-with-nils data)]
-     (dom/div #js {:style (display (not (game/game-started? data)))}
-              (dom/h3 nil "Players")
-              (apply dom/ol nil
-                     (om/build-all players-li players-and-nils))))))
+(defview players-li
+  (dom/li nil (if (nil? data) "_____" data)))
+(defview players-view
+  (let [players-and-nils (game/get-players-with-nils data)]
+    (dom/div #js {:style (display (not (game/game-started? data)))}
+             (dom/h3 nil "Players")
+             (apply dom/ol nil
+                    (om/build-all players-li players-and-nils)))))
 
-(defn state-view [data owner]
-  (om-render (dom/p nil (prn-str data))))
+(defview state-view
+  (dom/p nil (prn-str data)))
 
-(defn game-view [data owner]
-  (om-render
-   (dom/div nil
-            (om/build players-view data)
-            (om/build start-view data)
-            (om/build hand-view data)
-            (om/build points-view data)
-            (om/build bid-view data)
-            (om/build table-cards-view data)
-            ;; (om/build state-view data)
-            )))
+(defview game-view
+  (dom/div nil
+           (om/build players-view data)
+           (om/build start-view data)
+           (om/build hand-view data)
+           (om/build points-view data)
+           (om/build bid-view data)
+           (om/build table-cards-view data)
+           ;; (om/build state-view data)
+           ))
 
 (set! (.-onload js/window)
       (fn []
