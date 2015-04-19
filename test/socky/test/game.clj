@@ -270,7 +270,7 @@
     ;; correctly sort out state for completed hand
     (let [resolved (check-hand-over hand-played)]
       ;; onus is on the winner
-      (is (= (:onus resolved) "louise"))
+      (is (= (get-onus resolved) "louise"))
       ;; louise got the trick
       (is (= (get-player-tricks resolved "louise") [["AC" "2C" "4C"]]))
       ;; table cards were cleared
@@ -345,8 +345,8 @@
                             (add-player "tim" "sharon" "louise" "rob")
                             (add-cards)
                             (dealt-state))]
-      (is (= (:dealer initial-state) "tim"))
-      (is (= (:onus initial-state) "sharon"))
+      (is (= (get-dealer initial-state) "tim"))
+      (is (= (get-onus initial-state) "sharon"))
       ;; only sharon can make the next move
       (is (nil? (advance-state initial-state "louise" "bid" 2)))
       ;; bid must be at least 2
@@ -354,8 +354,8 @@
       ;; bid must not be greater than 4
       (is (nil? (advance-state initial-state "sharon" "bid" 5)))
       (let [next-state (advance-state initial-state "sharon" "bid" 2)]
-        (is (= (:onus next-state) "louise"))
-        (is (= (:bids next-state) {"sharon" 2}))
+        (is (= (get-onus next-state) "louise"))
+        (is (= (get-bids next-state) {"sharon" 2}))
         ;; only louise can act
         (is (nil? (advance-state next-state "rob" "bid" "3")))
         ;; louise can only bid
@@ -366,14 +366,14 @@
           ;; louise can bid more than sharon
           (is (not (nil? bid-3)))
           ;; then the onus should be on rob
-          (is (= (:onus bid-3) "rob"))
-          (is (= (:bids bid-3) {"sharon" 2, "louise" 3})))
+          (is (= (get-onus bid-3) "rob"))
+          (is (= (get-bids bid-3) {"sharon" 2, "louise" 3})))
         (let [pass (advance-state next-state "louise" "bid" 0)]
           ;; louise can pass (implemented as bidding 0)
           (is (not (nil? pass)))
           ;; onus should still be on rob
-          (is (= (:onus pass) "rob"))
-          (is (= (:bids pass) {"sharon" 2, "louise" 0}))
+          (is (= (get-onus pass) "rob"))
+          (is (= (get-bids pass) {"sharon" 2, "louise" 0}))
           ;; rob must bid more than sharon
           (is (nil? (advance-state pass "rob" "bid" 2)))
           ;; rob can pass
@@ -388,7 +388,7 @@
                   rob-card (first (get-player-cards play "rob"))
                   tim-card (first (get-player-cards play "tim"))]
               ;; onus should now be on highest bidder (rob)
-              (is (= (:onus play) "rob"))
+              (is (= (get-onus play) "rob"))
               ;; rob can't do any more bidding
               (is (nil? (advance-state play "rob" "bid" 4)))
               ;; no one else can play
@@ -399,6 +399,6 @@
                 ;; rob can play any card
                 (is (not (nil? trump-lead)))
                 ;; and that suit is now trump
-                (is (= (get-suit rob-card) (:trump trump-lead)))
+                (is (= (get-suit rob-card) (get-trump trump-lead)))
                 ;; and that card is now on the table
-                (is (= [rob-card] (:table-cards trump-lead)))))))))))
+                (is (= [rob-card] (get-table-cards trump-lead)))))))))))
