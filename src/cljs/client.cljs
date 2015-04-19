@@ -21,9 +21,7 @@
   (put! @websocket msg))
 
 (defn display [show]
-  (if show
-    #js {}
-    #js {:display "none"}))
+  (if show #js {} #js {:display "none"}))
 
 (defn my-turn? [state]
   (= (game/get-onus state) (:me state)))
