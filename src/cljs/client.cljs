@@ -54,14 +54,12 @@
     (dom/li #js {:onClick handler} (card-ui data))))
 
 (defview hand-view
-  (let [player-cards (first (:player-cards data))]
-    (if (not (nil? player-cards))
-      (let [cards (sort-hand (:cards (val player-cards)))
-            class (str "hand" (if (my-turn? data) " onus" ""))]
-        (dom/div
-         #js {:className class}
-         (apply dom/ul nil (om/build-all card-view cards))))
-      (dom/div nil ""))))
+  (if-let [player-cards (first (:player-cards data))]
+    (let [cards (sort-hand (:cards (val player-cards)))
+          class (str "hand" (if (my-turn? data) " onus" ""))]
+      (dom/div #js {:className class}
+               (apply dom/ul nil (om/build-all card-view cards))))
+    (dom/div nil "")))
 
 (defn start-button [text msg show]
   (dom/button #js {:className "button"
