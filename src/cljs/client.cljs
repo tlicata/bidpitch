@@ -63,6 +63,10 @@
          (apply dom/ul nil (om/build-all card-view cards))))
       (dom/div nil ""))))
 
+(defn start-button [text msg show]
+  (dom/button #js {:className "button"
+                   :style (display show)
+                   :onClick #(send-message msg)} text))
 (defview start-view
   (let [players (game/get-players data)
         me (:me data)
@@ -75,18 +79,9 @@
              (dom/p nil (if can-start
                           "You're the leader, start when you're satisfied with the participant list."
                           (if can-join "" "Waiting for others to join...")))
-             (dom/button #js {:className "button"
-                              :style (display can-start)
-                              :onClick #(send-message "start")}
-                         "Start")
-             (dom/button #js {:className "button"
-                              :style (display can-join)
-                              :onClick #(send-message "join")}
-                         "Join")
-             (dom/button #js {:className "button"
-                              :style (display can-leave)
-                              :onClick #(send-message "leave")}
-                         "Leave"))))
+             (start-button "Start" "start" can-start)
+             (start-button "Join" "join" can-join)
+             (start-button "Leave" "leave" can-leave))))
 
 (defn bid-button [data val txt]
   (dom/button #js {:className "button"
