@@ -61,7 +61,7 @@
                (apply dom/ul nil (om/build-all card-view cards))))
     (dom/div nil "")))
 
-(defn start-button [text msg show]
+(defn msg-button [text msg show]
   (dom/button #js {:className "button"
                    :style (display show)
                    :onClick #(send-message msg)} text))
@@ -77,14 +77,12 @@
              (dom/p nil (if can-start
                           "You're the leader, start when you're satisfied with the participant list."
                           (if can-join "" "Waiting for others to join...")))
-             (start-button "Start" "start" can-start)
-             (start-button "Join" "join" can-join)
-             (start-button "Leave" "leave" can-leave))))
+             (msg-button "Start" "start" can-start)
+             (msg-button "Join" "join" can-join)
+             (msg-button "Leave" "leave" can-leave))))
 
 (defn bid-button [data val txt]
-  (dom/button #js {:className "button"
-                   :style (display (game/valid-bid? data (:me data) val))
-                   :onClick #(send-message (str "bid:" val))} txt))
+  (msg-button txt (str "bid:" val) (game/valid-bid? data (:me data) val)))
 (defview bid-view
   (dom/div #js {:style (display (my-turn-to-bid? data))}
            (bid-button data 0 "pass")
@@ -102,10 +100,7 @@
              (apply dom/ul nil (om/build-all points-li points))
              (dom/div #js {:style (display (not (nil? winner)))}
                       (str winner " wins!"))
-             (dom/button #js {:className "button"
-                              :style (display (game/game-over? data))
-                              :onClick #(send-message "start")}
-                         "Play again!"))))
+             (msg-button "Play again!" "start" (game/game-over? data)))))
 
 (defview table-card-li
   (dom/li nil (card-ui data)))
