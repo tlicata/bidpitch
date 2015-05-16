@@ -87,7 +87,7 @@
           (>! channel "taken"))))))
 
 (defroutes app-routes
-  (GET "/" [] (view/page-home))
+  (GET "/" [] (view/page-home @games))
   (POST "/games/" []
         (let [{:keys [id]} (db/game-add)]
           (resp/redirect (str "/games/" id))))
