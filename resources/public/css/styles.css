@@ -62,11 +62,6 @@ body.home p.small:first-of-type {
     margin-top: 5px;
 }
 
-/* create game page */
-body.create .row2 input {
-    margin-top: 5px;
-}
-
 ul {
     margin: 0;
     padding: 0;
