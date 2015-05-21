@@ -6,7 +6,8 @@
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [socky.cards :refer [get-rank get-suit ranks suits]]
-            [socky.game :as game])
+            [socky.game :as game]
+            [socky.table :as table])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]
                    [socky.cljs-macros :refer [defview]]))
 
@@ -122,6 +123,9 @@
 (defview state-view
   (dom/p nil (prn-str data)))
 
+(defview table-view
+  (socky.table.render data))
+
 (defview game-view
   (dom/div nil
            (om/build players-view data)
@@ -130,6 +134,7 @@
            (om/build points-view data)
            (om/build bid-view data)
            (om/build table-cards-view data)
+           (om/build table-view data)
            ;; (om/build state-view data)
            ))
 
