@@ -72,6 +72,11 @@ ul {
     display: flex;
     flex-direction: row;
 }
+.tablecards div {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
 .hand {
     opacity: .82;
     overflow-x: auto;
