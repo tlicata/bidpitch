@@ -67,13 +67,22 @@ ul {
     padding: 0;
 }
 
+.tablecards {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: row;
+}
 .hand {
     opacity: .82;
     overflow-x: auto;
     overflow-y: hidden;
     white-space: nowrap;
 }
-.tablecards li, .hand li {
+.card {
+    height: 139px;
+    width: 100px;
+}
+.hand li {
     display: inline-block;
 }
 .hand li:not(:last-child) {
