@@ -123,22 +123,22 @@
 (defview state-view
   (dom/p nil (prn-str data)))
 
-(defn table-view [data owner]
-  (reify
-    om/IRender
-    (render [_] (socky.table.render (clj->js data)))
-    om/IDidMount
-    (did-mount [self] (socky.table.componentDidMount (clj->js self)))))
+;; (defn table-view [data owner]
+;;   (reify
+;;     om/IRender
+;;     (render [_] (socky.table.render (clj->js data)))
+;;     om/IDidMount
+;;     (did-mount [self] (socky.table.componentDidMount (clj->js self)))))
 
 (defview game-view
   (dom/div nil
-           (om/build table-view data)
+           ;; (om/build table-view data)
            (om/build players-view data)
            (om/build start-view data)
            (om/build hand-view data)
            (om/build points-view data)
            (om/build bid-view data)
-           ;; (om/build table-cards-view data)
+           (om/build table-cards-view data)
            ;; (om/build state-view data)
            ))
 
