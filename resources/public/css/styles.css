@@ -69,13 +69,21 @@ ul {
 
 .tablecards {
     align-items: flex-start;
-    display: flex;
     flex-direction: row;
+    -webkit-align-items: flex-start;
+    -webkit-flex-direction: row;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
 }
 .tablecards div {
     align-items: center;
-    display: flex;
     flex-direction: column;
+    -webkit-align-items: center;
+    -webkit-flex-direction: column;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
 }
 .hand {
     opacity: .82;
