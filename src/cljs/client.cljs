@@ -7,7 +7,8 @@
             [om.dom :as dom :include-macros true]
             [socky.cards :refer [get-rank get-suit ranks suits]]
             [socky.game :as game]
-            [socky.table :as table])
+            [socky.table :as table]
+            [socky.util :as util])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]
                    [socky.cljs-macros :refer [defview]]))
 
@@ -47,8 +48,8 @@
   (vec (sort sort-cards cards)))
 
 (defn card-ui [card]
-  (let [url (str "/img/cards/individual/" card ".svg?2")]
-    (dom/img #js {:src url :className "card"})))
+  (let [url {:src (str "/img/cards/individual/" card ".svg?2.09")}]
+    (dom/img (clj->js (merge {:className "card"} (when card url))))))
 (defview card-view
   (let [msg (str "play:" data)
         handler #(socky.client.send-message msg)]
@@ -103,13 +104,14 @@
                       (str winner " wins!"))
              (msg-button "Play again!" "start" (game/game-over? data)))))
 
-(defview table-card-li
-  (dom/li nil (card-ui data)))
+(defview table-card
+  (dom/div nil (card-ui (second data)) (dom/span nil (first data))))
 (defview table-cards-view
-  (let [table-cards (game/get-table-cards data)]
-    (apply dom/ul #js {:className "tablecards"
-                       :style (display (seq table-cards))}
-           (om/build-all table-card-li table-cards))))
+  (let [players (game/get-players data)
+        table-cards (game/get-table-cards data)
+        visible (when-not (game/game-started? data) {:style {:display "none"}})]
+    (apply dom/div (clj->js (merge {:className "tablecards"} visible))
+           (om/build-all table-card (util/map-all vector players table-cards)))))
 
 (defview players-li
   (dom/li nil (if (nil? data) "_____" data)))
@@ -123,22 +125,22 @@
 (defview state-view
   (dom/p nil (prn-str data)))
 
-(defn table-view [data owner]
-  (reify
-    om/IRender
-    (render [_] (socky.table.render (clj->js data)))
-    om/IDidMount
-    (did-mount [self] (socky.table.componentDidMount (clj->js self)))))
+;; (defn table-view [data owner]
+;;   (reify
+;;     om/IRender
+;;     (render [_] (socky.table.render (clj->js data)))
+;;     om/IDidMount
+;;     (did-mount [self] (socky.table.componentDidMount (clj->js self)))))
 
 (defview game-view
   (dom/div nil
-           (om/build table-view data)
+           ;; (om/build table-view data)
+           (om/build table-cards-view data)
            (om/build players-view data)
            (om/build start-view data)
            (om/build hand-view data)
            (om/build points-view data)
            (om/build bid-view data)
-           ;; (om/build table-cards-view data)
            ;; (om/build state-view data)
            ))
 
