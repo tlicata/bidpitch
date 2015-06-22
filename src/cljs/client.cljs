@@ -86,7 +86,7 @@
 (defn bid-button [data val txt]
   (msg-button txt (str "bid:" val) (game/valid-bid? data (:me data) val)))
 (defview bid-view
-  (dom/div #js {:style (display (my-turn-to-bid? data))}
+  (dom/div #js {:className "bids" :style (display (my-turn-to-bid? data))}
            (bid-button data 0 "pass")
            (bid-button data 2 "2")
            (bid-button data 3 "3")
@@ -135,14 +135,15 @@
 ;;     (did-mount [self] (socky.table.componentDidMount (clj->js self)))))
 
 (defview game-view
-  (dom/div nil
+  (dom/div #js {:className "game"}
            ;; (om/build table-view data)
            (om/build table-cards-view data)
            (om/build players-view data)
            (om/build start-view data)
-           (om/build hand-view data)
-           (om/build points-view data)
-           (om/build bid-view data)
+           (dom/div #js {:className "bottom-ui"}
+                    (om/build bid-view data)
+                    (om/build hand-view data)
+                    (om/build points-view data))
            ;; (om/build state-view data)
            ))
 

@@ -71,11 +71,39 @@ ul {
     padding: 0;
 }
 
+/* game page */
+
+html, body, #content, .game {
+    /* make page full screen */
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+.game {
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: space-between;
+    -webkit-align-items: flex-start;
+    -webkit-flex-direction: column;
+    -webkit-justify-content: space-between;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+}
+.game>* {
+    width: 100%;
+}
+.bottom-ui {
+    align-self: flex-start;
+    -webkit-align-self: flex-start;
+}
 .tablecards {
     align-items: flex-start;
     flex-direction: row;
+    justify-content: center;
     -webkit-align-items: flex-start;
     -webkit-flex-direction: row;
+    -webkit-justify-content: center;
     display: -webkit-box;
     display: -webkit-flex;
     display: flex;
@@ -89,15 +117,23 @@ ul {
     display: -webkit-flex;
     display: flex;
 }
+.tablecards .card {
+    height: 111px;
+    width: 80px;
+}
+.card {
+    height: 139px;
+    width: 100px;
+}
 .hand {
     opacity: .82;
     overflow-x: auto;
     overflow-y: hidden;
     white-space: nowrap;
 }
-.card {
-    height: 139px;
-    width: 100px;
+.hand ul, .hand li {
+    /* make sure no space between hand and points */
+    line-height: 0;
 }
 .hand li {
     display: inline-block;
@@ -109,11 +145,13 @@ ul {
     opacity: 1;
 }
 
+.bids {
+    background-color: rgba(0, 0, 0, 0.5);
+    text-align: center;
+    padding: .5em;
+}
 .points {
     background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 8px;
-    display: inline-block;
-    margin-bottom: 1em;
     padding: 1em;
 }
 .points div {
