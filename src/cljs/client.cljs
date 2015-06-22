@@ -109,8 +109,10 @@
 (defview table-cards-view
   (let [players (game/get-players data)
         table-cards (game/get-table-cards data)
-        visible (when-not (game/game-started? data) {:style {:display "none"}})]
-    (apply dom/div (clj->js (merge {:className "tablecards"} visible))
+        hidden (when (or (not (game/game-started? data))
+                         (game/game-over? data))
+                 {:style {:display "none"}})]
+    (apply dom/div (clj->js (merge {:className "tablecards"} hidden))
            (om/build-all table-card (util/map-all vector players table-cards)))))
 
 (defview players-li
