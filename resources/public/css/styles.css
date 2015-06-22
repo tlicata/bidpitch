@@ -18,7 +18,6 @@ h1 {
     color: #CCC;
     display: inline-block;
     font-size: 1em;
-    margin-right: .5em;
     min-width: 3em;
     padding: 5px 10px;
     text-align: center;
@@ -159,5 +158,9 @@ html, body, #content, .game {
 }
 .points li {
     display: inline;
+    margin-right: .5em;
+}
+
+.bids button, .start-view button {
     margin-right: .5em;
 }

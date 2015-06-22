@@ -75,7 +75,7 @@
         can-join (game/can-join? data me)
         can-leave (game/can-leave? data me)
         can-start (and is-leader (not started) (> (count players) 1))]
-    (dom/div #js {:style (display (not started))}
+    (dom/div #js {:style (display (not started)) :className "start-view"}
              (dom/p nil (if can-start
                           "You're the leader, start when you're satisfied with the participant list."
                           (if can-join "" "Waiting for others to join...")))
