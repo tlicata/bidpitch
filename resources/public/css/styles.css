@@ -47,6 +47,10 @@ body.page .row1, body.page .row2, body.page .row3 {
 body.home .row2 div {
     margin: 5px;
 }
+body.home .row2 ul {
+    /* separate player list from "create a game" button */
+    margin-bottom: 30px;
+}
 body.home a.howto {
     color: #CCC;
 }
