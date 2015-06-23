@@ -104,13 +104,13 @@
 (defview table-card
   (dom/div nil (card-ui (second data)) (dom/span nil (first data))))
 (defview table-cards-view
-  (let [players (game/get-players data)
-        table-cards (game/get-table-cards data)
-        hidden (when (or (not (game/game-started? data))
-                         (game/game-over? data))
-                 {:style {:display "none"}})]
-    (apply dom/div (clj->js (merge {:className "tablecards"} hidden))
-           (om/build-all table-card (util/map-all vector players table-cards)))))
+  (when (and (game/game-started? data)
+             (not (game/bidding-stage? data))
+             (not (game/game-over? data)))
+    (let [players (game/get-players data)
+          table-cards (game/get-table-cards data)]
+      (apply dom/div #js {:className "tablecards"}
+             (om/build-all table-card (util/map-all vector players table-cards))))))
 
 (defview join-list-li
   (dom/li nil (if (nil? data) "_____" data)))
@@ -134,11 +134,12 @@
 (defview game-view
   (dom/div #js {:className "game"}
            ;; (om/build table-view data)
-           (om/build table-cards-view data)
-           (om/build join-list-view data)
+           (dom/div #js {:className "top-ui"}
+                    (om/build bid-view data)
+                    (om/build table-cards-view data)
+                    (om/build join-list-view data))
            (om/build start-view data)
            (dom/div #js {:className "bottom-ui"}
-                    (om/build bid-view data)
                     (om/build hand-view data)
                     (om/build points-view data))
            ;; (om/build state-view data)
