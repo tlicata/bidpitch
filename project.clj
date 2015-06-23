@@ -24,7 +24,6 @@
                    :plugins [[com.keminglabs/cljx "0.6.0"]]}}
   :cljsbuild {:builds [{:source-paths ["src/clj" "src/cljs" "target/generated-src/cljs"]
                         :compiler {:output-to "resources/public/js/bin/main.js"
-                                   :libs ["resources/public/js/src"]
                                    :optimizations :whitespace
                                    :pretty-print true}}]}
   :cljx {:builds [{:source-paths ["src/cljx"]
