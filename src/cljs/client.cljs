@@ -79,9 +79,7 @@
              (dom/p nil (if can-start
                           "You're the leader, start when you're satisfied with the participant list."
                           (if can-join "" "Waiting for others to join...")))
-             (msg-button "Start" "start" can-start)
-             (msg-button "Join" "join" can-join)
-             (msg-button "Leave" "leave" can-leave))))
+             (msg-button "Start" "start" can-start))))
 
 (defn bid-button [data val txt]
   (msg-button txt (str "bid:" val) (game/valid-bid? data (:me data) val)))
