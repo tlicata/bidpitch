@@ -141,11 +141,6 @@ html, body, #content, .game {
     opacity: 1;
 }
 
-.bids {
-    background-color: rgba(0, 0, 0, 0.5);
-    text-align: center;
-    padding: .5em;
-}
 .points {
     background-color: rgba(0, 0, 0, 0.5);
     padding: 1em;
@@ -158,6 +153,11 @@ html, body, #content, .game {
     margin-right: .5em;
 }
 
+.bids, .start-view {
+    background-color: rgba(0, 0, 0, 0.5);
+    text-align: center;
+    padding: .5em 0;
+}
 .bids button, .start-view button {
     margin-right: .5em;
 }
