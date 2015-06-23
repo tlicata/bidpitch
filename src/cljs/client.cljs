@@ -115,14 +115,14 @@
     (apply dom/div (clj->js (merge {:className "tablecards"} hidden))
            (om/build-all table-card (util/map-all vector players table-cards)))))
 
-(defview players-li
+(defview join-list-li
   (dom/li nil (if (nil? data) "_____" data)))
-(defview players-view
+(defview join-list-view
   (let [players-and-nils (game/get-players-with-nils data)]
     (dom/div #js {:style (display (not (game/game-started? data)))}
              (dom/h3 nil "Players")
              (apply dom/ol nil
-                    (om/build-all players-li players-and-nils)))))
+                    (om/build-all join-list-li players-and-nils)))))
 
 (defview state-view
   (dom/p nil (prn-str data)))
@@ -138,7 +138,7 @@
   (dom/div #js {:className "game"}
            ;; (om/build table-view data)
            (om/build table-cards-view data)
-           (om/build players-view data)
+           (om/build join-list-view data)
            (om/build start-view data)
            (dom/div #js {:className "bottom-ui"}
                     (om/build bid-view data)
