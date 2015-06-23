@@ -53,14 +53,13 @@
 (defview card-view
   (let [msg (str "play:" data)
         handler #(socky.client.send-message msg)]
-    (dom/li #js {:onClick handler} (card-ui data))))
+    (dom/span #js {:onClick handler} (card-ui data))))
 
 (defview hand-view
   (if-let [player-cards (first (:player-cards data))]
-    (let [cards (sort-hand (:cards (val player-cards)))
-          class (str "hand" (if (my-turn? data) " onus" ""))]
-      (dom/div #js {:className class}
-               (apply dom/ul nil (om/build-all card-view cards))))
+    (apply dom/div
+           #js {:className (str "hand" (when (my-turn? data) " onus"))}
+           (om/build-all card-view (sort-hand (:cards (val player-cards)))))
     (dom/div nil "")))
 
 (defn msg-button [text msg show]

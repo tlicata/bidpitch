@@ -125,20 +125,17 @@ html, body, #content, .game {
     width: 100px;
 }
 .hand {
+    justify-content: center;
+    -webkit-justify-content: center;
     opacity: .82;
-    overflow-x: auto;
-    overflow-y: hidden;
-    white-space: nowrap;
+    overflow: hidden;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
 }
-.hand ul, .hand li {
+.hand * {
     /* make sure no space between hand and points */
     line-height: 0;
-}
-.hand li {
-    display: inline-block;
-}
-.hand li:not(:last-child) {
-    width: 53px;
 }
 .hand.onus {
     opacity: 1;
