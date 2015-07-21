@@ -73,20 +73,23 @@
         can-join (game/can-join? data me)
         can-leave (game/can-leave? data me)
         can-start (and is-leader (not started) (> (count players) 1))]
-    (dom/div #js {:style (display (not started)) :className "start-view"}
-             (dom/p nil (if can-start
-                          "You're the leader, start when you're satisfied with the participant list."
-                          (if can-join "" "Waiting for others to join...")))
-             (msg-button "Start" "start" can-start))))
+    (dom/div #js {:className "start-view"}
+             (if can-start
+               (dom/span nil
+                         (dom/p nil "When you're satisfied with the participant list,")
+                         (msg-button "Start" "start" true))
+               (dom/span nil (or (game/message-next-step data)
+                                 (last (game/get-messages data)))))
+             (bid-view data))))
 
 (defn bid-button [data val txt]
   (msg-button txt (str "bid:" val) (game/valid-bid? data (:me data) val)))
-(defview bid-view
-  (dom/div #js {:className "bids" :style (display (my-turn-to-bid? data))}
-           (bid-button data 0 "pass")
-           (bid-button data 2 "2")
-           (bid-button data 3 "3")
-           (bid-button data 4 "4")))
+(defn bid-view [data]
+  (dom/span #js {:className "bids" :style (display (my-turn-to-bid? data))}
+            (bid-button data 0 "pass")
+            (bid-button data 2 "2")
+            (bid-button data 3 "3")
+            (bid-button data 4 "4")))
 
 (defview points-li
   (dom/li nil (str (key data) ": " (val data))))
@@ -101,7 +104,7 @@
              (msg-button "Play again!" "start" (game/game-over? data)))))
 
 (defview table-card
-  (dom/div nil (card-ui (second data)) (dom/span nil (first data))))
+  (dom/div nil (card-ui (second data)) (dom/span #js {:className "player"} (first data))))
 (defview table-cards-view
   (when (and (game/game-started? data)
              (not (game/bidding-stage? data))
@@ -115,7 +118,7 @@
   (dom/li nil (if (nil? data) "_____" data)))
 (defview join-list-view
   (let [players-and-nils (game/get-players-with-nils data)]
-    (dom/div #js {:style (display (not (game/game-started? data)))}
+    (dom/div #js {:className "player-list" :style (display (not (game/game-started? data)))}
              (dom/h3 nil "Players")
              (apply dom/ol nil
                     (om/build-all join-list-li players-and-nils)))))
@@ -126,11 +129,13 @@
 (defview game-view
   (dom/div #js {:className "game"}
            (dom/div #js {:className "top-ui"}
-                    (om/build bid-view data)
                     (om/build table-cards-view data)
                     (om/build join-list-view data))
-           (om/build start-view data)
+           (when-not (game/game-started? data)
+             (om/build start-view data))
            (dom/div #js {:className "bottom-ui"}
+                    (when (game/game-started? data)
+                      (om/build start-view data))
                     (om/build hand-view data)
                     (om/build points-view data))
            ;; (om/build state-view data)

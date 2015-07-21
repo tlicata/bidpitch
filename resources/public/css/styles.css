@@ -7,7 +7,7 @@ body {
 button {
     padding: 1em;
 }
-h1 {
+h1, p {
     margin: 0;
 }
 
@@ -18,8 +18,8 @@ h1 {
     color: #CCC;
     display: inline-block;
     font-size: 1em;
-    min-width: 3em;
-    padding: 5px 10px;
+    min-width: 2.5em;
+    padding: 4px 5px;
     text-align: center;
     text-decoration: none;
     border-radius: 10px;
@@ -78,7 +78,17 @@ html, body, #content, .game {
     margin: 0;
     padding: 0;
 }
+#content {
+    background-color: black;
+}
 .game {
+    background-color: green;
+
+    /* stop horizontal sprawl */
+    max-width: 600px;
+    margin: 0 auto;
+
+    /* make it a vertical flexbox */
     align-items: flex-start;
     flex-direction: column;
     justify-content: space-between;
@@ -115,16 +125,27 @@ html, body, #content, .game {
     display: -webkit-box;
     display: -webkit-flex;
     display: flex;
+    position: relative;
 }
 .tablecards .card {
     height: 111px;
     width: 80px;
+}
+.tablecards .player {
+    color: white;
+    line-height: 115px;
+    position: absolute;
+    text-align: center;
+    text-shadow: black 2px 2px 1px;
+    top: 0;
+    width: 100%;
 }
 .card {
     height: 139px;
     width: 100px;
 }
 .hand {
+    height: 139px;
     justify-content: center;
     -webkit-justify-content: center;
     opacity: .82;
@@ -141,23 +162,58 @@ html, body, #content, .game {
     opacity: 1;
 }
 
-.points {
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 1em;
-}
 .points div {
-    margin: 1em 0;
+    margin: .5em 0;
 }
 .points li {
     display: inline;
     margin-right: .5em;
 }
 
-.bids, .start-view {
+.points, .start-view {
     background-color: rgba(0, 0, 0, 0.5);
+    padding: 1em 0;
     text-align: center;
-    padding: .5em 0;
 }
-.bids button, .start-view button {
-    margin-right: .5em;
+
+.start-view .button {
+    margin-top: .5em;
+}
+.start-view .bids {
+    margin-left: .5em;
+}
+.start-view .bids button {
+    margin: 0 .25em 0 0;
+}
+
+.player-list {
+    margin: .5em;
+}
+
+@media (max-height: 350px) {
+    /* less vertial padding */
+    .points, .start-view {
+        padding: .5em 0;
+    }
+    /* smaller cards */
+    .card {
+        height: 104px;
+        width: 75px;
+    }
+    .hand {
+        height: 104px;
+    }
+    .tablecards .card {
+        height: 100px;
+        width: 72px;
+    }
+    .tablecards .player {
+        line-height: 100px;
+    }
+}
+@media (max-width: 640px) {
+    /* stop horizontal sprawl sooner */
+    .game {
+        max-width: 450px;
+    }
 }

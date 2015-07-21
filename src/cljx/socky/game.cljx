@@ -51,6 +51,10 @@
   (:dealer state))
 (defn get-onus [state]
   (:onus state))
+(defn get-winner [state]
+  (:winner state))
+(defn get-messages [state]
+  (:messages state))
 
 ; Utility functions to get next player
 (defn index-of [vect item]
@@ -78,6 +82,7 @@
 (def empty-state
   {:bids {}
    :dealer nil
+   :messages []
    :onus nil
    :players []
    :player-cards {}
@@ -323,14 +328,30 @@
         (if-> *reconcile-hand-over* do-reconcile))))
 
 (defn advance-state [old-state player action value]
-  (when (= (get-onus old-state) player)
-    (if (bidding-stage? old-state)
-      (when (= action "bid")
-        (update-bid old-state player value))
-      (when (= action "play")
-        (update-play old-state player value)))))
+  (when-let [s (when (= (get-onus old-state) player)
+                 (if (bidding-stage? old-state)
+                   (when (= action "bid")
+                     (update-bid old-state player value))
+                   (when (= action "play")
+                     (update-play old-state player value))))]
+    (let [msg (str player " " action " " value)]
+      (update-in s [:messages] #(conj % msg)))))
 
 (defn bid [state player value]
   (advance-state state player "bid" value))
 (defn play [state player value]
   (advance-state state player "play" value))
+
+(defn possessive-name [state]
+  (when-let [onus (get-onus state)]
+    (if (= onus (:me state)) "Your" (str onus "'s"))))
+
+(defn message-next-step [state]
+  (if (game-started? state)
+    (if (game-over? state)
+      (str "Game over. " (get-winner state) " wins.")
+      (when (get-onus state)
+        (if (bidding-stage? state)
+          (str (possessive-name state) " turn to bid.")
+          (str (possessive-name state) " turn to play."))))
+    "Waiting for everyone to join"))
