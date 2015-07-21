@@ -47,10 +47,16 @@ To start a web server for the application, run:
 
 ## TODO
 
-- Start view shows who has joined
 - Bidder goes out
 - Teams
 - Switch players/teams after game
+- History in top bar ^
+- Player can rejoin started game without url
+
+### Bugs
+
+- Safari table cards do not clear when hand is over.
+- Safari hand cards sometimes become small.
 
 ## License
 
