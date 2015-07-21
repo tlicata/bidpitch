@@ -7,7 +7,7 @@ body {
 button {
     padding: 1em;
 }
-h1 {
+h1, p {
     margin: 0;
 }
 
@@ -18,9 +18,8 @@ h1 {
     color: #CCC;
     display: inline-block;
     font-size: 1em;
-    margin-right: .5em;
-    min-width: 3em;
-    padding: 5px 10px;
+    min-width: 2.5em;
+    padding: 4px 5px;
     text-align: center;
     text-decoration: none;
     border-radius: 10px;
@@ -71,33 +70,150 @@ ul {
     padding: 0;
 }
 
+/* game page */
+
+html, body, #content, .game {
+    /* make page full screen */
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+#content {
+    background-color: black;
+}
+.game {
+    background-color: green;
+
+    /* stop horizontal sprawl */
+    max-width: 600px;
+    margin: 0 auto;
+
+    /* make it a vertical flexbox */
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: space-between;
+    -webkit-align-items: flex-start;
+    -webkit-flex-direction: column;
+    -webkit-justify-content: space-between;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+}
+.game>* {
+    width: 100%;
+}
+.bottom-ui {
+    align-self: flex-start;
+    -webkit-align-self: flex-start;
+}
+.tablecards {
+    align-items: flex-start;
+    flex-direction: row;
+    justify-content: center;
+    -webkit-align-items: flex-start;
+    -webkit-flex-direction: row;
+    -webkit-justify-content: center;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+}
+.tablecards div {
+    align-items: center;
+    flex-direction: column;
+    -webkit-align-items: center;
+    -webkit-flex-direction: column;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    position: relative;
+}
+.tablecards .card {
+    height: 111px;
+    width: 80px;
+}
+.tablecards .player {
+    color: white;
+    line-height: 115px;
+    position: absolute;
+    text-align: center;
+    text-shadow: black 2px 2px 1px;
+    top: 0;
+    width: 100%;
+}
+.card {
+    height: 139px;
+    width: 100px;
+}
 .hand {
+    height: 139px;
+    justify-content: center;
+    -webkit-justify-content: center;
     opacity: .82;
-    overflow-x: auto;
-    overflow-y: hidden;
-    white-space: nowrap;
+    overflow: hidden;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
 }
-.tablecards li, .hand li {
-    display: inline-block;
-}
-.hand li:not(:last-child) {
-    width: 53px;
+.hand * {
+    /* make sure no space between hand and points */
+    line-height: 0;
 }
 .hand.onus {
     opacity: 1;
 }
 
-.points {
-    background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 8px;
-    display: inline-block;
-    margin-bottom: 1em;
-    padding: 1em;
-}
 .points div {
-    margin: 1em 0;
+    margin: .5em 0;
 }
 .points li {
     display: inline;
     margin-right: .5em;
+}
+
+.points, .start-view {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 1em 0;
+    text-align: center;
+}
+
+.start-view .button {
+    margin-top: .5em;
+}
+.start-view .bids {
+    margin-left: .5em;
+}
+.start-view .bids button {
+    margin: 0 .25em 0 0;
+}
+
+.player-list {
+    margin: .5em;
+}
+
+@media (max-height: 350px) {
+    /* less vertial padding */
+    .points, .start-view {
+        padding: .5em 0;
+    }
+    /* smaller cards */
+    .card {
+        height: 104px;
+        width: 75px;
+    }
+    .hand {
+        height: 104px;
+    }
+    .tablecards .card {
+        height: 100px;
+        width: 72px;
+    }
+    .tablecards .player {
+        line-height: 100px;
+    }
+}
+@media (max-width: 640px) {
+    /* stop horizontal sprawl sooner */
+    .game {
+        max-width: 450px;
+    }
 }

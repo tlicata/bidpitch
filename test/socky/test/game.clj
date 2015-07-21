@@ -347,6 +347,7 @@
                             (dealt-state))]
       (is (= (get-dealer initial-state) "tim"))
       (is (= (get-onus initial-state) "sharon"))
+      (is (= (:messages initial-state [])))
       ;; only sharon can make the next move
       (is (nil? (advance-state initial-state "louise" "bid" 2)))
       ;; bid must be at least 2
@@ -356,6 +357,7 @@
       (let [next-state (advance-state initial-state "sharon" "bid" 2)]
         (is (= (get-onus next-state) "louise"))
         (is (= (get-bids next-state) {"sharon" 2}))
+        (is (= (get-messages next-state) ["sharon bid 2"]))
         ;; only louise can act
         (is (nil? (advance-state next-state "rob" "bid" "3")))
         ;; louise can only bid
@@ -363,6 +365,7 @@
         ;; louise must bid more than sharon
         (is (nil? (advance-state next-state "louise" "bid" 2)))
         (let [bid-3 (advance-state next-state "louise" "bid" 3)]
+          (is (= (get-messages bid-3) ["sharon bid 2" "louise bid 3"]))
           ;; louise can bid more than sharon
           (is (not (nil? bid-3)))
           ;; then the onus should be on rob

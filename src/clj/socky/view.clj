@@ -7,7 +7,7 @@
 (def games-path "/games/")
 
 (defn meta-viewport []
-  [:meta {:name "viewport" :content "width=device-width"}])
+  [:meta {:name "viewport" :content "width=device-width, user-scalable=no"}])
 
 (defn page-home [games]
   (html5
