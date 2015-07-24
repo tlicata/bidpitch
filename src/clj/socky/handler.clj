@@ -9,7 +9,8 @@
             [ring.util.response :as resp]
             [socky.db :as db]
             [socky.game :as game]
-            [socky.view :as view]))
+            [socky.view :as view])
+  (:gen-class))
 
 (def sockets (atom {}))
 (def games (atom {}))

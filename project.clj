@@ -21,7 +21,10 @@
   :prep-tasks [["cljx" "once"] "javac" "compile"]
   :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
                                   [ring-mock "0.1.5"]]
-                   :plugins [[com.keminglabs/cljx "0.6.0"]]}}
+                   :plugins [[com.keminglabs/cljx "0.6.0"]]}
+             :uberjar {:main socky.handler
+                       :aot :all
+                       :dependencies [[javax.servlet/servlet-api "2.5"]]}}
   :cljsbuild {:builds [{:source-paths ["src/clj" "src/cljs" "target/generated-src/cljs"]
                         :compiler {:output-to "resources/public/js/bin/main.js"
                                    :optimizations :whitespace
