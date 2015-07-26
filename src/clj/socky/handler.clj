@@ -7,7 +7,6 @@
             [compojure.route :as route]
             [org.httpkit.server :as httpkit]
             [ring.util.response :as resp]
-            [socky.db :as db]
             [socky.game :as game]
             [socky.view :as view])
   (:gen-class))
@@ -63,7 +62,6 @@
   (with-channel request channel
     (go
       (let [{username :message} (<! channel)]
-        (add-game! game-id)
         (if (add-socket! game-id username channel)
           (do
             (println (str "channel for user: " username))
@@ -90,10 +88,11 @@
 (defroutes app-routes
   (GET "/" [] (view/page-home @games))
   (POST "/games/" []
-        (let [{:keys [id]} (db/game-add)]
+        (let [id (str (java.util.UUID/randomUUID))]
+          (add-game! id)
           (resp/redirect (str "/games/" id))))
   (GET "/games/:id" [id]
-       (when (db/game-get (convert-str-to-int id))
+       (when (get-game id)
          (view/page-game id)))
   (GET "/games/:id/socky" [id :as request]
        (websocket-handler request id))
