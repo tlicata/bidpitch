@@ -107,4 +107,5 @@
   (@server :timeout 100)
   (reset! server nil))
 (defn -main []
-  (reset! server (httpkit/run-server app {:port 8080})))
+  (let [port (Integer/parseInt (or (System/getenv "PORT") "8080"))]
+    (reset! server (httpkit/run-server app {:port port}))))
