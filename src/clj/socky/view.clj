@@ -20,10 +20,9 @@
      [:h1 "Bid Pitch"]]
     [:div.row2
      `[:ul ~@(map (fn [[id game]]
-                    (when-not (game-started? game)
+                    (when-not (or (game-started? game) (empty? (get-players game)))
                       (let [url (str games-path id)
-                            players (get-players game)
-                            names (if (empty? players) "[EMPTY]" (join "," players))]
+                            names (join "," (get-players game))]
                         [:li (link-to url (str "Join w/ " names))])))
                   games)]
      [:form {:action games-path :method "POST"}
