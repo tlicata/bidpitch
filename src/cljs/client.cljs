@@ -123,9 +123,6 @@
              (apply dom/ol nil
                     (om/build-all join-list-li players-and-nils)))))
 
-(defview state-view
-  (dom/p nil (prn-str data)))
-
 (defview game-view
   (dom/div #js {:className "game"}
            (dom/div #js {:className "top-ui"}
@@ -137,9 +134,7 @@
                     (when (game/game-started? data)
                       (om/build start-view data))
                     (om/build hand-view data)
-                    (om/build points-view data))
-           ;; (om/build state-view data)
-           ))
+                    (om/build points-view data))))
 
 (set! (.-onload js/window)
       (fn []
