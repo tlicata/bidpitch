@@ -137,17 +137,18 @@ html, body, #content, .game {
 }
 .hand {
     height: 139px;
-    justify-content: center;
-    -webkit-justify-content: center;
-    opacity: .82;
-    overflow: hidden;
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: flex;
-}
-.hand * {
-    /* make sure no space between hand and points */
     line-height: 0;
+    opacity: .82;
+    overflow-x: auto;
+    overflow-y: hidden;
+    text-align: center;
+    white-space: nowrap;
+}
+.hand .card {
+    display: inline-block;
+}
+.hand .card:not(:last-child) {
+    width: 53px;
 }
 .hand .card .card-img {
     height: 139px;
