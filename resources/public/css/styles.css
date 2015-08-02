@@ -206,9 +206,3 @@ html, body, #content, .game {
         line-height: 100px;
     }
 }
-@media (max-width: 640px) {
-    /* stop horizontal sprawl sooner */
-    .game {
-        max-width: 450px;
-    }
-}
