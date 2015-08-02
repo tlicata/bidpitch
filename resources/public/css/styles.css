@@ -78,12 +78,7 @@ html, body, #content, .game {
     margin: 0;
     padding: 0;
 }
-#content {
-    background-color: black;
-}
 .game {
-    background-color: green;
-
     /* stop horizontal sprawl */
     max-width: 600px;
     margin: 0 auto;
