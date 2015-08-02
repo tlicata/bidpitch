@@ -78,12 +78,7 @@ html, body, #content, .game {
     margin: 0;
     padding: 0;
 }
-#content {
-    background-color: black;
-}
 .game {
-    background-color: green;
-
     /* stop horizontal sprawl */
     max-width: 600px;
     margin: 0 auto;
@@ -127,7 +122,7 @@ html, body, #content, .game {
     display: flex;
     position: relative;
 }
-.tablecards .card {
+.tablecards .card-img {
     height: 111px;
     width: 80px;
 }
@@ -140,23 +135,24 @@ html, body, #content, .game {
     top: 0;
     width: 100%;
 }
-.card {
-    height: 139px;
-    width: 100px;
-}
 .hand {
     height: 139px;
-    justify-content: center;
-    -webkit-justify-content: center;
-    opacity: .82;
-    overflow: hidden;
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: flex;
-}
-.hand * {
-    /* make sure no space between hand and points */
     line-height: 0;
+    opacity: .82;
+    overflow-x: auto;
+    overflow-y: hidden;
+    text-align: center;
+    white-space: nowrap;
+}
+.hand .card {
+    display: inline-block;
+}
+.hand .card:not(:last-child) {
+    width: 53px;
+}
+.hand .card .card-img {
+    height: 139px;
+    width: 100px;
 }
 .hand.onus {
     opacity: 1;
@@ -196,24 +192,18 @@ html, body, #content, .game {
         padding: .5em 0;
     }
     /* smaller cards */
-    .card {
+    .hand .card .card-img {
         height: 104px;
         width: 75px;
     }
     .hand {
         height: 104px;
     }
-    .tablecards .card {
+    .tablecards .card .card-img{
         height: 100px;
         width: 72px;
     }
     .tablecards .player {
         line-height: 100px;
-    }
-}
-@media (max-width: 640px) {
-    /* stop horizontal sprawl sooner */
-    .game {
-        max-width: 450px;
     }
 }
