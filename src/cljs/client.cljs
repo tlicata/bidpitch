@@ -48,11 +48,11 @@
 
 (defn card-ui [card]
   (let [url {:src (str "/img/cards/individual/" card ".svg?2.09")}]
-    (dom/img (clj->js (merge {:className "card"} (when card url))))))
+    (dom/img (clj->js (merge {:className "card-img"} (when card url))))))
 (defview card-view
   (let [msg (str "play:" data)
         handler #(socky.client.send-message msg)]
-    (dom/span #js {:onClick handler} (card-ui data))))
+    (dom/span #js {:onClick handler :className "card"} (card-ui data))))
 
 (defview hand-view
   (if-let [player-cards (first (:player-cards data))]

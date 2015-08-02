@@ -122,7 +122,7 @@ html, body, #content, .game {
     display: flex;
     position: relative;
 }
-.tablecards .card {
+.tablecards .card-img {
     height: 111px;
     width: 80px;
 }
@@ -134,10 +134,6 @@ html, body, #content, .game {
     text-shadow: black 2px 2px 1px;
     top: 0;
     width: 100%;
-}
-.card {
-    height: 139px;
-    width: 100px;
 }
 .hand {
     height: 139px;
@@ -152,6 +148,10 @@ html, body, #content, .game {
 .hand * {
     /* make sure no space between hand and points */
     line-height: 0;
+}
+.hand .card .card-img {
+    height: 139px;
+    width: 100px;
 }
 .hand.onus {
     opacity: 1;
@@ -191,14 +191,14 @@ html, body, #content, .game {
         padding: .5em 0;
     }
     /* smaller cards */
-    .card {
+    .hand .card .card-img {
         height: 104px;
         width: 75px;
     }
     .hand {
         height: 104px;
     }
-    .tablecards .card {
+    .tablecards .card .card-img{
         height: 100px;
         width: 72px;
     }
