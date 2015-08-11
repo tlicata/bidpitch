@@ -144,18 +144,20 @@
           (if (blank? name)
             (.alert js/window "It works better if you enter a name. Refresh to try again.")
             (go
-              (reset! websocket (<! (ws-ch websocket-url)))
-              (send-message name)
-              (let [{message :message} (<! @websocket)]
-                (if (= message "taken")
-                  (.alert js/window "Name already taken. Refresh to try again.")
-                  (do
-                    (reset! game-state (read-string message))
-                    (.setItem js/localStorage "username" name)
-                    (send-message "join")
-                    (om/root game-view game-state {:target target})
-                    (loop []
-                      (when-let [msg (<! @websocket)]
-                        (reset! game-state (read-string (:message msg)))
-                        (recur)))
-                    (.alert js/window "server disconnected")))))))))
+              (let [{:keys [ws-channel error]} (<! (ws-ch websocket-url))]
+                (when-not error
+                  (reset! websocket ws-channel)
+                  (send-message name)
+                  (let [{message :message} (<! @websocket)]
+                    (if (= message "taken")
+                      (.alert js/window "Name already taken. Refresh to try again.")
+                      (do
+                        (reset! game-state (read-string message))
+                        (.setItem js/localStorage "username" name)
+                        (send-message "join")
+                        (om/root game-view game-state {:target target})
+                        (loop []
+                          (when-let [msg (<! @websocket)]
+                            (reset! game-state (read-string (:message msg)))
+                            (recur)))
+                        (.alert js/window "server disconnected")))))))))))

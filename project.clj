@@ -8,7 +8,7 @@
                  [com.palletops/thread-expr "1.3.0"]
                  [hiccup "1.0.5"]
                  [http-kit "2.1.16"]
-                 [jarohen/chord "0.2.2"]
+                 [jarohen/chord "0.6.0"]
                  [org.omcljs/om "0.8.8"]]
   :plugins [[lein-cljsbuild "1.0.5"]]
   :hooks [leiningen.cljsbuild]
