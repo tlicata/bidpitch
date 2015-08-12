@@ -22,19 +22,19 @@
 (defn remove-socket! [game-id username]
   (swap! sockets update-in [game-id] dissoc username))
 
-(defn get-game [game-id]
+(defn get-game! [game-id]
   (get @games game-id))
 (defn add-game! [game-id]
-  (when-not (get-game game-id)
+  (when-not (get-game! game-id)
     (swap! games assoc game-id game/empty-state)))
 
 (defn update-clients! [game-id]
-  (let [game-state (get-game game-id)]
+  (let [game-state (get-game! game-id)]
     (doseq [[user data] (get-sockets game-id)]
       (put! (:socket data) (prn-str (game/shield game-state user))))))
 (defn update-game! [game-id func & vals]
   (binding [game/*reconcile-hand-over* false]
-    (when-let [new-state (apply func (concat [(get-game game-id)] vals))]
+    (when-let [new-state (apply func (concat [(get-game! game-id)] vals))]
       (swap! games assoc game-id new-state)
       (when (game/needs-reconcile? new-state)
         (future
@@ -65,7 +65,7 @@
         (if (add-socket! game-id username channel)
           (do
             (println (str "channel for user: " username))
-            (>! channel (prn-str (game/shield (get-game game-id) username)))
+            (>! channel (prn-str (game/shield (get-game! game-id) username)))
             (loop []
               (if-let [{:keys [message]} (<! channel)]
                 (let [[msg val val2] (split message #":")]
@@ -76,7 +76,7 @@
                     "bid" (player-bid! game-id username val)
                     "play" (player-play! game-id username val)
                     "start" (player-start! game-id)
-                    "state" (>! channel (prn-str (game/shield (get-game game-id) username)))
+                    "state" (>! channel (prn-str (game/shield (get-game! game-id) username)))
                     :else (>! channel "unknown message type"))
                   (recur))
                 (do
@@ -92,7 +92,7 @@
           (add-game! id)
           (resp/redirect (str "/games/" id))))
   (GET "/games/:id" [id]
-       (when (get-game id)
+       (when (get-game! id)
          (view/page-game id)))
   (GET "/games/:id/socky" [id :as request]
        (websocket-handler request id))
