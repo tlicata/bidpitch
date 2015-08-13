@@ -1,8 +1,9 @@
 (ns socky.handler
   (:use compojure.core)
   (:require [chord.http-kit :refer [with-channel]]
-            [clojure.core.async :refer [<! >! go go-loop put!]]
+            [clojure.core.async :refer [<! >! close! go go-loop put!]]
             [clojure.string :refer [split]]
+            [clj-jwt.core :refer [jwt str->jwt to-str verify]]
             [compojure.handler :as handler]
             [compojure.route :as route]
             [org.httpkit.server :as httpkit]
@@ -16,11 +17,22 @@
 
 (defn get-sockets [game-id]
   (get @sockets game-id))
-(defn add-socket! [game-id username channel]
-  (when-not (get-in @sockets [game-id username])
-    (swap! sockets assoc-in [game-id username] {:socket channel})))
-(defn remove-socket! [game-id username]
-  (swap! sockets update-in [game-id] dissoc username))
+(defn find-socket [game-id username socks]
+  (-> socks (get game-id) (get username)))
+(defn add-socket! [game-id username channel force]
+  (= channel
+     (find-socket
+      game-id username
+      (swap! sockets (fn [old-sockets]
+                       (let [update #(assoc-in old-sockets [game-id username] channel)]
+                         (if-let [sock (find-socket game-id username old-sockets)]
+                           (if force (do (close! sock) (update)) old-sockets)
+                           (update))))))))
+(defn remove-socket! [game-id username socket]
+  (swap! sockets (fn [old]
+                   (if (= socket (find-socket game-id username old))
+                     (update-in old [game-id] dissoc username)
+                     old))))
 
 (defn get-game! [game-id]
   (get @games game-id))
@@ -30,8 +42,8 @@
 
 (defn update-clients! [game-id]
   (let [game-state (get-game! game-id)]
-    (doseq [[user data] (get-sockets game-id)]
-      (put! (:socket data) (prn-str (game/shield game-state user))))))
+    (doseq [[user socket] (get-sockets game-id)]
+      (put! socket (prn-str (game/shield game-state user))))))
 (defn update-game! [game-id func & vals]
   (binding [game/*reconcile-hand-over* false]
     (when-let [new-state (apply func (concat [(get-game! game-id)] vals))]
@@ -58,13 +70,20 @@
 (defn player-start! [game-id]
   (update-game! game-id game/restart))
 
+(defn grab-user-name [msg]
+  (let [possible-jwt (try (str->jwt msg) (catch Exception _ msg))]
+    (if (string? possible-jwt)
+      {:signed false :jwt (jwt {:username possible-jwt}) :username possible-jwt}
+      {:signed true :jwt possible-jwt :username (-> possible-jwt :claims :username)})))
+
 (defn websocket-handler [request game-id]
   (with-channel request channel
     (go
-      (let [{username :message} (<! channel)]
-        (if (add-socket! game-id username channel)
+      (let [{:keys [username jwt signed]} (grab-user-name (:message (<! channel)))]
+        (if (add-socket! game-id username channel signed)
           (do
             (println (str "channel for user: " username))
+            (>! channel (prn-str (to-str jwt)))
             (>! channel (prn-str (game/shield (get-game! game-id) username)))
             (loop []
               (if-let [{:keys [message]} (<! channel)]
@@ -81,7 +100,7 @@
                   (recur))
                 (do
                   (player-leave! game-id username)
-                  (remove-socket! game-id username)
+                  (remove-socket! game-id username channel)
                   (println (str "channel closed by " username))))))
           (>! channel "taken"))))))
 
