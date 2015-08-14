@@ -65,6 +65,16 @@
   (dom/button #js {:className "button"
                    :style (display show)
                    :onClick #(send-message msg)} text))
+
+(defn bid-button [data val txt]
+  (msg-button txt (str "bid:" val) (game/valid-bid? data (:me data) val)))
+(defn bid-view [data]
+  (dom/span #js {:className "bids" :style (display (my-turn-to-bid? data))}
+            (bid-button data 0 "pass")
+            (bid-button data 2 "2")
+            (bid-button data 3 "3")
+            (bid-button data 4 "4")))
+
 (defview start-view
   (let [players (game/get-players data)
         me (:me data)
@@ -81,15 +91,6 @@
                (dom/span nil (or (game/message-next-step data)
                                  (last (game/get-messages data)))))
              (bid-view data))))
-
-(defn bid-button [data val txt]
-  (msg-button txt (str "bid:" val) (game/valid-bid? data (:me data) val)))
-(defn bid-view [data]
-  (dom/span #js {:className "bids" :style (display (my-turn-to-bid? data))}
-            (bid-button data 0 "pass")
-            (bid-button data 2 "2")
-            (bid-button data 3 "3")
-            (bid-button data 4 "4")))
 
 (defview points-li
   (dom/li nil (str (key data) ": " (val data))))
