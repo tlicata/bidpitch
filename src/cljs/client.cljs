@@ -75,8 +75,15 @@
            (bid-button data 3 "3")
            (bid-button data 4 "4")))
 
+(defn history-current-game [state]
+  (let [play-regex (partial re-matches #".*play\s.*")
+        bid-regex (partial re-matches #".*bid\s.*")
+        msgs (reverse (game/get-messages state))
+        plays (take-while play-regex msgs)
+        bids (take-while bid-regex (drop-while play-regex msgs))]
+    (concat (reverse bids) (reverse plays))))
 (defn history-pprint [state]
-  (join "\n" (game/get-messages state)))
+  (join "\n" (history-current-game state)))
 (defn history-view [data]
   (when-not (empty? (game/get-messages data))
     (dom/span #js {:className "button history"
