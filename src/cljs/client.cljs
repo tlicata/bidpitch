@@ -2,10 +2,10 @@
   (:require [chord.client :refer [ws-ch]]
             [cljs.core.async :refer [<! >! chan put!]]
             [cljs.reader :refer [read-string]]
-            [clojure.string :refer [blank? join]]
+            [clojure.string :refer [blank? join replace]]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
-            [socky.cards :refer [get-rank get-suit ranks suits]]
+            [socky.cards :refer [get-rank get-suit ranks suits to-unicode]]
             [socky.game :as game]
             [socky.util :as util])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]
@@ -24,8 +24,10 @@
 (defn display [show]
   (if show #js {} #js {:display "none"}))
 
+(defn who-am-i [state]
+  (:me state))
 (defn my-turn? [state]
-  (= (game/get-onus state) (:me state)))
+  (= (game/get-onus state) (who-am-i state)))
 (defn my-turn-to-bid? [state]
   (and (my-turn? state) (game/bidding-stage? state)))
 (defn my-turn-to-play? [state]
@@ -75,15 +77,26 @@
            (bid-button data 3 "3")
            (bid-button data 4 "4")))
 
+(def history-play-regex (partial re-matches #"(.*)\splay\s(\S\S)"))
+(def history-bid-regex (partial re-matches #"(.*)\sbid\s(\d)"))
 (defn history-current-game [state]
-  (let [play-regex (partial re-matches #".*play\s.*")
-        bid-regex (partial re-matches #".*bid\s.*")
-        msgs (reverse (game/get-messages state))
-        plays (take-while play-regex msgs)
-        bids (take-while bid-regex (drop-while play-regex msgs))]
+  (let [msgs (reverse (game/get-messages state))
+        plays (take-while history-play-regex msgs)
+        bids (take-while history-bid-regex (drop-while history-play-regex msgs))]
     (concat (reverse bids) (reverse plays))))
+(defn history-unicode [msg]
+  (if-let [[_ name card] (history-play-regex msg)]
+    (replace msg card (to-unicode card))
+    msg))
+(defn history-pass [msg]
+  (let [[_ name bid] (history-bid-regex msg)]
+    (if (= bid "0") (replace msg "bid 0" "pass") msg)))
+(defn history-personalize [person msg]
+  (replace msg person "You"))
 (defn history-pprint [state]
-  (join "\n" (history-current-game state)))
+  (join "\n" (map (comp history-pass history-unicode
+                        (partial history-personalize (who-am-i state)))
+                  (history-current-game state))))
 (defn history-view [data]
   (when-not (empty? (game/get-messages data))
     (dom/span #js {:className "button history"
