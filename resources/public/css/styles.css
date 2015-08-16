@@ -168,18 +168,44 @@ html, body, #content, .game {
 
 .points, .start-view {
     background-color: rgba(0, 0, 0, 0.5);
-    padding: 1em 0;
+    padding: 1em;
     text-align: center;
 }
 
-.start-view .button {
-    margin-top: .5em;
+.start-view {
+    align-items: center;
+    justify-content: space-between;
+    -webkit-align-items: center;
+    -webkit-justify-content: space-between;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
 }
-.start-view .bids {
-    margin-left: .5em;
+
+.bids {
+    align-items: center;
+    justify-content: center;
+    -webkit-align-items: center;
+    -webkit-justify-content: center;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    margin-top: 1em;
 }
-.start-view .bids button {
-    margin: 0 .25em 0 0;
+.bids .button {
+    border-width: 3px;
+    font-size: 1.3em;
+    padding: .4em .25em;
+}
+.bids .button:not(:last-child) {
+    margin-right: .5em;
+}
+
+.history.button {
+    min-width: 1.5em;
+    font-weight: bold;
+    padding: 2px;
+    height: 13px;
 }
 
 .player-list {

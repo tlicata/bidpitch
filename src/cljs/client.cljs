@@ -2,7 +2,7 @@
   (:require [chord.client :refer [ws-ch]]
             [cljs.core.async :refer [<! >! chan put!]]
             [cljs.reader :refer [read-string]]
-            [clojure.string :refer [blank?]]
+            [clojure.string :refer [blank? join]]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [socky.cards :refer [get-rank get-suit ranks suits]]
@@ -68,12 +68,19 @@
 
 (defn bid-button [data val txt]
   (msg-button txt (str "bid:" val) (game/valid-bid? data (:me data) val)))
-(defn bid-view [data]
-  (dom/span #js {:className "bids" :style (display (my-turn-to-bid? data))}
-            (bid-button data 0 "pass")
-            (bid-button data 2 "2")
-            (bid-button data 3 "3")
-            (bid-button data 4 "4")))
+(defview bid-view
+  (dom/div #js {:className "bids" :style (display (my-turn-to-bid? data))}
+           (bid-button data 0 "pass")
+           (bid-button data 2 "2")
+           (bid-button data 3 "3")
+           (bid-button data 4 "4")))
+
+(defn history-pprint [state]
+  (join "\n" (game/get-messages state)))
+(defn history-view [data]
+  (when-not (empty? (game/get-messages data))
+    (dom/span #js {:className "button history"
+                   :onClick #(.alert js/window (history-pprint data))} "^")))
 
 (defview start-view
   (let [players (game/get-players data)
@@ -84,13 +91,14 @@
         can-leave (game/can-leave? data me)
         can-start (and is-leader (not started) (> (count players) 1))]
     (dom/div #js {:className "start-view"}
+             (dom/span nil "") ;; take up left space
              (if can-start
                (dom/span nil
                          (dom/p nil "When you're satisfied with the participant list,")
                          (msg-button "Start" "start" true))
                (dom/span nil (or (game/message-next-step data)
                                  (last (game/get-messages data)))))
-             (bid-view data))))
+             (history-view data))))
 
 (defview points-li
   (dom/li nil (str (key data) ": " (val data))))
@@ -127,6 +135,7 @@
 (defview game-view
   (dom/div #js {:className "game"}
            (dom/div #js {:className "top-ui"}
+                    (om/build bid-view data)
                     (om/build table-cards-view data)
                     (om/build join-list-view data))
            (when-not (game/game-started? data)
