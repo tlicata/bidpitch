@@ -2,10 +2,10 @@
   (:require [chord.client :refer [ws-ch]]
             [cljs.core.async :refer [<! >! chan put!]]
             [cljs.reader :refer [read-string]]
-            [clojure.string :refer [blank?]]
+            [clojure.string :refer [blank? join replace]]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
-            [socky.cards :refer [get-rank get-suit ranks suits]]
+            [socky.cards :refer [get-rank get-suit ranks suits to-unicode]]
             [socky.game :as game]
             [socky.util :as util])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]
@@ -24,8 +24,10 @@
 (defn display [show]
   (if show #js {} #js {:display "none"}))
 
+(defn who-am-i [state]
+  (:me state))
 (defn my-turn? [state]
-  (= (game/get-onus state) (:me state)))
+  (= (game/get-onus state) (who-am-i state)))
 (defn my-turn-to-bid? [state]
   (and (my-turn? state) (game/bidding-stage? state)))
 (defn my-turn-to-play? [state]
@@ -68,12 +70,38 @@
 
 (defn bid-button [data val txt]
   (msg-button txt (str "bid:" val) (game/valid-bid? data (:me data) val)))
-(defn bid-view [data]
-  (dom/span #js {:className "bids" :style (display (my-turn-to-bid? data))}
-            (bid-button data 0 "pass")
-            (bid-button data 2 "2")
-            (bid-button data 3 "3")
-            (bid-button data 4 "4")))
+(defview bid-view
+  (dom/div #js {:className "bids" :style (display (my-turn-to-bid? data))}
+           (bid-button data 0 "pass")
+           (bid-button data 2 "2")
+           (bid-button data 3 "3")
+           (bid-button data 4 "4")))
+
+(def history-play-regex (partial re-matches #"(.*)\splay\s(\S\S)"))
+(def history-bid-regex (partial re-matches #"(.*)\sbid\s(\d)"))
+(defn history-current-game [state]
+  (let [msgs (reverse (game/get-messages state))
+        plays (take-while history-play-regex msgs)
+        bids (take-while history-bid-regex (drop-while history-play-regex msgs))]
+    (concat (reverse bids) (reverse plays))))
+(defn history-unicode [msg]
+  (if-let [[_ name card] (history-play-regex msg)]
+    (replace msg card (to-unicode card))
+    msg))
+(defn history-pass [msg]
+  (let [[_ name bid] (history-bid-regex msg)]
+    (if (= bid "0") (replace msg "bid 0" "pass") msg)))
+(defn history-personalize [person msg]
+  (replace msg person "You"))
+(defn history-pprint [state]
+  (join "\n" (map (comp history-pass history-unicode
+                        (partial history-personalize (who-am-i state)))
+                  (history-current-game state))))
+(defn history-view [data]
+  (if (empty? (game/get-messages data))
+    (dom/span nil nil)
+    (dom/span #js {:className "button history"
+                   :onClick #(.alert js/window (history-pprint data))} "^")))
 
 (defview start-view
   (let [players (game/get-players data)
@@ -84,13 +112,15 @@
         can-leave (game/can-leave? data me)
         can-start (and is-leader (not started) (> (count players) 1))]
     (dom/div #js {:className "start-view"}
+             ;; hidden history button so can-start message is centered
+             (dom/span #js {:style #js {:visibility "hidden"}} (history-view data))
              (if can-start
-               (dom/span nil
+               (dom/span #js {:className "starter"}
                          (dom/p nil "When you're satisfied with the participant list,")
                          (msg-button "Start" "start" true))
                (dom/span nil (or (game/message-next-step data)
-                                 (last (game/get-messages data)))))
-             (bid-view data))))
+                                 (history-unicode (last (game/get-messages data))))))
+             (history-view data))))
 
 (defview points-li
   (dom/li nil (str (key data) ": " (val data))))
@@ -127,6 +157,7 @@
 (defview game-view
   (dom/div #js {:className "game"}
            (dom/div #js {:className "top-ui"}
+                    (om/build bid-view data)
                     (om/build table-cards-view data)
                     (om/build join-list-view data))
            (when-not (game/game-started? data)

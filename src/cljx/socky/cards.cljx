@@ -14,3 +14,13 @@
 
 (defn create-deck []
   (shuffle (flatten (map #(map (fn [rank] (str rank %)) ranks) suits))))
+
+(defn to-unicode [card]
+  (let [suit (get-suit card)
+        rank (get-rank card)]
+    (str rank (condp = suit
+                "C" "♣"
+                "S" "♠"
+                "D" "♦"
+                "H" "♥"
+                suit))))
