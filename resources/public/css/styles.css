@@ -168,7 +168,7 @@ html, body, #content, .game {
 
 .points, .start-view {
     background-color: rgba(0, 0, 0, 0.5);
-    padding: 1em;
+    padding: 1em 0;
     text-align: center;
 }
 
@@ -180,6 +180,9 @@ html, body, #content, .game {
     display: -webkit-box;
     display: -webkit-flex;
     display: flex;
+}
+.start-view .starter p {
+    margin-bottom: .5em;
 }
 
 .bids {
@@ -206,6 +209,7 @@ html, body, #content, .game {
     font-weight: bold;
     padding: 2px;
     height: 13px;
+    margin-right: 1em;
 }
 
 .player-list {

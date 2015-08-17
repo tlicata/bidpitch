@@ -114,7 +114,7 @@
     (dom/div #js {:className "start-view"}
              (dom/span nil "") ;; take up left space
              (if can-start
-               (dom/span nil
+               (dom/span #js {:className "starter"}
                          (dom/p nil "When you're satisfied with the participant list,")
                          (msg-button "Start" "start" true))
                (dom/span nil (or (game/message-next-step data)
