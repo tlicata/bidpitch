@@ -118,7 +118,7 @@
                          (dom/p nil "When you're satisfied with the participant list,")
                          (msg-button "Start" "start" true))
                (dom/span nil (or (game/message-next-step data)
-                                 (last (game/get-messages data)))))
+                                 (history-unicode (last (game/get-messages data))))))
              (history-view data))))
 
 (defview points-li
