@@ -98,7 +98,8 @@
                         (partial history-personalize (who-am-i state)))
                   (history-current-game state))))
 (defn history-view [data]
-  (when-not (empty? (game/get-messages data))
+  (if (empty? (game/get-messages data))
+    (dom/span nil nil)
     (dom/span #js {:className "button history"
                    :onClick #(.alert js/window (history-pprint data))} "^")))
 
