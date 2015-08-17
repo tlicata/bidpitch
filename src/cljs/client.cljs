@@ -112,7 +112,8 @@
         can-leave (game/can-leave? data me)
         can-start (and is-leader (not started) (> (count players) 1))]
     (dom/div #js {:className "start-view"}
-             (dom/span nil "") ;; take up left space
+             ;; hidden history button so can-start message is centered
+             (dom/span #js {:style #js {:visibility "hidden"}} (history-view data))
              (if can-start
                (dom/span #js {:className "starter"}
                          (dom/p nil "When you're satisfied with the participant list,")
