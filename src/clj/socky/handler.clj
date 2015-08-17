@@ -82,13 +82,12 @@
       (let [{:keys [username jwt signed]} (grab-user-name (:message (<! channel)))]
         (if (add-socket! game-id username channel signed)
           (do
-            (println (str "channel for user: " username))
             (>! channel (prn-str (to-str jwt)))
             (>! channel (prn-str (game/shield (get-game! game-id) username)))
             (loop []
               (if-let [{:keys [message]} (<! channel)]
                 (let [[msg val val2] (split message #":")]
-                  (println (str "message received: " game-id " " message "  " username))
+                  (println (str "message received: " username  " " message))
                   (condp = msg
                     "join" (player-join! game-id username)
                     "leave" (player-leave! game-id username)
