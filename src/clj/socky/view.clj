@@ -9,7 +9,7 @@
 (defn meta-viewport []
   [:meta {:name "viewport" :content "width=device-width, user-scalable=no"}])
 
-(defn page-home [games]
+(defn page-home [games player]
   (html5
    [:head
     [:title "Bid Pitch - Home"]
