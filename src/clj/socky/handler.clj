@@ -3,6 +3,7 @@
   (:require [chord.http-kit :refer [with-channel]]
             [clojure.core.async :refer [<! >! close! go go-loop put!]]
             [clojure.string :refer [split]]
+            [clojure.tools.reader.edn :as edn]
             [clj-jwt.core :refer [jwt str->jwt to-str verify]]
             [compojure.handler :as handler]
             [compojure.route :as route]
@@ -53,6 +54,11 @@
           (Thread/sleep 2000)
           (update-game! game-id game/do-reconcile)))
       (update-clients! game-id))))
+
+(defn write-games-to-disk! []
+  (spit "games.edn" (prn-str @games)))
+(defn read-games-from-disk! []
+  (reset! games (edn/read-string (slurp "games.edn"))))
 
 (defn convert-str-to-int [str]
   (try
