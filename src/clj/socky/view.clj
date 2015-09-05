@@ -30,7 +30,7 @@
     [:div.row3
      [:a.howto {:href "https://github.com/tlicata/bidpitch"} "What is this"]]
     [:div.row4
-     [:a.howto {:href "http://en.wikipedia.org/wiki/Pitch_(card_game)"} "How to play"]
+     [:a.howto {:href "http://en.wikipedia.org/wiki/Pitch_(card_game)"} "Wikipedia"]
      [:p.small "(Hint: Auction Pitch with"]
      [:p.small "High, Low, Jack, and Game)"]]]))
 
