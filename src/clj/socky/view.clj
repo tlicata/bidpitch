@@ -9,6 +9,20 @@
 (defn meta-viewport []
   [:meta {:name "viewport" :content "width=device-width, user-scalable=no"}])
 
+
+(defn render-list-of-games-to-join [games]
+  (let [waiting (remove (fn [[id game]]
+                          (or (game-started? game)
+                              (empty? (get-players game))))
+                        games)]
+    (when-not (empty? waiting)
+      [:div
+       [:h5 "Waiting for more players:"]
+       `[:ul
+         ~@(map (fn [[id game]]
+                  [:li (link-to (str games-path id) (join "," (get-players game)))])
+                waiting)]])))
+
 (defn page-home [games player]
   (html5
    [:head
@@ -19,12 +33,7 @@
     [:div.row1
      [:h1 "Bid Pitch"]]
     [:div.row2
-     `[:ul ~@(map (fn [[id game]]
-                    (when-not (or (game-started? game) (empty? (get-players game)))
-                      (let [url (str games-path id)
-                            names (join "," (get-players game))]
-                        [:li (link-to url (str "Join w/ " names))])))
-                  games)]
+     (render-list-of-games-to-join games)
      [:form {:action games-path :method "POST"}
       [:input {:type "submit" :value "Create a game"}]]]
     [:div.row4
