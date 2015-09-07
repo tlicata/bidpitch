@@ -184,7 +184,9 @@
                     (if (= message "taken")
                       (.alert js/window "Name already taken. Refresh to try again.")
                       (do
-                        (.setItem js/localStorage "username" (read-string message))
+                        (let [username (read-string message)]
+                          (.setItem js/localStorage "username" username)
+                          (set! (.-cookie js/document) (str "username=" username ";path=/")))
                         (reset! game-state (read-string (:message (<! @websocket))))
                         (send-message "join")
                         (om/root game-view game-state {:target target})

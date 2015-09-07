@@ -9,7 +9,36 @@
 (defn meta-viewport []
   [:meta {:name "viewport" :content "width=device-width, user-scalable=no"}])
 
-(defn page-home [games]
+
+(defn games-for-user [games username]
+  (filter #(and (game-started? (val %)) (some #{username} (get-players (val  %)))) games))
+
+(defn render-list-of-joined-games [games player]
+  (let [ongoing (if player (games-for-user games player) [])]
+    (when-not (empty? ongoing)
+      [:div
+       [:h5 "Rejoin:"]
+       `[:ul
+         ~@(map (fn [[id game]]
+                  (let [url (str games-path id)
+                        names (join "," (remove #{player} (get-players game)))]
+                    [:li (link-to url (str "You & " names))]))
+                ongoing)]])))
+
+(defn render-list-of-games-to-join [games]
+  (let [waiting (remove (fn [[id game]]
+                          (or (game-started? game)
+                              (empty? (get-players game))))
+                        games)]
+    (when-not (empty? waiting)
+      [:div
+       [:h5 "Waiting for more players:"]
+       `[:ul
+         ~@(map (fn [[id game]]
+                  [:li (link-to (str games-path id) (join "," (get-players game)))])
+                waiting)]])))
+
+(defn page-home [games player]
   (html5
    [:head
     [:title "Bid Pitch - Home"]
@@ -19,12 +48,8 @@
     [:div.row1
      [:h1 "Bid Pitch"]]
     [:div.row2
-     `[:ul ~@(map (fn [[id game]]
-                    (when-not (or (game-started? game) (empty? (get-players game)))
-                      (let [url (str games-path id)
-                            names (join "," (get-players game))]
-                        [:li (link-to url (str "Join w/ " names))])))
-                  games)]
+     (render-list-of-joined-games games player)
+     (render-list-of-games-to-join games)
      [:form {:action games-path :method "POST"}
       [:input {:type "submit" :value "Create a game"}]]]
     [:div.row4

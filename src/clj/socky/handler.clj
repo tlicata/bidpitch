@@ -110,7 +110,10 @@
           (>! channel "taken"))))))
 
 (defroutes app-routes
-  (GET "/" [] (view/page-home @games))
+  (GET "/" request
+       (let [jwt (get-in request [:cookies "username" :value])
+             username (when jwt (:username (grab-user-name jwt)))]
+         (view/page-home @games username)))
   (POST "/games/" []
         (let [id (str (java.util.UUID/randomUUID))]
           (add-game! id)
