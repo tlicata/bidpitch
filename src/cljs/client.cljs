@@ -49,8 +49,11 @@
   (vec (sort sort-cards cards)))
 
 (defn card-ui [card]
-  (let [url {:src (str "/img/cards/individual/" card ".svg?2.09")}]
-    (dom/img (clj->js (merge {:className "card-img"} (when card url))))))
+  (let [html-class {:className (str "card-img" (if card "" " empty"))}
+        card-url {:src (str "/img/cards/individual/" card ".svg?2.09")}]
+    (if card
+      (dom/img (clj->js (merge html-class card-url)))
+      (dom/span (clj->js html-class)))))
 (defview card-view
   (let [msg (str "play:" data)
         handler #(socky.client.send-message msg)]
