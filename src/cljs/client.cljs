@@ -50,7 +50,11 @@
 
 (defn card-ui [card]
   (let [html-class {:className (str "card-img" (if card "" " empty"))}
-        card-url {:src (str "/img/cards/individual/" card ".svg?2.09")}]
+        card-url {:src (str "/img/cards/individual/" card ".svg?2.09")
+                  ;; Force react to not reuse card <img>s. Safari was
+                  ;; messing with the sizes of cards when setting the
+                  ;; `src` attribute to a cached image.
+                  :key card}]
     (if card
       (dom/img (clj->js (merge html-class card-url)))
       (dom/span (clj->js html-class)))))
