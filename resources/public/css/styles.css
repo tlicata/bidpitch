@@ -1,3 +1,10 @@
+html {
+    box-sizing: border-box;
+}
+* {
+    box-sizing: inherit;
+}
+
 body {
     background-color: green;
     color: #CCC;
@@ -126,6 +133,10 @@ html, body, #content, .game {
     height: 111px;
     width: 80px;
 }
+.tablecards .card-img.empty {
+    border: solid 1px #CCC;
+}
+
 .tablecards .player {
     color: white;
     line-height: 115px;
@@ -205,10 +216,10 @@ html, body, #content, .game {
 }
 
 .history.button {
-    min-width: 1.5em;
+    min-width: 2em;
     font-weight: bold;
     padding: 2px;
-    height: 13px;
+    height: 20px;
     margin-right: 1em;
 }
 
