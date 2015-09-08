@@ -49,11 +49,6 @@ To start a web server for the application, run:
 - History in top bar ^
 - Player can rejoin started game without url
 
-### Bugs
-
-- Safari table cards do not clear when hand is over.
-- Safari hand cards sometimes become small.
-
 ## License
 
 Released under the MIT license.
