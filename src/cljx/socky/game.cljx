@@ -2,12 +2,12 @@
   (:require [socky.cards :refer [create-deck get-suit get-rank make-card ranks suits]])
   (#+clj :require #+cljs :require-macros  [pallet.thread-expr :refer [arg-> if-> when->]]))
 
-; Determines whether or not advance-state will infer additional
-; state changes based on the initial change. For instance, if all
-; the cards are played, a new hand should be started. Binding this
-; value to false will prevent the new hand from being automatically
-; dealt. This is only used for testing purposes.
+;; Is a new hand automatically dealt? Yes, (true), except during tests
+;; when we want to inspect the old state before it's replaced.
 (def ^:dynamic *reconcile-end-game* true)
+;; Are table cards cleared when last card is played or is there a
+;; delay? Clear immediately during tests (true) but leave a delay
+;; during normal game play (false) so players have a chance to see.
 (def ^:dynamic *reconcile-hand-over* true)
 
 ; The maximum number of players in a game. The theoretical max is 8,
