@@ -46,8 +46,6 @@ To start a web server for the application, run:
 - Bidder goes out
 - Teams
 - Switch players/teams after game
-- History in top bar ^
-- Player can rejoin started game without url
 
 ## License
 
