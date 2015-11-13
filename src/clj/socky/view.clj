@@ -32,7 +32,7 @@
                         games)]
     (when-not (empty? waiting)
       [:div
-       [:h5 "Waiting for more players:"]
+       [:h5 "Join a game with:"]
        `[:ul
          ~@(map (fn [[id game]]
                   [:li (link-to (str games-path id) (join "," (get-players game)))])
