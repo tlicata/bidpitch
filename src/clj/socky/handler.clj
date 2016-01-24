@@ -82,15 +82,15 @@
       {:signed false :jwt (jwt {:username possible-jwt}) :username possible-jwt}
       {:signed true :jwt possible-jwt :username (-> possible-jwt :claims :username)})))
 
-(defn register-channel [game-id channel]
+(defn register-channel [game-id in out]
   (go
-    (let [{:keys [username jwt signed]} (grab-user-name (:message (<! channel)))]
-      (if (add-socket! game-id username channel signed)
+    (let [{:keys [username jwt signed]} (grab-user-name (:message (<! in)))]
+      (if (add-socket! game-id username out signed)
         (do
-          (>! channel (prn-str (to-str jwt)))
-          (>! channel (prn-str (game/shield (get-game! game-id) username)))
+          (>! out (prn-str (to-str jwt)))
+          (>! out (prn-str (game/shield (get-game! game-id) username)))
           (loop []
-            (if-let [{:keys [message]} (<! channel)]
+            (if-let [{:keys [message]} (<! in)]
               (let [[msg val val2] (split message #":")]
                 (println (str "message received: " username  " " message))
                 (condp = msg
@@ -99,18 +99,18 @@
                   "bid" (player-bid! game-id username val)
                   "play" (player-play! game-id username val)
                   "start" (player-start! game-id)
-                  "state" (>! channel (prn-str (game/shield (get-game! game-id) username)))
-                  :else (>! channel "unknown message type"))
+                  "state" (>! out (prn-str (game/shield (get-game! game-id) username)))
+                  :else (>! out "unknown message type"))
                 (recur))
               (do
                 (player-leave! game-id username)
-                (remove-socket! game-id username channel)
+                (remove-socket! game-id username out)
                 (println (str "channel closed by " username))))))
-        (>! channel "taken")))))
+        (>! out "taken")))))
 
 (defn websocket-handler [request game-id]
   (with-channel request channel
-    (register-channel game-id channel)))
+    (register-channel game-id channel channel)))
 
 (defroutes app-routes
   (GET "/" request
