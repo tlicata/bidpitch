@@ -1,7 +1,7 @@
 (ns socky.handler
   (:use compojure.core)
   (:require [chord.http-kit :refer [with-channel]]
-            [clojure.core.async :refer [<! >! <!! >!! chan close! go go-loop put!]]
+            [clojure.core.async :refer [<! >! chan close! go go-loop put!]]
             [clojure.string :refer [split]]
             [clojure.tools.reader.edn :as edn]
             [clj-jwt.core :refer [jwt str->jwt to-str verify]]
