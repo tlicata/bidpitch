@@ -9,6 +9,7 @@
             [compojure.route :as route]
             [org.httpkit.server :as httpkit]
             [ring.util.response :as resp]
+            [socky.ai :as ai]
             [socky.game :as game]
             [socky.view :as view])
   (:gen-class))
@@ -81,16 +82,7 @@
 (defn spawn-ai [game-id]
   (future (let [in (chan) out (chan)]
             (register-channel game-id in out)
-            (>!! in {:message "AI"})
-            (let [jwt (<!! out) game-state (<!! out)]
-              (println (str "AI jwt " jwt))
-              (println (str "AI game-state ") game-state)
-              (>!! in {:message "join"})
-              (loop []
-                (when-let [msg (<!! out)]
-                  (println (str "AI says: " msg))
-                  (recur)))
-              (println "AI stopped due to disconnect")))))
+            (ai/play in out))))
 
 (defn grab-user-name [msg]
   (let [possible-jwt (try (str->jwt msg) (catch Exception _ msg))]
