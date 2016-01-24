@@ -1,7 +1,7 @@
 (ns socky.handler
   (:use compojure.core)
   (:require [chord.http-kit :refer [with-channel]]
-            [clojure.core.async :refer [<! >! close! go go-loop put!]]
+            [clojure.core.async :refer [<! >! <!! >!! chan close! go go-loop put!]]
             [clojure.string :refer [split]]
             [clojure.tools.reader.edn :as edn]
             [clj-jwt.core :refer [jwt str->jwt to-str verify]]
@@ -76,6 +76,22 @@
 (defn player-start! [game-id]
   (update-game! game-id game/restart))
 
+(declare register-channel)
+
+(defn spawn-ai [game-id]
+  (future (let [in (chan) out (chan)]
+            (register-channel game-id in out)
+            (>!! in {:message "AI"})
+            (let [jwt (<!! out) game-state (<!! out)]
+              (println (str "AI jwt " jwt))
+              (println (str "AI game-state ") game-state)
+              (>!! in {:message "join"})
+              (loop []
+                (when-let [msg (<!! out)]
+                  (println (str "AI says: " msg))
+                  (recur)))
+              (println "AI stopped due to disconnect")))))
+
 (defn grab-user-name [msg]
   (let [possible-jwt (try (str->jwt msg) (catch Exception _ msg))]
     (if (string? possible-jwt)
@@ -94,6 +110,7 @@
               (let [[msg val val2] (split message #":")]
                 (println (str "message received: " username  " " message))
                 (condp = msg
+                  "ai" (spawn-ai game-id)
                   "join" (player-join! game-id username)
                   "leave" (player-leave! game-id username)
                   "bid" (player-bid! game-id username val)

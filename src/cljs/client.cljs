@@ -125,8 +125,11 @@
                (dom/span #js {:className "starter"}
                          (dom/p nil "When you're satisfied with the participant list,")
                          (msg-button "Start" "start" true))
-               (dom/span nil (or (game/message-next-step data)
-                                 (history-unicode (last (game/get-messages data))))))
+               (dom/span nil
+                         (dom/p nil (or (game/message-next-step data)
+                                        (history-unicode (last (game/get-messages data)))))
+                         (when (and is-leader (game/can-join? data "ai"))
+                           (msg-button "Add AI Player" "ai" true))))
              (history-view data))))
 
 (defview points-li
