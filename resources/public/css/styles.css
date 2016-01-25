@@ -192,7 +192,7 @@ html, body, #content, .game {
     display: -webkit-flex;
     display: flex;
 }
-.start-view .starter p {
+.start-view .starter p, .start-view .show-ai p {
     margin-bottom: .5em;
 }
 
