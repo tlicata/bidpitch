@@ -49,4 +49,25 @@
                       ;; Set dealer and order players accordingly.
                       (game/dealt-state))]
         (is (= (game/get-dealer state) my-name))
-        (is (= (game/get-onus state) opponent))))))
+        (is (= (game/get-onus state) opponent))
+
+        ;; If opponent passes, then AI will bid 2.
+        (>!! to-ai (-> state
+                       (game/bid opponent 0)
+                       (game/shield my-name)
+                       prn-str))
+        (is (= {:message "bid:2"} (<!! from-ai)))
+
+        (let [done (-> state
+                       (game/bid opponent 0)
+                       (game/bid my-name 2)
+                       (game/play my-name "AC")
+                       (game/play opponent "2D")
+                       (game/play my-name "KC")
+                       (game/play opponent "4D")
+                       (game/play my-name "JC")
+                       (game/play opponent "6D"))]
+
+          ;; AI will currently pass if given the opportunity.
+          (>!! to-ai (-> done (game/shield my-name) prn-str))
+          (is (= {:message "bid:0"} (<!! from-ai))))))))
