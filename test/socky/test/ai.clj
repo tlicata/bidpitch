@@ -3,7 +3,11 @@
   (:require [clojure.core.async :refer [<!! >!! chan]]
             [socky.game :as game]))
 
+;; This function performs the initial handshake that the AI client
+;; (indeed, all clients, including the browser) go through when
+;; connecting to the server. It is used in the tests below.
 (defn setup-game [my-name from-ai to-ai]
+
   ;; Expect to receive "name" message from AI.  Every client
   ;; tries to register with a name and is accepted if the name
   ;; is available and rejected otherwise.
@@ -31,7 +35,7 @@
 )
 
 (deftest test-ai
-  (testing "AI interaction with server"
+  (testing "AI bidding behavior"
     (let [my-name "AI"
           from-ai (chan) to-ai (chan)
           brain (future (play from-ai to-ai))]
@@ -70,4 +74,45 @@
 
           ;; AI will currently pass if given the opportunity.
           (>!! to-ai (-> done (game/shield my-name) prn-str))
-          (is (= {:message "bid:0"} (<!! from-ai))))))))
+          (is (= {:message "bid:0"} (<!! from-ai)))))
+
+      ;; Try to clean up the running AI process.
+      (future-cancel brain)))
+
+  ;; There once existed a bug who only showed its face when:
+  ;;  1) a game had ended and a new one started, and
+  ;;  2) the AI was the second player to bid.
+  ;; Let's try to recreate that scenario here.
+  (testing "AI response to game restarts"
+    (let [my-name "AI"
+          opponent "opponent"
+          points (assoc {} my-name (dec game/MAX_POINTS) opponent 0)
+          from-ai (chan) to-ai (chan)
+          brain (future (play from-ai to-ai))
+          state (-> game/empty-state
+                    (assoc :points points) ;; about to win
+                    (game/add-player opponent my-name)
+                    (game/add-cards my-name ["AC" "KC" "JC"])
+                    (game/add-cards opponent ["2D" "4D" "6D"])
+                    (game/dealt-state)
+                    (game/bid my-name 2) (game/bid opponent 0)
+                    (game/play my-name "AC") (game/play opponent "2D")
+                    (game/play my-name "KC") (game/play opponent "4D"))]
+      ;; Setup initial state.
+      (setup-game my-name from-ai to-ai)
+
+      ;; Send state to AI and it will/should play the only card it has
+      ;; left (JC).
+      (>!! to-ai (-> state (game/shield my-name) prn-str))
+      (is (= {:message "play:JC"} (<!! from-ai)))
+
+      (let [cards-played (-> state (game/play my-name "JC") (game/play opponent "6D"))]
+        ;; Game should be over, since AI has > MAX_POINTS.
+        (is (game/game-over? cards-played))
+        (is (= my-name (game/get-winner cards-played)))
+        ;; Start a new game and have the opponent pass the bid.
+        (let [new-state (-> cards-played game/restart (game/bid opponent 0))]
+          (>!! to-ai (-> new-state (game/shield my-name) prn-str))
+          (is (= {:message "bid:2"} (<!! from-ai)))))
+
+      (future-cancel brain))))
