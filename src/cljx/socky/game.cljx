@@ -149,7 +149,14 @@
            (assoc :onus onus)
            (assoc :players ordered)))))
 (defn restart [state]
-  (-> state clear-points clear-messages add-cards dealt-state))
+  (let [dealer (get-dealer state)]
+    (-> state
+        clear-points
+        clear-messages
+        add-cards
+        (if-> dealer
+              (dealt-state (next-player (get-players state) dealer))
+              dealt-state))))
 
 ;; helper functions for managing bids
 (defn bidding-stage? [state]
