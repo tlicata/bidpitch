@@ -1,7 +1,7 @@
 (ns socky.handler
   (:use compojure.core)
   (:require [chord.http-kit :refer [with-channel]]
-            [clojure.core.async :refer [<! >! close! go go-loop put!]]
+            [clojure.core.async :refer [<! >! chan close! go go-loop put!]]
             [clojure.string :refer [split]]
             [clojure.tools.reader.edn :as edn]
             [clj-jwt.core :refer [jwt str->jwt to-str verify]]
@@ -9,6 +9,7 @@
             [compojure.route :as route]
             [org.httpkit.server :as httpkit]
             [ring.util.response :as resp]
+            [socky.ai :as ai]
             [socky.game :as game]
             [socky.view :as view])
   (:gen-class))
@@ -76,38 +77,49 @@
 (defn player-start! [game-id]
   (update-game! game-id game/restart))
 
+(declare register-channel)
+
+(defn spawn-ai [game-id]
+  (future (let [in (chan) out (chan)]
+            (register-channel game-id in out)
+            (ai/play in out))))
+
 (defn grab-user-name [msg]
   (let [possible-jwt (try (str->jwt msg) (catch Exception _ msg))]
     (if (string? possible-jwt)
       {:signed false :jwt (jwt {:username possible-jwt}) :username possible-jwt}
       {:signed true :jwt possible-jwt :username (-> possible-jwt :claims :username)})))
 
+(defn register-channel [game-id in out]
+  (go
+    (let [{:keys [username jwt signed]} (grab-user-name (:message (<! in)))]
+      (if (add-socket! game-id username out signed)
+        (do
+          (>! out (prn-str (to-str jwt)))
+          (>! out (prn-str (game/shield (get-game! game-id) username)))
+          (loop []
+            (if-let [{:keys [message]} (<! in)]
+              (let [[msg val val2] (split message #":")]
+                (println (str "message received: " username  " " message))
+                (condp = msg
+                  "ai" (spawn-ai game-id)
+                  "join" (player-join! game-id username)
+                  "leave" (player-leave! game-id username)
+                  "bid" (player-bid! game-id username val)
+                  "play" (player-play! game-id username val)
+                  "start" (player-start! game-id)
+                  "state" (>! out (prn-str (game/shield (get-game! game-id) username)))
+                  :else (>! out "unknown message type"))
+                (recur))
+              (do
+                (player-leave! game-id username)
+                (remove-socket! game-id username out)
+                (println (str "channel closed by " username))))))
+        (>! out "taken")))))
+
 (defn websocket-handler [request game-id]
   (with-channel request channel
-    (go
-      (let [{:keys [username jwt signed]} (grab-user-name (:message (<! channel)))]
-        (if (add-socket! game-id username channel signed)
-          (do
-            (>! channel (prn-str (to-str jwt)))
-            (>! channel (prn-str (game/shield (get-game! game-id) username)))
-            (loop []
-              (if-let [{:keys [message]} (<! channel)]
-                (let [[msg val val2] (split message #":")]
-                  (println (str "message received: " username  " " message))
-                  (condp = msg
-                    "join" (player-join! game-id username)
-                    "leave" (player-leave! game-id username)
-                    "bid" (player-bid! game-id username val)
-                    "play" (player-play! game-id username val)
-                    "start" (player-start! game-id)
-                    "state" (>! channel (prn-str (game/shield (get-game! game-id) username)))
-                    :else (>! channel "unknown message type"))
-                  (recur))
-                (do
-                  (player-leave! game-id username)
-                  (remove-socket! game-id username channel)
-                  (println (str "channel closed by " username))))))
-          (>! channel "taken"))))))
+    (register-channel game-id channel channel)))
 
 (defroutes app-routes
   (GET "/" request

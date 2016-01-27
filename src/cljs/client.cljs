@@ -7,6 +7,7 @@
             [om.dom :as dom :include-macros true]
             [socky.cards :refer [get-rank get-suit ranks suits to-unicode]]
             [socky.game :as game]
+            [socky.shield :as shield]
             [socky.util :as util])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]
                    [socky.cljs-macros :refer [defview]]))
@@ -23,15 +24,6 @@
 
 (defn display [show]
   (if show #js {} #js {:display "none"}))
-
-(defn who-am-i [state]
-  (:me state))
-(defn my-turn? [state]
-  (= (game/get-onus state) (who-am-i state)))
-(defn my-turn-to-bid? [state]
-  (and (my-turn? state) (game/bidding-stage? state)))
-(defn my-turn-to-play? [state]
-  (and (my-turn? state) (not (game/bidding-stage? state))))
 
 (defn sort-cards [card1 card2]
   (let [suit1 (get-suit card1)
@@ -64,10 +56,10 @@
     (dom/span #js {:onClick handler :className "card"} (card-ui data))))
 
 (defview hand-view
-  (if-let [player-cards (first (:player-cards data))]
+  (if-let [player-cards (shield/my-cards data)]
     (apply dom/div
-           #js {:className (str "hand" (when (my-turn? data) " onus"))}
-           (om/build-all card-view (sort-hand (:cards (val player-cards)))))
+           #js {:className (str "hand" (when (shield/my-turn? data) " onus"))}
+           (om/build-all card-view (sort-hand player-cards)))
     (dom/div nil "")))
 
 (defn msg-button [text msg show]
@@ -78,7 +70,7 @@
 (defn bid-button [data val txt]
   (msg-button txt (str "bid:" val) (game/valid-bid? data (:me data) val)))
 (defview bid-view
-  (dom/div #js {:className "bids" :style (display (my-turn-to-bid? data))}
+  (dom/div #js {:className "bids" :style (display (shield/my-turn-to-bid? data))}
            (bid-button data 0 "pass")
            (bid-button data 2 "2")
            (bid-button data 3 "3")
@@ -102,7 +94,7 @@
   (replace msg person "You"))
 (defn history-pprint [state]
   (join "\n" (map (comp history-pass history-unicode
-                        (partial history-personalize (who-am-i state)))
+                        (partial history-personalize (shield/who-am-i state)))
                   (history-current-game state))))
 (defn history-view [data]
   (if (empty? (game/get-messages data))
@@ -125,8 +117,11 @@
                (dom/span #js {:className "starter"}
                          (dom/p nil "When you're satisfied with the participant list,")
                          (msg-button "Start" "start" true))
-               (dom/span nil (or (game/message-next-step data)
-                                 (history-unicode (last (game/get-messages data))))))
+               (let [show-ai (and is-leader (game/can-join? data "ai"))]
+                 (dom/span (when show-ai #js {:className "show-ai"})
+                           (dom/p nil (or (game/message-next-step data)
+                                          (history-unicode (last (game/get-messages data)))))
+                           (when show-ai (msg-button "Add AI Player" "ai" true)))))
              (history-view data))))
 
 (defview points-li
