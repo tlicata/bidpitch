@@ -15,6 +15,9 @@
 ; to ease development.
 (def MAX_PLAYERS 8)
 
+;; The number of points in a game.
+(def MAX_POINTS 11)
+
 ;; Wanted to define `can-leave?` below `remove-player` to keep related
 ;; functions grouped together. Do the same for `can-join?` and
 ;; `add-players`.
@@ -266,7 +269,7 @@
   (empty? (get-all-cards state)))
 (defn game-over? [state]
   (let [points (:points state)
-        winning-pts (filter #(>= % 11) (vals points))]
+        winning-pts (filter #(>= % MAX_POINTS) (vals points))]
     (and (not (empty? winning-pts))
          (= (count winning-pts) (count (into #{} winning-pts))))))
 (defn needs-reconcile? [state]
