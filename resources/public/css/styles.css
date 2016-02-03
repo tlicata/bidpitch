@@ -216,6 +216,7 @@ html, body, #content, .game {
 }
 
 .history.button {
+    cursor: pointer;
     min-width: 2em;
     font-weight: bold;
     padding: 2px;
