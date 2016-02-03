@@ -3,19 +3,12 @@
             [socky.game :as game]
             [socky.shield :as shield]))
 
-(def from-server (atom (chan)))
-(def to-server (atom (chan)))
-(def state (atom {}))
-
 (defn play [in out]
-  (reset! to-server in)
-  (reset! from-server out)
   (>!! in {:message "AI"})
   (let [jwt (<!! out) game-state (<!! out)]
     (>!! in {:message "join"})
     (loop []
       (when-let [game-state (read-string (<!! out))]
-        (reset! state game-state)
         (when (shield/my-turn? game-state)
           (Thread/sleep 2000)
           (>!! in {:message
