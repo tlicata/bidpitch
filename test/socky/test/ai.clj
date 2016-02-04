@@ -3,6 +3,10 @@
   (:require [clojure.core.async :refer [<!! >!! chan]]
             [socky.game :as game]))
 
+;; Helper function for serializing state to be sent to AI.
+(defn state-to-ai [state username]
+  (prn-str (game/shield state username)))
+
 ;; This function performs the initial handshake that the AI client
 ;; (indeed, all clients, including the browser) go through when
 ;; connecting to the server. It is used in the tests below.
@@ -21,7 +25,7 @@
 
   ;; After accepting the client, we send them the current state of
   ;; the game (shielded so they can't see other players' cards).
-  (>!! to-ai game/empty-state)
+  (>!! to-ai (state-to-ai game/empty-state my-name))
 
   ;; Expect to receive the "join" message from the client saying
   ;; the AI wants to join the game.
@@ -58,8 +62,7 @@
         ;; If opponent passes, then AI will bid 2.
         (>!! to-ai (-> state
                        (game/bid opponent 0)
-                       (game/shield my-name)
-                       prn-str))
+                       (state-to-ai my-name)))
         (is (= {:message "bid:2"} (<!! from-ai)))
 
         (let [done (-> state
@@ -73,7 +76,7 @@
                        (game/play opponent "6D"))]
 
           ;; AI will currently pass if given the opportunity.
-          (>!! to-ai (-> done (game/shield my-name) prn-str))
+          (>!! to-ai (state-to-ai done my-name))
           (is (= {:message "bid:0"} (<!! from-ai)))))
 
       ;; Try to clean up the running AI process.
@@ -103,7 +106,7 @@
 
       ;; Send state to AI and it will/should play the only card it has
       ;; left (JC).
-      (>!! to-ai (-> state (game/shield my-name) prn-str))
+      (>!! to-ai (state-to-ai state my-name))
       (is (= {:message "play:JC"} (<!! from-ai)))
 
       (let [cards-played (-> state (game/play my-name "JC") (game/play opponent "6D"))]
@@ -112,7 +115,7 @@
         (is (= my-name (game/get-winner cards-played)))
         ;; Start a new game and have the opponent pass the bid.
         (let [new-state (-> cards-played game/restart (game/bid opponent 0))]
-          (>!! to-ai (-> new-state (game/shield my-name) prn-str))
+          (>!! to-ai (state-to-ai new-state my-name))
           (is (= {:message "bid:2"} (<!! from-ai)))))
 
       (future-cancel brain))))
