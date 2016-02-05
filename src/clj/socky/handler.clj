@@ -17,6 +17,13 @@
 (def sockets (atom {}))
 (def games (atom {}))
 
+;; A hack to determine local AI connections from live player
+;; connections. Websocket connections will be of class similar to
+;; chord.channels$bidi_ch$reify__8637 while AI connections are pure
+;; core.async channels.
+(defn local-ai? [socket]
+  (instance? clojure.core.async.impl.channels.ManyToManyChannel socket))
+
 (defn get-sockets [game-id]
   (get @sockets game-id))
 (defn find-socket [game-id username socks]
@@ -42,12 +49,12 @@
   (when-not (get-game! game-id)
     (swap! games assoc game-id game/empty-state)))
 
-(defn state-to-client [state user]
-  (prn-str (game/shield state user)))
+(defn state-to-client [state user socket]
+  (prn-str (game/shield state user (local-ai? socket))))
 (defn update-clients! [game-id]
   (let [game-state (get-game! game-id)]
     (doseq [[user socket] (get-sockets game-id)]
-      (put! socket (state-to-client game-state user)))))
+      (put! socket (state-to-client game-state user socket)))))
 (defn update-game! [game-id func & vals]
   (binding [game/*reconcile-hand-over* false]
     (when-let [new-state (apply func (concat [(get-game! game-id)] vals))]
@@ -98,7 +105,7 @@
       (if (add-socket! game-id username out signed)
         (do
           (>! out (prn-str (to-str jwt)))
-          (>! out (state-to-client (get-game! game-id) username))
+          (>! out (state-to-client (get-game! game-id) username out))
           (loop []
             (if-let [{:keys [message]} (<! in)]
               (let [[msg val val2] (split message #":")]
@@ -110,7 +117,7 @@
                   "bid" (player-bid! game-id username val)
                   "play" (player-play! game-id username val)
                   "start" (player-start! game-id)
-                  "state" (>! out (state-to-client (get-game! game-id) username))
+                  "state" (>! out (state-to-client (get-game! game-id) username out))
                   :else (>! out "unknown message type"))
                 (recur))
               (do

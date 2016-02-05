@@ -5,7 +5,7 @@
 
 ;; Helper function for serializing state to be sent to AI.
 (defn state-to-ai [state username]
-  (prn-str (game/shield state username)))
+  (prn-str (game/shield state username true)))
 
 ;; This function performs the initial handshake that the AI client
 ;; (indeed, all clients, including the browser) go through when
