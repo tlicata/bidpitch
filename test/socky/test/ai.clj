@@ -3,6 +3,28 @@
   (:require [clojure.core.async :refer [<!! >!! chan]]
             [socky.game :as game]))
 
+(deftest test-possible-moves
+  (let [my-name "AI" opponent "opponent-name"
+        state (-> game/empty-state
+                  (game/add-player my-name opponent)
+                  (game/add-cards my-name ["AC" "KC" "JC"])
+                  (game/add-cards opponent ["2D" "4D" "6D"])
+                  (game/dealt-state))]
+    (testing "possible bids"
+      (is (= (possible-moves state) [{:action "bid" :value 0}
+                                     {:action "bid" :value 2}
+                                     {:action "bid" :value 3}
+                                     {:action "bid" :value 4}]))
+      (is (= (possible-moves (-> state (game/bid opponent 0)))
+             [{:action "bid" :value 2}
+              {:action "bid" :value 3}
+              {:action "bid" :value 4}])))
+    (testing "possible cards"
+      (let [bidded (-> state (game/bid opponent 0) (game/bid my-name 2))]
+        (is (= (possible-moves bidded) [{:action "play" :value "AC"}
+                                        {:action "play" :value "KC"}
+                                        {:action "play" :value "JC"}]))))))
+
 ;; Helper function for serializing state to be sent to AI.
 (defn state-to-ai [state username]
   (prn-str (game/shield state username true)))
