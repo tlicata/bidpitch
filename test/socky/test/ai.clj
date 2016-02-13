@@ -20,10 +20,16 @@
               {:action "bid" :value 3}
               {:action "bid" :value 4}])))
     (testing "possible cards"
-      (let [bidded (-> state (game/bid opponent 0) (game/bid my-name 2))]
-        (is (= (possible-moves bidded) [{:action "play" :value "AC"}
-                                        {:action "play" :value "KC"}
-                                        {:action "play" :value "JC"}]))))))
+      (is (= (possible-moves (-> state (game/bid opponent 0)
+                                 (game/bid my-name 2)))
+             [{:action "play" :value "AC"}
+              {:action "play" :value "KC"}
+              {:action "play" :value "JC"}]))
+      (is (= (possible-moves (-> state (game/bid opponent 2)
+                                 (game/bid my-name 0)))
+             [{:action "play" :value "2D"}
+              {:action "play" :value "4D"}
+              {:action "play" :value "6D"}])))))
 
 ;; Helper function for serializing state to be sent to AI.
 (defn state-to-ai [state username]
