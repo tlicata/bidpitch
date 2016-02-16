@@ -31,6 +31,23 @@
               {:action "play" :value "4D"}
               {:action "play" :value "6D"}])))))
 
+(deftest test-possible-next-states
+  (testing "possible next states"
+    (let [my-name "AI" opponent "opponent-name"
+          state (-> game/empty-state
+                    (game/add-player my-name opponent)
+                    (game/add-cards my-name ["AC" "KC" "JC"])
+                    (game/add-cards opponent ["2D" "4D" "6D"])
+                    (game/dealt-state)
+                    (game/bid opponent 2) (game/bid my-name 0)
+                    (game/play opponent "6D") (game/play my-name "JC")
+                    (game/play opponent "4D") (game/play my-name "KC"))
+          one-step (-> state (game/play opponent "2D"))]
+      (is (= (possible-next-states state) [one-step]))
+      (binding [game/*reconcile-end-game* false]
+        (is (= (possible-next-states one-step)
+               [(-> one-step (game/play my-name "AC"))]))))))
+
 ;; Helper function for serializing state to be sent to AI.
 (defn state-to-ai [state username]
   (prn-str (game/shield state username true)))
