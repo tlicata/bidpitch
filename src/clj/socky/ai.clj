@@ -1,5 +1,6 @@
 (ns socky.ai
   (:require [clojure.core.async :refer [<!! >!! chan]]
+            [socky.cards :as cards]
             [socky.game :as game]
             [socky.shield :as shield]))
 
@@ -24,6 +25,41 @@
          (binding [game/*reconcile-end-game* false]
            (game/advance-state state (game/get-onus state) action value)))
        (possible-moves state)))
+
+;;; Helper functions that mimic some functions in game.cljx but are
+;;; custom to the AI behavior since they examine all the cards in the
+;;; round, not just card that have been won already.
+(defn ai-has-high-trump [state]
+  {:pre [(empty? (game/get-table-cards state))]}
+  (let [trump (game/get-trump state)
+        played (game/highest (game/get-all-tricks state) trump)
+        in-hand (game/highest (game/get-all-cards state) trump)
+        highest (game/highest [played in-hand] trump)]
+    (if (= played highest)
+      (if (= (game/who-won-card state played) "AI") 1 -1)
+      (if (game/player-has-card? state "AI" in-hand) 1 -1))))
+(defn won-or-lost-low [state]
+  (let [trump (game/get-trump state)
+        played (game/lowest (game/get-all-tricks state) trump)
+        in-hand (game/lowest (game/get-all-cards state) trump)
+        lowest (game/lowest [played in-hand] trump)]
+    (if (= played lowest)
+      (if (= (game/who-won-card state lowest) "AI") 1 -1)
+      0)))
+(defn won-or-lost-jack [state]
+  (let [trump (game/get-trump state)
+        jack (cards/make-card "J" trump)
+        who (game/who-won-card state jack)]
+    (condp = who "AI" 1 nil 0 -1)))
+(defn won-or-lost-pts [state] 0)
+
+;;; A static evaluation function that allows us to determine how
+;;; promising a state is without playing it out to the bitter end.
+(defn static-score [state]
+  (if (nil? (game/get-trump state))
+    0
+    (+ (ai-has-high-trump state) (won-or-lost-low state)
+       (won-or-lost-jack state) (won-or-lost-pts state))))
 
 (defn play [in out]
   (>!! in {:message "AI"})
