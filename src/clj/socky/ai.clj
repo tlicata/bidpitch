@@ -62,9 +62,8 @@
        (won-or-lost-jack state) (won-or-lost-pts state))))
 
 (defn best-move [state]
-  (if (shield/my-turn-to-bid? state)
-    {:action "bid" :value (first (filter (partial game/valid-bid? state (shield/who-am-i state)) [0 1 2 3 4]))}
-    {:action "play" :value (rand-nth (filter (partial game/valid-play? state (shield/who-am-i state)) (shield/my-cards state)))}))
+  (let [pick-one (if (shield/my-turn-to-bid? state) first rand-nth)]
+    (pick-one (possible-moves state))))
 
 (defn play [in out]
   (>!! in {:message "AI"})
