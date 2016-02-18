@@ -61,6 +61,11 @@
     (+ (ai-has-high-trump state) (won-or-lost-low state)
        (won-or-lost-jack state) (won-or-lost-pts state))))
 
+(defn best-move [state]
+  (if (shield/my-turn-to-bid? state)
+    {:action "bid" :value (first (filter (partial game/valid-bid? state (shield/who-am-i state)) [0 1 2 3 4]))}
+    {:action "play" :value (rand-nth (filter (partial game/valid-play? state (shield/who-am-i state)) (shield/my-cards state)))}))
+
 (defn play [in out]
   (>!! in {:message "AI"})
   (let [jwt (<!! out) game-state (<!! out)]
@@ -69,9 +74,7 @@
       (when-let [game-state (read-string (<!! out))]
         (when (shield/my-turn? game-state)
           (Thread/sleep 2000)
-          (>!! in {:message
-                   (if (shield/my-turn-to-bid? game-state)
-                     (str "bid:" (first (filter (partial game/valid-bid? game-state (shield/who-am-i game-state)) [0 1 2 3 4])))
-                     (str "play:" (rand-nth (filter (partial game/valid-play? game-state (shield/who-am-i game-state)) (shield/my-cards game-state)))))}))
+          (let [{:keys [:action :value]} (best-move game-state)]
+            (>!! in {:message (str action ":" value)})))
         (recur)))
     (println "AI stopped due to disconnect")))
