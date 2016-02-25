@@ -11,14 +11,14 @@
                   (game/add-cards opponent ["2D" "4D" "6D"])
                   (game/dealt-state))]
     (testing "possible bids"
-      (is (= (possible-moves state) [{:action "bid" :value 0}
-                                     {:action "bid" :value 2}
+      (is (= (possible-moves state) [{:action "bid" :value 4}
                                      {:action "bid" :value 3}
-                                     {:action "bid" :value 4}]))
+                                     {:action "bid" :value 2}
+                                     {:action "bid" :value 0}]))
       (is (= (possible-moves (-> state (game/bid opponent 0)))
-             [{:action "bid" :value 2}
+             [{:action "bid" :value 4}
               {:action "bid" :value 3}
-              {:action "bid" :value 4}])))
+              {:action "bid" :value 2}])))
     (testing "possible cards"
       (is (= (possible-moves (-> state (game/bid opponent 0)
                                  (game/bid my-name 2)))
@@ -43,10 +43,10 @@
                     (game/play opponent "6D") (game/play my-name "JC")
                     (game/play opponent "4D") (game/play my-name "KC"))
           one-step (-> state (game/play opponent "2D"))]
-      (is (= (possible-next-states state) [one-step]))
+      (is (= (possible-state state (first (possible-moves state))) one-step))
       (binding [game/*reconcile-end-game* false]
-        (is (= (possible-next-states one-step)
-               [(-> one-step (game/play my-name "AC"))]))))))
+        (is (= (possible-state one-step (first (possible-moves one-step)))
+               (-> one-step (game/play my-name "AC"))))))))
 
 (deftest test-ai-helpers
   (testing "who has what cards"
