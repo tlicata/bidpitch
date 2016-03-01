@@ -61,27 +61,39 @@
       (let [state (-> base (game/bid opponent 0) (game/bid my-name 2))]
         (let [high (-> state
                        (game/play my-name "AC") (game/play opponent "2D"))]
-          (is (= 1 (ai-has-high-trump high)))
-          (is (= 0 (won-or-lost-low high)))
-          (is (= 0 (won-or-lost-jack high))))
+          (is (= 1 (won-or-lost-high my-name high)))
+          (is (= 0 (won-or-lost-low my-name high)))
+          (is (= 0 (won-or-lost-jack my-name high)))
+          (is (= -1 (won-or-lost-high opponent high)))
+          (is (= 0 (won-or-lost-low opponent high)))
+          (is (= 0 (won-or-lost-jack opponent high))))
         (let [low (-> state
                       (game/play my-name "JC") (game/play opponent "2D"))]
-          (is (= 1 (ai-has-high-trump low)))
-          (is (= 1 (won-or-lost-low low)))
-          (is (= 1 (won-or-lost-jack low)))))
+          (is (= 1 (won-or-lost-high my-name low)))
+          (is (= 1 (won-or-lost-low my-name low)))
+          (is (= 1 (won-or-lost-jack my-name low)))
+          (is (= -1 (won-or-lost-high opponent low)))
+          (is (= -1 (won-or-lost-low opponent low)))
+          (is (= -1 (won-or-lost-jack opponent low)))))
 
       ;; Opponent picks trump.
       (let [state (-> base (game/bid opponent 2) (game/bid my-name 0))]
         (let [high (-> state
                        (game/play opponent "4D") (game/play my-name "KC"))]
-          (is (= -1 (ai-has-high-trump high)))
-          (is (= 0 (won-or-lost-low high)))
-          (is (= 0 (won-or-lost-jack high))))
+          (is (= -1 (won-or-lost-high my-name high)))
+          (is (= 0 (won-or-lost-low my-name high)))
+          (is (= 0 (won-or-lost-jack my-name high)))
+          (is (= 1 (won-or-lost-high opponent high)))
+          (is (= 0 (won-or-lost-low opponent high)))
+          (is (= 0 (won-or-lost-jack opponent high))))
         (let [low (-> state
                       (game/play opponent "2D") (game/play my-name "JC"))]
-          (is (= -1 (ai-has-high-trump low)))
-          (is (= -1 (won-or-lost-low low)))
-          (is (= 0 (won-or-lost-jack low))))))))
+          (is (= -1 (won-or-lost-high my-name low)))
+          (is (= -1 (won-or-lost-low my-name low)))
+          (is (= 0 (won-or-lost-jack my-name low)))
+          (is (= 1 (won-or-lost-high opponent low)))
+          (is (= 1 (won-or-lost-low opponent low)))
+          (is (= 0 (won-or-lost-jack opponent low))))))))
 
 (deftest test-static-score
   (testing "static evaluation of state"
@@ -94,22 +106,22 @@
       ;; AI picks trump.
       (let [state (-> base (game/bid opponent 0) (game/bid my-name 2))]
         ;; 1 point for high card.
-        (is (= 1 (static-score (-> state (game/play my-name "AC")
-                                   (game/play opponent "2D")))))
+        (is (= 1 (static-score my-name (-> state (game/play my-name "AC")
+                                           (game/play opponent "2D")))))
         ;; 3 points for high, low, and jack.
-        (is (= 3 (static-score (-> state (game/play my-name "JC")
-                                   (game/play opponent "2D"))))))
+        (is (= 3 (static-score my-name (-> state (game/play my-name "JC")
+                                           (game/play opponent "2D"))))))
       ;; Opponent picks trump.
       (let [state (-> base (game/bid opponent 2) (game/bid my-name 0))]
         ;; -2 since opponent has high (in hand) and low (played).
-        (is (= -2 (static-score (-> state (game/play opponent "2D")
-                                    (game/play my-name "KC")))))
+        (is (= -2 (static-score my-name (-> state (game/play opponent "2D")
+                                            (game/play my-name "KC")))))
         ;; -1 since opponent has high (played).
-        (is (= -1 (static-score (-> state (game/play opponent "6D")
-                                    (game/play my-name "JC")))))
+        (is (= -1 (static-score my-name (-> state (game/play opponent "6D")
+                                            (game/play my-name "JC")))))
         ;; -1 since opponent has high (in hand).
-        (is (= -1 (static-score (-> state (game/play opponent "4D")
-                                    (game/play my-name "JC")))))))))
+        (is (= -1 (static-score my-name (-> state (game/play opponent "4D")
+                                            (game/play my-name "JC")))))))))
 
 ;; Helper function for serializing state to be sent to AI.
 (defn state-to-ai [state username]
