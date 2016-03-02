@@ -56,12 +56,11 @@
 ;;; A static evaluation function that allows us to determine how
 ;;; promising a state is without playing it out to the bitter end.
 (defn static-score [player state]
-  (if (nil? (game/get-trump state))
+  (if (or (nil? (game/get-trump state))
+          (not (empty? (game/get-table-cards state))))
     0
-    (if (empty? (game/get-table-cards state))
-      (+ (won-or-lost-high player state) (won-or-lost-low player state)
-         (won-or-lost-jack player state) (won-or-lost-pts player state))
-      (recur player (possible-state state (best-move state))))))
+    (+ (won-or-lost-high player state) (won-or-lost-low player state)
+       (won-or-lost-jack player state) (won-or-lost-pts player state))))
 
 (defn best-move [state]
   (let [player (game/get-onus state)]
