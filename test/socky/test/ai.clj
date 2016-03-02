@@ -123,6 +123,35 @@
         (is (= -1 (static-score my-name (-> state (game/play opponent "4D")
                                             (game/play my-name "JC")))))))))
 
+(deftest test-prune
+  (testing "likely best moves without recursing"
+    (let [my-name "AI" opponent "other"
+          base (-> game/empty-state
+                    (game/add-player my-name opponent)
+                    (game/add-cards my-name ["AC" "TD" "4D"])
+                    (game/add-cards opponent ["2C" "3C" "6D"])
+                    (game/dealt-state))]
+      (let [state (-> base (game/bid opponent 0) (game/bid my-name 2))]
+        ;; All moves are equivalent when statically considered.
+        (is (= (prune my-name state (possible-moves state))
+               [{:action "play" :value "4D"}
+                {:action "play" :value "TD"}
+                {:action "play" :value "AC"}]))
+        (let [lead (-> state (game/play my-name "AC"))
+              moves (possible-moves lead)]
+          ;; Opponent needs to follow suit.
+          (is (= moves [{:action "play" :value "2C"}
+                        {:action "play" :value "3C"}]))
+          ;; But it should not throw the low.
+          (is (= (prune opponent lead moves)
+                 [{:action "play" :value "3C"}]))
+          (let [final (-> lead
+                          (game/play opponent "3C")
+                          (game/play my-name "TD"))]
+            ;; Opponent should use the low to take the ten!
+            (is (= (prune opponent final (possible-moves final))
+                   [{:action "play" :value "2C"}]))))))))
+
 ;; Helper function for serializing state to be sent to AI.
 (defn state-to-ai [state username]
   (prn-str (game/shield state username true)))

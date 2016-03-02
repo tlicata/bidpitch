@@ -62,6 +62,16 @@
     (+ (won-or-lost-high player state) (won-or-lost-low player state)
        (won-or-lost-jack player state) (won-or-lost-pts player state))))
 
+;; Prune possible-moves based on the static evalutation function.
+(defn prune [player state moves]
+  (let [states (map (partial possible-state state) moves)
+        scored (map #(assoc % :score (static-score player %)) states)
+        zipped (zipmap scored moves)
+        sorted (into (sorted-map-by (fn [x y] (>= (:score x) (:score y)))) zipped)
+        get-score (comp :score key)
+        best-score (get-score (first sorted))]
+    (vals (take-while #(= (get-score %) best-score) sorted))))
+
 (defn best-move [state]
   (let [player (game/get-onus state)]
     (apply max-key #(static-score player (possible-state state %))
