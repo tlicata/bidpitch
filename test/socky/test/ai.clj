@@ -11,13 +11,10 @@
                   (game/add-cards opponent ["2D" "4D" "6D"])
                   (game/dealt-state))]
     (testing "possible bids"
-      (is (= (possible-moves state) [{:action "bid" :value 4}
-                                     {:action "bid" :value 3}
-                                     {:action "bid" :value 2}
+      (is (= (possible-moves state) [{:action "bid" :value 2}
                                      {:action "bid" :value 0}]))
       (is (= (possible-moves (-> state (game/bid opponent 0)))
-             [{:action "bid" :value 4}
-              {:action "bid" :value 3}
+             [{:action "bid" :value 3}
               {:action "bid" :value 2}])))
     (testing "possible cards"
       (is (= (possible-moves (-> state (game/bid opponent 0)

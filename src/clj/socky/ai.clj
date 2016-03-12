@@ -7,7 +7,7 @@
 (defn possible-bids [state]
   (let [player (game/get-onus state)
         valid? (partial game/valid-bid? state player)
-        options (filter valid? [4 3 2 1 0])]
+        options (take-last 2 (filter valid? [4 3 2 0]))]
     (map (fn [bid] {:action "bid" :value bid}) options)))
 (defn possible-cards [state]
   (let [player (game/get-onus state)
