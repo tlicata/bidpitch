@@ -1,6 +1,7 @@
 (ns socky.test.ai
   (:use clojure.test socky.ai)
   (:require [clojure.core.async :refer [<!! >!! chan]]
+            [clojure.set :refer [subset?]]
             [socky.game :as game]))
 
 (deftest test-possible-moves
@@ -14,8 +15,7 @@
       (is (= (possible-moves state) [{:action "bid" :value 2}
                                      {:action "bid" :value 0}]))
       (is (= (possible-moves (-> state (game/bid opponent 0)))
-             [{:action "bid" :value 3}
-              {:action "bid" :value 2}])))
+             [{:action "bid" :value 2}])))
     (testing "possible cards"
       (is (= (possible-moves (-> state (game/bid opponent 0)
                                  (game/bid my-name 2)))
@@ -130,10 +130,11 @@
                     (game/dealt-state))]
       (let [state (-> base (game/bid opponent 0) (game/bid my-name 2))]
         ;; All moves are equivalent when statically considered.
-        (is (= (prune my-name state (possible-moves state))
-               [{:action "play" :value "4D"}
-                {:action "play" :value "TD"}
-                {:action "play" :value "AC"}]))
+        (is (subset?
+             (set (prune my-name state (possible-moves state)))
+             (set [{:action "play" :value "4D"}
+                   {:action "play" :value "TD"}
+                   {:action "play" :value "AC"}])))
         (let [lead (-> state (game/play my-name "AC"))
               moves (possible-moves lead)]
           ;; Opponent needs to follow suit.
@@ -148,6 +149,29 @@
             ;; Opponent should use the low to take the ten!
             (is (= (prune opponent final (possible-moves final))
                    [{:action "play" :value "2C"}]))))))))
+
+(deftest test-expected-score
+  (testing "expected score of a state for a player"
+    (let [my-name "AI" opponent "opponent"
+          base (-> game/empty-state
+                    (game/add-player my-name opponent)
+                    (game/add-cards my-name ["AC" "TD" "4D"])
+                    (game/add-cards opponent ["2C" "3C" "6D"])
+                    (game/dealt-state)
+                    (game/bid opponent 0) (game/bid my-name 2)
+                    (game/play my-name "AC"))]
+      (binding [game/*reconcile-end-game* false]
+        (let [state (-> base (game/play opponent "3C")
+                        (game/play my-name "TD") (game/play opponent "2C")
+                        (game/play opponent "6D"))
+              done (-> state (game/play my-name "4D"))]
+          ;; AI loses 2 (doesn't make bid) and opponent gets 2 (low + pts).
+          (is (= (expected-score my-name done) -4))
+          (is (= (expected-score opponent done) 4))
+          ;; Can the computer figure out that out with one move left?
+          (is (= (expected-score my-name state) -4))
+          ;; But from the beginning the AI can play smarter.
+          (is (= (expected-score my-name base) 1)))))))
 
 ;; Helper function for serializing state to be sent to AI.
 (defn state-to-ai [state username]
@@ -209,21 +233,7 @@
         (>!! to-ai (-> state
                        (game/bid opponent 0)
                        (state-to-ai my-name)))
-        (is (= {:message "bid:2"} (<!! from-ai)))
-
-        (let [done (-> state
-                       (game/bid opponent 0)
-                       (game/bid my-name 2)
-                       (game/play my-name "AC")
-                       (game/play opponent "2D")
-                       (game/play my-name "KC")
-                       (game/play opponent "4D")
-                       (game/play my-name "JC")
-                       (game/play opponent "6D"))]
-
-          ;; AI will currently pass if given the opportunity.
-          (>!! to-ai (state-to-ai done my-name))
-          (is (= {:message "bid:0"} (<!! from-ai)))))
+        (is (= {:message "bid:2"} (<!! from-ai))))
 
       ;; Try to clean up the running AI process.
       (future-cancel brain)))

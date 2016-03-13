@@ -1,5 +1,6 @@
 (ns socky.ai
   (:require [clojure.core.async :refer [<!! >!! chan]]
+            [clojure.core.memoize :as memoize]
             [socky.cards :as cards]
             [socky.game :as game]
             [socky.shield :as shield]))
@@ -7,7 +8,7 @@
 (defn possible-bids [state]
   (let [player (game/get-onus state)
         valid? (partial game/valid-bid? state player)
-        options (take-last 2 (filter valid? [4 3 2 0]))]
+        options (filter valid? [2 0])]
     (map (fn [bid] {:action "bid" :value bid}) options)))
 (defn possible-cards [state]
   (let [player (game/get-onus state)
@@ -51,7 +52,7 @@
     (condp = who player 1 nil 0 -1)))
 (defn won-or-lost-pts [player state] 0)
 
-(declare best-move)
+(declare best-move-memo)
 
 ;;; A static evaluation function that allows us to determine how
 ;;; promising a state is without playing it out to the bitter end.
@@ -69,13 +70,30 @@
         zipped (zipmap scored moves)
         sorted (into (sorted-map-by (fn [x y] (>= (:score x) (:score y)))) zipped)
         get-score (comp :score key)
-        best-score (get-score (first sorted))]
-    (vals (take-while #(= (get-score %) best-score) sorted))))
+        best-score (get-score (first sorted))
+        actions (vals (take-while #(= (get-score %) best-score) sorted))]
+    (if (>= best-score 2)
+      (take 1 actions)
+      (take 2 actions))))
+
+(defn expected-score [player state]
+  (if (game/round-over? state)
+    (let [points (game/calc-points state)
+          our-points (get points player)
+          their-points (vals (dissoc points player))
+          avg-them (/ (reduce + their-points) (count their-points))]
+      (- our-points avg-them))
+    (recur player (possible-state state (best-move-memo state)))))
 
 (defn best-move [state]
-  (let [player (game/get-onus state)]
-    (apply max-key #(static-score player (possible-state state %))
-           (possible-moves state))))
+  (let [player (game/get-onus state)
+        moves (possible-moves state)]
+    (if (= 1 (count moves))
+      (first moves)
+      (apply max-key #(expected-score player (possible-state state %))
+             (prune player state moves)))))
+
+(def best-move-memo (memoize/ttl best-move {} :ttl/threshold (* 240000)))
 
 (defn play [in out]
   (>!! in {:message "AI"})
@@ -84,8 +102,8 @@
     (loop []
       (when-let [game-state (read-string (<!! out))]
         (when (shield/my-turn? game-state)
-          (Thread/sleep 2000)
-          (let [{:keys [:action :value]} (best-move game-state)]
+          (Thread/sleep 1000)
+          (let [{:keys [:action :value]} (best-move-memo game-state)]
             (>!! in {:message (str action ":" value)})))
         (recur)))
     (println "AI stopped due to disconnect")))
