@@ -1,6 +1,6 @@
 (ns socky.game
   (:require [socky.cards :refer [create-deck get-suit get-rank make-card ranks suits]])
-  (#+clj :require #+cljs :require-macros  [pallet.thread-expr :refer [arg-> if-> when->]]))
+  (#+clj :require #+cljs :require-macros  [pallet.thread-expr :refer [arg-> if-> when-> when-not->]]))
 
 ;; Is a new hand automatically dealt? Yes, (true), except during tests
 ;; when we want to inspect the old state before it's replaced.
@@ -114,10 +114,14 @@
   ;; give specific cards to player
   ([state player cards]
      (assoc-in state [:player-cards player] {:cards cards :tricks []})))
-(defn shield [state user]
-  (-> state
-      (assoc :player-cards (select-keys (:player-cards state) [user]))
-      (assoc :me user)))
+(defn shield
+  ([state user]
+   (shield state user false))
+  ([state user see-all-cards]
+   (-> state
+       (when-not-> see-all-cards
+                   (assoc :player-cards (select-keys (:player-cards state) [user])))
+       (assoc :me user))))
 
 (defn clear-bids [state]
   (assoc state :bids {}))

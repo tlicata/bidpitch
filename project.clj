@@ -4,6 +4,7 @@
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.clojure/clojurescript "1.7.48"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
+                 [org.clojure/core.memoize "0.5.8"]
                  [clj-jwt "0.1.0"]
                  [compojure "1.3.3"]
                  [com.palletops/thread-expr "1.3.0"]

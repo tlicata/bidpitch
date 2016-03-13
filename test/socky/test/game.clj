@@ -2,6 +2,7 @@
   (:use clojure.test
         socky.cards
         socky.game
+        socky.shield
         socky.test.scenarios))
 
 (deftest test-deal
@@ -67,13 +68,20 @@
                     (add-player "tim" "sharon" "louise")
                     (add-cards)
                     (dealt-state))]
+      (is (nil? (who-am-i state)))
       (is (not (empty? (get-player-cards state "tim"))))
       (is (not (empty? (get-player-cards state "sharon"))))
       (is (not (empty? (get-player-cards state "louise"))))
-      (let [shielded (shield state "tim")]
-        (is (not (empty? (get-player-cards shielded "tim"))))
-        (is (nil? (get-player-cards shielded "sharon")))
-        (is (nil? (get-player-cards shielded "louise")))))))
+      (let [hide-cards (shield state "tim" false)]
+        (is (= "tim" (who-am-i hide-cards)))
+        (is (not (empty? (get-player-cards hide-cards "tim"))))
+        (is (nil? (get-player-cards hide-cards "sharon")))
+        (is (nil? (get-player-cards hide-cards "louise"))))
+      (let [all-cards (shield state "tim" true)]
+        (is (= "tim" (who-am-i all-cards)))
+        (is (not (empty? (get-player-cards all-cards "tim"))))
+        (is (not (empty? (get-player-cards all-cards "sharon"))))
+        (is (not (empty? (get-player-cards all-cards "louise"))))))))
 
 (def biddy (-> empty-state (add-player "tim" "sharon" "louise" "bill") dealt-state))
 (def bid-ex0 (-> biddy (bid "sharon" 2) (bid "louise" 3) (bid "bill" 0) (bid "tim" 0)))
