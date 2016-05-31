@@ -6,7 +6,7 @@ html {
 }
 
 body {
-    background-color: green;
+    background: url(/img/pool_table.png) #1d5835 repeat;
     color: #CCC;
     font-family: sans-serif;
 }
