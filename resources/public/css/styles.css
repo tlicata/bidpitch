@@ -7,7 +7,7 @@ html {
 
 body {
     background: url(/img/pool_table.png) #1d5835 repeat;
-    color: #CCC;
+    color: white;
     font-family: sans-serif;
 }
 
@@ -21,8 +21,8 @@ h1, p {
 /* buttons */
 .button, input[type="submit"] {
     background: none;
-    border: #CCC solid 2px;
-    color: #CCC;
+    border: white solid 2px;
+    color: white;
     display: inline-block;
     font-size: 1em;
     min-width: 2.5em;
@@ -35,7 +35,6 @@ h1, p {
 }
 .button:hover, input[type="submit"]:hover {
     border-color: white;
-    color: white;
 }
 
 /* pages */
@@ -58,7 +57,7 @@ body.home .row2 ul {
     margin-bottom: 30px;
 }
 body.home a.howto {
-    color: #CCC;
+    color: white;
 }
 body.home .button {
     min-width: 100px;
@@ -66,7 +65,7 @@ body.home .button {
 body.home p.small {
     font-size: .65em;
     margin: 0;
-    color: #999;
+    color: #DDD;
 }
 body.home p.small:first-of-type {
     margin-top: 5px;
@@ -134,7 +133,7 @@ html, body, #content, .game {
     width: 80px;
 }
 .tablecards .card-img.empty {
-    border: solid 1px #CCC;
+    border: solid 1px white;
 }
 
 .tablecards .player {
