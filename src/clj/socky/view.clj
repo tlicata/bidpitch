@@ -51,7 +51,7 @@
      (render-list-of-joined-games games player)
      (render-list-of-games-to-join games)
      [:form {:action games-path :method "POST"}
-      [:input {:type "submit" :value "Create a game"}]]]
+      [:input {:type "submit" :value "Create game"}]]]
     [:div.row4
      [:a.howto {:href "http://en.wikipedia.org/wiki/Pitch_(card_game)"} "Wikipedia"]
      [:p.small "(Hint: Auction Pitch with"]

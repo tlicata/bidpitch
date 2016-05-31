@@ -1,3 +1,11 @@
+/*
+#0a1d11 - darkest : rgb(10,29,17)
+#133a23 - darker
+#1d5835 - normal
+#277647 - lighter
+#309359 - lightest
+*/
+
 html {
     box-sizing: border-box;
 }
@@ -6,8 +14,8 @@ html {
 }
 
 body {
-    background-color: green;
-    color: #CCC;
+    background: url(/img/pool_table.png) #1d5835 repeat;
+    color: white;
     font-family: sans-serif;
 }
 
@@ -20,13 +28,13 @@ h1, p {
 
 /* buttons */
 .button, input[type="submit"] {
-    background: none;
-    border: #CCC solid 2px;
-    color: #CCC;
+    background-color: #1d5835;
+    border: #277647 solid 2px;
+    color: white;
     display: inline-block;
     font-size: 1em;
     min-width: 2.5em;
-    padding: 4px 5px;
+    padding: 8px 10px;
     text-align: center;
     text-decoration: none;
     border-radius: 10px;
@@ -34,8 +42,7 @@ h1, p {
     -moz-border-radius: 10px;
 }
 .button:hover, input[type="submit"]:hover {
-    border-color: white;
-    color: white;
+    border-color: #309359;
 }
 
 /* pages */
@@ -58,7 +65,7 @@ body.home .row2 ul {
     margin-bottom: 30px;
 }
 body.home a.howto {
-    color: #CCC;
+    color: white;
 }
 body.home .button {
     min-width: 100px;
@@ -66,7 +73,7 @@ body.home .button {
 body.home p.small {
     font-size: .65em;
     margin: 0;
-    color: #999;
+    color: #DDD;
 }
 body.home p.small:first-of-type {
     margin-top: 5px;
@@ -134,7 +141,7 @@ html, body, #content, .game {
     width: 80px;
 }
 .tablecards .card-img.empty {
-    border: solid 1px #CCC;
+    border: solid 1px white;
 }
 
 .tablecards .player {
@@ -178,7 +185,7 @@ html, body, #content, .game {
 }
 
 .points, .start-view {
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(10, 29, 17, 0.6);
     padding: 1em 0;
     text-align: center;
 }
