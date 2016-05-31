@@ -1,3 +1,11 @@
+/*
+#0a1d11 - darkest : rgb(10,29,17)
+#133a23 - darker
+#1d5835 - normal
+#277647 - lighter
+#309359 - lightest
+*/
+
 html {
     box-sizing: border-box;
 }
@@ -20,8 +28,8 @@ h1, p {
 
 /* buttons */
 .button, input[type="submit"] {
-    background: none;
-    border: white solid 2px;
+    background-color: #1d5835;
+    border: #277647 solid 2px;
     color: white;
     display: inline-block;
     font-size: 1em;
@@ -34,7 +42,7 @@ h1, p {
     -moz-border-radius: 10px;
 }
 .button:hover, input[type="submit"]:hover {
-    border-color: white;
+    border-color: #309359;
 }
 
 /* pages */
@@ -177,7 +185,7 @@ html, body, #content, .game {
 }
 
 .points, .start-view {
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(10, 29, 17, 0.6);
     padding: 1em 0;
     text-align: center;
 }
