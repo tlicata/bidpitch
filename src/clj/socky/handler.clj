@@ -144,6 +144,7 @@
          (view/page-game id)))
   (GET "/games/:id/socky" [id :as request]
        (websocket-handler request id))
+  (GET "/rename" [] (view/page-rename))
   (route/resources "/")
   (route/not-found "Not Found"))
 

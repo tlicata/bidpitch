@@ -66,3 +66,11 @@
     (meta-viewport)]
    [:body
     [:div#content]]))
+
+(defn page-rename []
+  (html5
+   [:head
+    [:title "Bid Pitch"]
+    (include-js "/js/rename.js")
+    (meta-viewport)]
+   [:body "Name cleared"]))
