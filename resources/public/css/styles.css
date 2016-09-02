@@ -146,6 +146,7 @@ html, body, #content, .game {
 
 .tablecards .player {
     color: white;
+    left: 0;
     line-height: 115px;
     position: absolute;
     text-align: center;
