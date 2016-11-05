@@ -188,7 +188,7 @@
                       (do
                         (let [username (read-string message)]
                           (.setItem js/localStorage "username" username)
-                          (set! (.-cookie js/document) (str "username=" username ";path=/")))
+                          (set! (.-cookie js/document) (str "username=" username ";path=/;expires=Fri, 31 Dec 9999 23:59:59 GMT")))
                         (reset! game-state (read-string (:message (<! @websocket))))
                         (send-message "join")
                         (om/root game-view game-state {:target target})
