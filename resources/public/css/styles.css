@@ -116,21 +116,13 @@ html, body, #content, .game {
     -webkit-align-self: flex-start;
 }
 .tablecards {
-    align-items: flex-start;
-    flex-direction: row;
     justify-content: center;
-    -webkit-align-items: flex-start;
-    -webkit-flex-direction: row;
     -webkit-justify-content: center;
     display: -webkit-box;
     display: -webkit-flex;
     display: flex;
 }
 .tablecards div {
-    align-items: center;
-    flex-direction: column;
-    -webkit-align-items: center;
-    -webkit-flex-direction: column;
     display: -webkit-box;
     display: -webkit-flex;
     display: flex;
