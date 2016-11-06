@@ -136,8 +136,12 @@
                       (str winner " wins!"))
              (msg-button "Play again!" "start" (game/game-over? data)))))
 
+(defn name-ui [player-name]
+  (dom/div #js {:className "player-wrapper"}
+           (dom/span #js {:className "player"} player-name)))
+
 (defview table-card
-  (dom/div nil (card-ui (second data)) (dom/span #js {:className "player"} (first data))))
+  (dom/div nil (card-ui (second data)) (name-ui (first data))))
 (defview table-cards-view
   (when (and (game/game-started? data)
              (not (game/bidding-stage? data))

@@ -134,15 +134,25 @@ html, body, #content, .game {
     border: solid 1px white;
 }
 
-.tablecards .player {
-    color: white;
+.tablecards .player-wrapper {
+    height: 100%;
     left: 0;
-    line-height: 115px;
     position: absolute;
-    text-align: center;
-    text-shadow: black 2px 2px 1px;
     top: 0;
     width: 100%;
+
+    flex-direction: column;
+    -webkit-flex-direction: column;
+    justify-content: center;
+    -webkit-justify-content: center;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+}
+.tablecards .player {
+    color: white;
+    text-align: center;
+    text-shadow: black 2px 2px 1px;
 }
 .hand {
     height: 139px;
