@@ -2,7 +2,7 @@
   (:use compojure.core)
   (:require [chord.http-kit :refer [with-channel]]
             [clojure.core.async :refer [<! >! chan close! go go-loop put!]]
-            [clojure.string :refer [split]]
+            [clojure.string :refer [split trim]]
             [clojure.tools.reader.edn :as edn]
             [clj-jwt.core :refer [jwt str->jwt to-str verify]]
             [compojure.handler :as handler]
@@ -94,7 +94,7 @@
             (ai/play in out))))
 
 (defn grab-user-name [msg]
-  (let [possible-jwt (try (str->jwt msg) (catch Exception _ msg))]
+  (let [possible-jwt (try (str->jwt msg) (catch Exception _ (trim msg)))]
     (if (string? possible-jwt)
       {:signed false :jwt (jwt {:username possible-jwt}) :username possible-jwt}
       {:signed true :jwt possible-jwt :username (-> possible-jwt :claims :username)})))
