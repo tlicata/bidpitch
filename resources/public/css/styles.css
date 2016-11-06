@@ -123,12 +123,10 @@ html, body, #content, .game {
     display: flex;
 }
 .tablecards div {
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: flex;
     position: relative;
 }
 .tablecards .card-img {
+    display: block;
     height: 111px;
     width: 80px;
 }
