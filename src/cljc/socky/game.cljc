@@ -1,6 +1,6 @@
 (ns socky.game
   (:require [socky.cards :refer [create-deck get-suit get-rank make-card ranks suits]])
-  (#+clj :require #+cljs :require-macros  [pallet.thread-expr :refer [arg-> if-> when-> when-not->]]))
+  (#?(:clj :require :cljs :require-macros) [pallet.thread-expr :refer [arg-> if-> when-> when-not->]]))
 
 ;; Is a new hand automatically dealt? Yes, (true), except during tests
 ;; when we want to inspect the old state before it's replaced.
