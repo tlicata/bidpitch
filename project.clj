@@ -15,20 +15,12 @@
   :plugins [[lein-cljsbuild "1.0.5"]]
   :hooks [leiningen.cljsbuild]
   :main socky.handler
-  :source-paths ["src/clj" "target/generated-src/clj"]
-  :prep-tasks [["cljx" "once"] "javac" "compile"]
+  :source-paths ["src/clj" "src/cljc"]
   :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
-                                  [ring-mock "0.1.5"]]
-                   :plugins [[com.keminglabs/cljx "0.6.0"]]}
+                                  [ring-mock "0.1.5"]]}
              :uberjar {:aot :all
                        :dependencies [[javax.servlet/servlet-api "2.5"]]}}
-  :cljsbuild {:builds [{:source-paths ["src/clj" "src/cljs" "target/generated-src/cljs"]
+  :cljsbuild {:builds [{:source-paths ["src/clj" "src/cljc" "src/cljs"]
                         :compiler {:output-to "resources/public/js/bin/main.js"
                                    :optimizations :advanced
-                                   :pretty-print false}}]}
-  :cljx {:builds [{:source-paths ["src/cljx"]
-                   :output-path "target/generated-src/clj"
-                   :rules :clj}
-                  {:source-paths ["src/cljx"]
-                   :output-path "target/generated-src/cljs"
-                   :rules :cljs}]})
+                                   :pretty-print false}}]})

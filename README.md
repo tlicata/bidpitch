@@ -7,7 +7,7 @@ country.  Based on [Lockport, NY][lockport] local rules.
 Another goal of this project is to make use of interesting
 technologies. The server is written in [Clojure][clj] and the client
 is written in [ClojureScript][cljs]. Game logic is shared between them
-by using [cljx][cljx].
+by using [cljc][cljc].
 
 Websockets handle most of the client-server communication.
 [Http-kit][httpkit] provides good websocket implementation and James
@@ -22,7 +22,7 @@ not necessary, but they were very nice.
 [lockport]: http://en.wikipedia.org/wiki/Lockport_(city),_New_York
 [clj]: http://clojure.org/
 [cljs]: https://github.com/clojure/clojurescript
-[cljx]: https://github.com/lynaghk/cljx
+[cljc]: https://github.com/clojure/clojurescript/wiki/Using-cljc
 [httpkit]: http://http-kit.org/
 [chord]: https://github.com/james-henderson/chord
 [async]: https://github.com/clojure/core.async
