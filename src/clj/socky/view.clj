@@ -62,7 +62,7 @@
    [:head
     [:title "Bid Pitch"]
     (include-css "/css/styles.css")
-    (include-js "/js/bin/main.js")
+    (include-js "/cljs/app.js")
     (meta-viewport)]
    [:body
     [:div#content]]))
