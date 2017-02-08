@@ -1,4 +1,4 @@
-(ns socky.cljs-macros
+(ns bidpitch.cljs-macros
   (:require [om.core :as om]))
 
 (defmacro defview [name body]

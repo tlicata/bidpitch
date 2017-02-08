@@ -1,4 +1,4 @@
-(ns socky.util)
+(ns bidpitch.util)
 
 ;; like `map` but will continue through the end of the longest
 ;; sequence, instead of stopped with the shortest.

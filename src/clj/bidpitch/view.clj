@@ -1,8 +1,8 @@
-(ns socky.view
+(ns bidpitch.view
   (:require [clojure.string :refer [join]]
             [hiccup.element :refer [link-to]]
             [hiccup.page :refer [html5 include-css include-js]]
-            [socky.game :refer [game-started? get-players]]))
+            [bidpitch.game :refer [game-started? get-players]]))
 
 (def games-path "/games/")
 

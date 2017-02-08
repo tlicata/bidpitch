@@ -1,4 +1,4 @@
-(defproject socky "0.1.0-SNAPSHOT"
+(defproject bidpitch "0.1.0-SNAPSHOT"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :dependencies [[org.clojure/clojure "1.7.0"]
@@ -14,7 +14,7 @@
                  [org.omcljs/om "0.8.8"]]
   :plugins [[lein-cljsbuild "1.0.5"]]
   :hooks [leiningen.cljsbuild]
-  :main socky.handler
+  :main bidpitch.handler
   :source-paths ["src/clj" "src/cljc"]
   :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
                                   [ring-mock "0.1.5"]]}

@@ -1,8 +1,8 @@
-(ns socky.test.ai
-  (:use clojure.test socky.ai)
+(ns bidpitch.test.ai
+  (:use clojure.test bidpitch.ai)
   (:require [clojure.core.async :refer [<!! >!! chan]]
             [clojure.set :refer [subset?]]
-            [socky.game :as game]))
+            [bidpitch.game :as game]))
 
 (deftest test-possible-moves
   (let [my-name "AI" opponent "opponent-name"

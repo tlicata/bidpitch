@@ -1,4 +1,4 @@
-(ns socky.handler
+(ns bidpitch.handler
   (:use compojure.core)
   (:require [chord.http-kit :refer [with-channel]]
             [clojure.core.async :refer [<! >! chan close! go go-loop put!]]
@@ -9,9 +9,9 @@
             [compojure.route :as route]
             [org.httpkit.server :as httpkit]
             [ring.util.response :as resp]
-            [socky.ai :as ai]
-            [socky.game :as game]
-            [socky.view :as view])
+            [bidpitch.ai :as ai]
+            [bidpitch.game :as game]
+            [bidpitch.view :as view])
   (:gen-class))
 
 (def sockets (atom {}))

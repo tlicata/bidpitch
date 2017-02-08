@@ -1,16 +1,16 @@
-(ns socky.client
+(ns bidpitch.client
   (:require [chord.client :refer [ws-ch]]
             [cljs.core.async :refer [<! >! chan put!]]
             [cljs.reader :refer [read-string]]
             [clojure.string :refer [blank? join replace]]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
-            [socky.cards :refer [get-rank get-suit ranks suits to-unicode]]
-            [socky.game :as game]
-            [socky.shield :as shield]
-            [socky.util :as util])
+            [bidpitch.cards :refer [get-rank get-suit ranks suits to-unicode]]
+            [bidpitch.game :as game]
+            [bidpitch.shield :as shield]
+            [bidpitch.util :as util])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]
-                   [socky.cljs-macros :refer [defview]]))
+                   [bidpitch.cljs-macros :refer [defview]]))
 
 (def host (.-host (.-location js/window)))
 (def path (.-pathname (.-location js/window)))
@@ -52,7 +52,7 @@
       (dom/span (clj->js html-class)))))
 (defview card-view
   (let [msg (str "play:" data)
-        handler #(socky.client.send-message msg)]
+        handler #(bidpitch.client.send-message msg)]
     (dom/span #js {:onClick handler :className "card"} (card-ui data))))
 
 (defview hand-view
