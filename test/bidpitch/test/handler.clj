@@ -1,7 +1,7 @@
-(ns socky.test.handler
+(ns bidpitch.test.handler
   (:use clojure.test
         ring.mock.request
-        socky.handler))
+        bidpitch.handler))
 
 (deftest test-app
   (testing "main route"

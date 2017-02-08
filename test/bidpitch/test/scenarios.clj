@@ -1,7 +1,7 @@
-(ns socky.test.scenarios
+(ns bidpitch.test.scenarios
   (:use clojure.test
-        socky.cards
-        socky.game))
+        bidpitch.cards
+        bidpitch.game))
 
 (def dont-make-bid (-> empty-state
                        (add-player "tim" "sharon" "louise")

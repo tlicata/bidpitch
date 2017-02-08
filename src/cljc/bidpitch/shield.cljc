@@ -1,5 +1,5 @@
-(ns socky.shield
-  (:require [socky.game :as game]))
+(ns bidpitch.shield
+  (:require [bidpitch.game :as game]))
 
 (defn who-am-i [state]
   (:me state))

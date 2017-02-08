@@ -14,7 +14,7 @@
                  [org.omcljs/om "0.8.8"]]
   :plugins [[lein-cljsbuild "1.0.5"]]
   :hooks [leiningen.cljsbuild]
-  :main socky.handler
+  :main bidpitch.handler
   :source-paths ["src/clj" "src/cljc"]
   :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
                                   [ring-mock "0.1.5"]]}

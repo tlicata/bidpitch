@@ -1,5 +1,5 @@
-(ns socky.game
-  (:require [socky.cards :refer [create-deck get-suit get-rank make-card ranks suits]])
+(ns bidpitch.game
+  (:require [bidpitch.cards :refer [create-deck get-suit get-rank make-card ranks suits]])
   (#?(:clj :require :cljs :require-macros) [pallet.thread-expr :refer [arg-> if-> when-> when-not->]]))
 
 ;; Is a new hand automatically dealt? Yes, (true), except during tests

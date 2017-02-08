@@ -1,9 +1,9 @@
-(ns socky.test.game
+(ns bidpitch.test.game
   (:use clojure.test
-        socky.cards
-        socky.game
-        socky.shield
-        socky.test.scenarios))
+        bidpitch.cards
+        bidpitch.game
+        bidpitch.shield
+        bidpitch.test.scenarios))
 
 (deftest test-deal
   (testing "dealing cards to players"

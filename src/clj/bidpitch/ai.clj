@@ -1,9 +1,9 @@
-(ns socky.ai
+(ns bidpitch.ai
   (:require [clojure.core.async :refer [<!! >!! chan]]
             [clojure.core.memoize :as memoize]
-            [socky.cards :as cards]
-            [socky.game :as game]
-            [socky.shield :as shield]))
+            [bidpitch.cards :as cards]
+            [bidpitch.game :as game]
+            [bidpitch.shield :as shield]))
 
 (defn possible-bids [state]
   (let [player (game/get-onus state)
