@@ -185,6 +185,10 @@ html, body, #content, .game {
     margin-right: .5em;
 }
 
+.points a[href="/"] {
+    margin-left: .5em;
+}
+
 .points, .start-view {
     background-color: rgba(10, 29, 17, 0.6);
     padding: 1em 0;

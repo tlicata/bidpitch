@@ -62,6 +62,10 @@
            (om/build-all card-view (sort-hand player-cards)))
     (dom/div nil "")))
 
+(defn link-button [text url show]
+  (dom/a #js {:className "button"
+              :href url
+              :style (display show)} text))
 (defn msg-button [text msg show]
   (dom/button #js {:className "button"
                    :style (display show)
@@ -134,7 +138,8 @@
              (apply dom/ul nil (om/build-all points-li points))
              (dom/div #js {:style (display (not (nil? winner)))}
                       (str winner " wins!"))
-             (msg-button "Play again!" "start" (game/game-over? data)))))
+             (msg-button "Play again!" "start" (game/game-over? data))
+             (link-button "Home" "/" (game/game-over? data)))))
 
 (defn name-ui [player-name]
   (dom/div #js {:className "player-wrapper"}
