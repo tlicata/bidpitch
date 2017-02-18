@@ -1,18 +1,18 @@
 (defproject bidpitch "0.1.0-SNAPSHOT"
   :description "The card game"
   :url "https://github.com/tlicata/bidpitch"
-  :dependencies [[org.clojure/clojure "1.7.0"]
-                 [org.clojure/clojurescript "1.7.48"]
-                 [org.clojure/core.async "0.1.346.0-17112a-alpha"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
+                 [org.clojure/clojurescript "1.9.473"]
+                 [org.clojure/core.async "0.2.395"]
                  [org.clojure/core.memoize "0.5.8"]
                  [clj-jwt "0.1.0"]
-                 [compojure "1.3.3"]
+                 [compojure "1.5.2"]
                  [com.palletops/thread-expr "1.3.0"]
                  [hiccup "1.0.5"]
-                 [http-kit "2.1.16"]
-                 [jarohen/chord "0.7.0-SNAPSHOT"]
-                 [org.omcljs/om "0.8.8"]]
-  :plugins [[lein-cljsbuild "1.0.5"]]
+                 [http-kit "2.2.0"]
+                 [jarohen/chord "0.7.0"]
+                 [org.omcljs/om "0.9.0"]]
+  :plugins [[lein-cljsbuild "1.1.5"]]
   :hooks [leiningen.cljsbuild]
   :main bidpitch.handler
   :source-paths ["src/clj" "src/cljc"]
