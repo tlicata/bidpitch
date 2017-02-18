@@ -11,7 +11,7 @@
                  [hiccup "1.0.5"]
                  [http-kit "2.2.0"]
                  [jarohen/chord "0.7.0"]
-                 [org.omcljs/om "0.8.8"]]
+                 [org.omcljs/om "0.9.0"]]
   :plugins [[lein-cljsbuild "1.1.5"]]
   :hooks [leiningen.cljsbuild]
   :main bidpitch.handler
