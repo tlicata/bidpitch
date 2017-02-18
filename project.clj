@@ -6,7 +6,7 @@
                  [org.clojure/core.async "0.2.395"]
                  [org.clojure/core.memoize "0.5.8"]
                  [clj-jwt "0.1.0"]
-                 [compojure "1.3.3"]
+                 [compojure "1.5.2"]
                  [com.palletops/thread-expr "1.3.0"]
                  [hiccup "1.0.5"]
                  [http-kit "2.1.16"]
