@@ -118,6 +118,7 @@
   ([state user]
    (shield state user false))
   ([state user see-all-cards]
+   {:pre [(has-player? state user)]}
    (-> state
        (when-not-> see-all-cards
                    (assoc :player-cards (select-keys (:player-cards state) [user])))
