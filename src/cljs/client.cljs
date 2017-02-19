@@ -3,6 +3,7 @@
             [cljs.core.async :refer [<! >! chan put!]]
             [cljs.reader :refer [read-string]]
             [clojure.string :refer [blank? join replace]]
+            [goog.net.cookies]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [bidpitch.cards :refer [get-rank get-suit ranks suits to-unicode]]
@@ -176,6 +177,7 @@
       (fn []
         (let [target (.getElementById js/document "content")
               name (or (.getItem js/localStorage "username")
+                       (.get goog.net.cookies "username")
                        (.prompt js/window "Enter your name"))]
           (if (blank? name)
             (.alert js/window "It works better if you enter a name. Refresh to try again.")
