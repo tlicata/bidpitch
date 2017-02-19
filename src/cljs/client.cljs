@@ -52,15 +52,16 @@
       (dom/img (clj->js (merge html-class card-url)))
       (dom/span (clj->js html-class)))))
 (defview card-view
-  (let [msg (str "play:" data)
-        handler #(bidpitch.client.send-message msg)]
-    (dom/span #js {:onClick handler :className "card"} (card-ui data))))
+  (let [card (:card data) handler #(send-message (str "play:" card))]
+    (dom/span #js {:onClick handler :className "card"} (card-ui card))))
 
 (defview hand-view
   (if-let [player-cards (shield/my-cards data)]
     (apply dom/div
            #js {:className (str "hand" (when (shield/my-turn? data) " onus"))}
-           (om/build-all card-view (sort-hand player-cards)))
+           (om/build-all card-view
+                         (map (partial hash-map :card) (sort-hand player-cards))
+                         {:key :card}))
     (dom/div nil "")))
 
 (defn link-button [text url show]
