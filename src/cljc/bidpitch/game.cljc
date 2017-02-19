@@ -24,6 +24,19 @@
 (declare can-join?)
 (declare can-leave?)
 
+;; The base state of the game. All future states are transformations from here.
+(def empty-state
+  {:bids {}
+   :dealer nil
+   :messages []
+   :onus nil
+   :players []
+   :player-cards {}
+   :points {}
+   :table-cards []
+   :trump nil
+   :winner nil})
+
 ; Helper functions for dealing cards
 (defn deal-cards [deck num-players]
   (take num-players (partition 6 deck)))
@@ -81,18 +94,6 @@
   (let [onus (get-onus state)
         players (get-players state)]
     (assoc state :players (order-players players onus))))
-
-(def empty-state
-  {:bids {}
-   :dealer nil
-   :messages []
-   :onus nil
-   :players []
-   :player-cards {}
-   :points {}
-   :table-cards []
-   :trump nil
-   :winner nil})
 
 (defn has-player? [state player]
   (some #{player} (get-players state)))
