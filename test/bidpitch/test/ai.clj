@@ -275,3 +275,24 @@
           (is (= {:message "bid:2"} (<!! from-ai)))))
 
       (future-cancel brain))))
+
+(deftest test-ai-start
+  ;; There once existed a bug who only showed its face when:
+  ;;  1) a player had requested an AI opponent, but
+  ;;  2) the player left without starting the game.
+  ;; Now the AI "owned" the game and would be responsible for starting it (if
+  ;; the same player rejoined or another joined) and it had no logic to do so.
+  (testing "AI can start a game"
+    (let [my-name "AI" opponent "opponent"
+          from-ai (chan) to-ai (chan)
+          brain (future (play from-ai to-ai))
+          state (-> game/empty-state
+                    ;; AI is first player
+                    (game/add-player my-name opponent))]
+      ;; Setup initial state.
+      (setup-game my-name from-ai to-ai)
+
+      (>!! to-ai (state-to-ai state my-name))
+      (is (= {:message "start:"} (<!! from-ai)))
+
+      (future-cancel brain))))

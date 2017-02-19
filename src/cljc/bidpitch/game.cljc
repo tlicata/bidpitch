@@ -24,6 +24,19 @@
 (declare can-join?)
 (declare can-leave?)
 
+;; The base state of the game. All future states are transformations from here.
+(def empty-state
+  {:bids {}
+   :dealer nil
+   :messages []
+   :onus nil
+   :players []
+   :player-cards {}
+   :points {}
+   :table-cards []
+   :trump nil
+   :winner nil})
+
 ; Helper functions for dealing cards
 (defn deal-cards [deck num-players]
   (take num-players (partition 6 deck)))
@@ -82,18 +95,11 @@
         players (get-players state)]
     (assoc state :players (order-players players onus))))
 
-(def empty-state
-  {:bids {}
-   :dealer nil
-   :messages []
-   :onus nil
-   :players []
-   :player-cards {}
-   :points {}
-   :table-cards []
-   :trump nil
-   :winner nil})
-
+; Other player functions
+(defn leader [state]
+  (first (get-players state)))
+(defn leader? [state player]
+  (= player (leader state)))
 (defn has-player? [state player]
   (some #{player} (get-players state)))
 (defn add-players [state players]
@@ -133,8 +139,13 @@
       (assoc :winner nil)))
 (defn clear-messages [state]
   (assoc state :messages []))
-(defn game-started? [state]
-  (not (nil? (get-dealer state))))
+(defn starting-stage? [state]
+  (nil? (get-dealer state)))
+(def game-started? (comp not starting-stage?))
+(defn can-start? [state player]
+  (and (starting-stage? state)
+       (leader? state player)
+       (> (count (get-players state)) 1)))
 (defn can-join? [state player]
   (and (not (game-started? state))
        (not (has-player? state player))
@@ -167,7 +178,9 @@
 
 ;; helper functions for managing bids
 (defn bidding-stage? [state]
-  (< (count (get-bids state)) (count (get-players state))))
+  (and (game-started? state)
+       (< (count (get-bids state))
+          (count (get-players state)))))
 (defn max-bid-entry [state]
   (let [bids (get-bids state)]
     (if (empty? bids)

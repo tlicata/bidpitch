@@ -16,9 +16,10 @@
         options (filter valid? (game/get-player-cards state player))]
     (map (fn [card] {:action "play" :value card}) options)))
 (defn possible-moves [state]
-  (if (game/bidding-stage? state)
-    (possible-bids state)
-    (possible-cards state)))
+  (cond
+    (game/starting-stage? state) [{:action "start"}]
+    (game/bidding-stage? state) (possible-bids state)
+    :else (possible-cards state)))
 (defn possible-state [state {:keys [:action :value]}]
   ;; AI never needs to deal new cards in order to determine
   ;; play, since that is a new round.

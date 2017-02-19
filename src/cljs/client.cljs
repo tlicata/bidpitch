@@ -107,26 +107,19 @@
                    :onClick #(.alert js/window (history-pprint data))} "^")))
 
 (defview start-view
-  (let [players (game/get-players data)
-        me (:me data)
-        is-leader (= me (first players))
-        started (game/game-started? data)
-        can-join (game/can-join? data me)
-        can-leave (game/can-leave? data me)
-        can-start (and is-leader (not started) (> (count players) 1))]
-    (dom/div #js {:className "start-view"}
-             ;; hidden history button so can-start message is centered
-             (dom/span #js {:style #js {:visibility "hidden"}} (history-view data))
-             (if can-start
-               (dom/span #js {:className "starter"}
-                         (dom/p nil "When you're satisfied with the participant list,")
-                         (msg-button "Start" "start" true))
-               (let [show-ai (and is-leader (game/can-join? data "ai"))]
-                 (dom/span (when show-ai #js {:className "show-ai"})
-                           (dom/p nil (or (game/message-next-step data)
-                                          (history-unicode (last (game/get-messages data)))))
-                           (when show-ai (msg-button "Add AI Player" "ai" true)))))
-             (history-view data))))
+  (dom/div #js {:className "start-view"}
+           ;; hidden history button so can-start message is centered
+           (dom/span #js {:style #js {:visibility "hidden"}} (history-view data))
+           (if (shield/can-i-start? data)
+             (dom/span #js {:className "starter"}
+                       (dom/p nil "When you're satisfied with the participant list,")
+                       (msg-button "Start" "start" true))
+             (let [show-ai (and (shield/am-i-leader? data) (game/can-join? data "ai"))]
+               (dom/span (when show-ai #js {:className "show-ai"})
+                         (dom/p nil (or (game/message-next-step data)
+                                        (history-unicode (last (game/get-messages data)))))
+                         (when show-ai (msg-button "Add AI Player" "ai" true)))))
+           (history-view data)))
 
 (defview points-li
   (dom/li nil (str (key data) ": " (val data))))
