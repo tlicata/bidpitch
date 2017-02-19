@@ -6,3 +6,6 @@
      (reify
        om/IRender
        (~'render [~'_] ~body))))
+
+(defmacro safely [body]
+  `(try ~body (catch :default _ nil)))

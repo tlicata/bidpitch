@@ -10,7 +10,7 @@
             [bidpitch.shield :as shield]
             [bidpitch.util :as util])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]
-                   [bidpitch.cljs-macros :refer [defview]]))
+                   [bidpitch.cljs-macros :refer [defview safely]]))
 
 (def host (.-host (.-location js/window)))
 (def path (.-pathname (.-location js/window)))
@@ -189,7 +189,7 @@
                       (.alert js/window "Name already taken. Refresh to try again.")
                       (do
                         (let [username (read-string message)]
-                          (.setItem js/localStorage "username" username)
+                          (safely (.setItem js/localStorage "username" username))
                           (set! (.-cookie js/document) (str "username=" username ";path=/;expires=Fri, 31 Dec 9999 23:59:59 GMT")))
                         (reset! game-state (read-string (:message (<! @websocket))))
                         (send-message "join")
