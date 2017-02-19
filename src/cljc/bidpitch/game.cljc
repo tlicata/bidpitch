@@ -95,6 +95,11 @@
         players (get-players state)]
     (assoc state :players (order-players players onus))))
 
+; Other player functions
+(defn leader [state]
+  (first (get-players state)))
+(defn leader? [state player]
+  (= player (leader state)))
 (defn has-player? [state player]
   (some #{player} (get-players state)))
 (defn add-players [state players]
@@ -137,6 +142,10 @@
 (defn starting-stage? [state]
   (nil? (get-dealer state)))
 (def game-started? (comp not starting-stage?))
+(defn can-start? [state player]
+  (and (starting-stage? state)
+       (leader? state player)
+       (> (count (get-players state)) 1)))
 (defn can-join? [state player]
   (and (not (game-started? state))
        (not (has-player? state player))

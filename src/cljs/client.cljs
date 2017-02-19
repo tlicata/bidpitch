@@ -110,10 +110,9 @@
   (let [players (game/get-players data)
         me (:me data)
         is-leader (shield/am-i-leader? data)
-        started (game/game-started? data)
         can-join (game/can-join? data me)
         can-leave (game/can-leave? data me)
-        can-start (and is-leader (not started) (> (count players) 1))]
+        can-start (game/can-start? data me)]
     (dom/div #js {:className "start-view"}
              ;; hidden history button so can-start message is centered
              (dom/span #js {:style #js {:visibility "hidden"}} (history-view data))

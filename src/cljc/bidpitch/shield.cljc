@@ -4,7 +4,7 @@
 (defn who-am-i [state]
   (:me state))
 (defn am-i-leader? [state]
-  (= (who-am-i state) (first (game/get-players state))))
+  (game/leader? state (who-am-i state)))
 (defn my-turn? [state]
   (or (and (game/starting-stage? state) (am-i-leader? state))
       (and (not (game/game-over? state))
