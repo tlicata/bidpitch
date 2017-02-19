@@ -3,6 +3,8 @@
 
 (defn who-am-i [state]
   (:me state))
+(defn am-i-leader? [state]
+  (= (who-am-i state) (first (game/get-players state))))
 (defn my-turn? [state]
   (and (not (game/game-over? state))
        (= (game/get-onus state) (who-am-i state))))

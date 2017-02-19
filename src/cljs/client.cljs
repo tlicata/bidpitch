@@ -109,7 +109,7 @@
 (defview start-view
   (let [players (game/get-players data)
         me (:me data)
-        is-leader (= me (first players))
+        is-leader (shield/am-i-leader? data)
         started (game/game-started? data)
         can-join (game/can-join? data me)
         can-leave (game/can-leave? data me)
