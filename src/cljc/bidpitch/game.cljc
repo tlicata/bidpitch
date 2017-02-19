@@ -168,7 +168,9 @@
 
 ;; helper functions for managing bids
 (defn bidding-stage? [state]
-  (< (count (get-bids state)) (count (get-players state))))
+  (and (game-started? state)
+       (< (count (get-bids state))
+          (count (get-players state)))))
 (defn max-bid-entry [state]
   (let [bids (get-bids state)]
     (if (empty? bids)
