@@ -134,8 +134,9 @@
       (assoc :winner nil)))
 (defn clear-messages [state]
   (assoc state :messages []))
-(defn game-started? [state]
-  (not (nil? (get-dealer state))))
+(defn starting-stage? [state]
+  (nil? (get-dealer state)))
+(def game-started? (comp not starting-stage?))
 (defn can-join? [state player]
   (and (not (game-started? state))
        (not (has-player? state player))
