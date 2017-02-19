@@ -14,6 +14,7 @@
 (defn my-turn-to-bid? [state]
   (and (my-turn? state) (game/bidding-stage? state)))
 (defn my-turn-to-play? [state]
-  (and (my-turn? state) (not (game/bidding-stage? state))))
+  (and (my-turn? state) (not (or (game/bidding-stage? state)
+                                 (game/starting-stage? state)))))
 (defn my-cards [state]
   (game/get-player-cards state (who-am-i state)))
