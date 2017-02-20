@@ -202,3 +202,6 @@
                             (reset! game-state (read-string (:message msg)))
                             (recur)))
                         (.alert js/window "Lost connection. Reload page.")))))))))))
+
+(defn on-figwheel-reload []
+  (om/root game-view game-state {:target (.getElementById js/document "content")}))
