@@ -16,9 +16,9 @@
 (def host (.-host (.-location js/window)))
 (def path (.-pathname (.-location js/window)))
 (def websocket-url (str "ws://" host  path "/socky"))
-(def websocket (atom (chan)))
 
-(def game-state (atom game/empty-state))
+(defonce websocket (atom (chan)))
+(defonce game-state (atom game/empty-state))
 
 (defn send-message [msg]
   (put! @websocket msg))
@@ -202,3 +202,6 @@
                             (reset! game-state (read-string (:message msg)))
                             (recur)))
                         (.alert js/window "Lost connection. Reload page.")))))))))))
+
+(defn on-figwheel-reload []
+  (om/root game-view game-state {:target (.getElementById js/document "content")}))

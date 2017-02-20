@@ -41,6 +41,15 @@ To start a web server for the application, run:
 
     lein run
 
+Additionally, to enable live reloading of ClojureScript and CSS
+via [Figwheel][figwheel], run:
+
+    lein figwheel
+
+(And change  `/cljs/app.js` to `/figwheel/app.js` in `view.clj`.)
+
+[figwheel]: https://github.com/bhauman/lein-figwheel
+
 ## TODO
 
 - Bidder goes out
