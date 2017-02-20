@@ -7,7 +7,7 @@ country.  Based on [Lockport, NY][lockport] local rules.
 Another goal of this project is to make use of interesting
 technologies. The server is written in [Clojure][clj] and the client
 is written in [ClojureScript][cljs]. Game logic is shared between them
-by using [cljc][cljc].
+using [cljc][cljc].
 
 Websockets handle most of the client-server communication.
 [Http-kit][httpkit] provides good websocket implementation and James
@@ -31,9 +31,9 @@ not necessary, but they were very nice.
 
 ## Prerequisites
 
-You will need [Leiningen][1] 1.7.0 or above installed.
+You will need [Leiningen][leiningen] installed.
 
-[1]: https://github.com/technomancy/leiningen
+[leiningen]: https://github.com/technomancy/leiningen
 
 ## Running
 
