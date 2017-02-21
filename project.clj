@@ -12,13 +12,13 @@
                  [http-kit "2.2.0"]
                  [jarohen/chord "0.7.0"]
                  [org.omcljs/om "0.9.0"]]
-  :plugins [[lein-cljsbuild "1.1.5"]
-            [lein-figwheel "0.5.9"]]
+  :plugins [[lein-cljsbuild "1.1.5"]]
   :hooks [leiningen.cljsbuild]
   :main bidpitch.handler
   :source-paths ["src/clj" "src/cljc"]
   :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
                                   [ring-mock "0.1.5"]]
+                   :plugins [[lein-figwheel "0.5.9"]]
                    :cljsbuild {:builds
                                {:key {:figwheel {:on-jsload "bidpitch.client/on-figwheel-reload"}
                                       :compiler {:asset-path "/cljs"
