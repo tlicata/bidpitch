@@ -18,23 +18,21 @@
   :main bidpitch.handler
   :source-paths ["src/clj" "src/cljc"]
   :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
-                                  [ring-mock "0.1.5"]]}
+                                  [ring-mock "0.1.5"]]
+                   :cljsbuild {:builds
+                               {:key {:figwheel {:on-jsload "bidpitch.client/on-figwheel-reload"}
+                                      :compiler {:asset-path "/cljs"
+                                                 :main "bidpitch.client"
+                                                 :output-to "target/classes/public/cljs/app.js"
+                                                 :output-dir "target/classes/public/cljs"
+                                                 :optimizations :none
+                                                 :pretty-print true
+                                                 :source-map-timestamp true}}}}}
              :uberjar {:aot :all
                        :dependencies [[javax.servlet/servlet-api "2.5"]]}}
   :cljsbuild {:builds
-              [{:id "prod"
-                :source-paths ["src/clj" "src/cljc" "src/cljs"]
-                :compiler {:output-to "target/classes/public/cljs/app.js"
-                           :optimizations :advanced
-                           :pretty-print false}}
-               {:id "dev"
-                :source-paths ["src/clj" "src/cljc" "src/cljs"]
-                :figwheel {:on-jsload "bidpitch.client/on-figwheel-reload"}
-                :compiler {:asset-path "/figwheel"
-                           :main "bidpitch.client"
-                           :output-to "target/classes/public/figwheel/app.js"
-                           :output-dir "target/classes/public/figwheel"
-                           :optimizations :none
-                           :pretty-print true
-                           :source-map-timestamp true}}]}
+              {:key {:source-paths ["src/clj" "src/cljc" "src/cljs"]
+                     :compiler {:output-to "target/classes/public/cljs/app.js"
+                                :optimizations :advanced
+                                :pretty-print false}}}}
   :figwheel {:css-dirs ["resources/public/css"]})

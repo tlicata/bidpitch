@@ -46,8 +46,6 @@ via [Figwheel][figwheel], run:
 
     lein figwheel
 
-(And change  `/cljs/app.js` to `/figwheel/app.js` in `view.clj`.)
-
 [figwheel]: https://github.com/bhauman/lein-figwheel
 
 ## TODO
