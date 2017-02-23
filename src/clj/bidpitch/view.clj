@@ -41,7 +41,7 @@
 (defn page-home [games player]
   (html5
    [:head
-    [:title "Bid Pitch - Home"]
+    [:title "Bid Pitch"]
     (include-css "/css/styles.css")
     (meta-viewport)]
    [:body.page.home
