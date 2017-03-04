@@ -4,6 +4,7 @@
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/clojurescript "1.9.473"]
                  [org.clojure/core.async "0.2.395"]
+                 [org.clojure/core.logic "0.8.11"]
                  [org.clojure/core.memoize "0.5.8"]
                  [clj-jwt "0.1.0"]
                  [compojure "1.5.2"]
