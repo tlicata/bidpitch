@@ -2,7 +2,7 @@
   (:refer-clojure :exclude [==])
   (:require
    [bidpitch.cards :refer [create-deck get-suit get-rank make-card ranks suits]]
-   [clojure.core.logic :refer [run* membero]]
+   [clojure.core.logic :refer [run* fresh membero ==]]
    [clojure.string :as string])
   (#?(:clj :require :cljs :require-macros) [pallet.thread-expr :refer [arg-> if-> when-> when-not->]]))
 
@@ -404,6 +404,13 @@
   (run* [q]
     (membero q [1 2 3])
     (membero q [2 3 4])))
+
+(defn do-a-logic-with-unification []
+  (run* [q]
+    (fresh [a]
+      (membero q [1 2 3])
+      (membero a [2 3 4])
+      (== q a))))
 
 (defn do-more-logic []
   (run* [q]
