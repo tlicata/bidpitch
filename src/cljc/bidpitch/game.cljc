@@ -1,4 +1,5 @@
 (ns bidpitch.game
+  (:refer-clojure :exclude [==])
   (:require
    [bidpitch.cards :refer [create-deck get-suit get-rank make-card ranks suits]]
    [clojure.core.logic :refer [run* membero]]
