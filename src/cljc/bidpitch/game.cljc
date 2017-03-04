@@ -404,3 +404,7 @@
   (run* [q]
     (membero q [1 2 3])
     (membero q [2 3 4])))
+
+(defn do-more-logic []
+  (run* [q]
+    (== {:a q, :b 2} {:a 1 :b 2})))
