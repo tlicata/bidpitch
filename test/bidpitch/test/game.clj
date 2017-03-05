@@ -39,6 +39,13 @@
       (is (= (order-players players "rob")
              ["rob" "tim" "paul" "mike"])))))
 
+(deftest test-has-player
+  (testing "detecting if a player has joined the game"
+    (let [players ["carl" "alex"]
+          state (-> empty-state (add-players players))]
+      (is (nil? (has-player? empty-state "carl")))
+      (is (= true  (has-player? state "carl")))
+      (is (nil? (has-player? state "who"))))))
 (deftest test-add-player
   (testing "add a NEW player ONLY before game has started"
     (let [players ["carl" "alex"]

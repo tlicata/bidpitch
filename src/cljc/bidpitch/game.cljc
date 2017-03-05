@@ -101,7 +101,7 @@
 (defn leader? [state player]
   (= player (leader state)))
 (defn has-player? [state player]
-  (some #{player} (get-players state)))
+  (some #(= player %) (get-players state)))
 (defn add-players [state players]
   (let [dedupe (filter (partial can-join? state) players)]
     (update-in state [:players] concat dedupe)))
