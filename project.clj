@@ -31,7 +31,7 @@
              :uberjar {:aot :all
                        :dependencies [[javax.servlet/servlet-api "2.5"]]}}
   :cljsbuild {:builds
-              {:key {:source-paths ["src/clj" "src/cljc" "src/cljs"]
+              {:key {:source-paths ["src/cljc" "src/cljs"]
                      :compiler {:output-to "target/classes/public/cljs/app.js"
                                 :optimizations :advanced
                                 :pretty-print false}}}}
