@@ -28,7 +28,7 @@
 (def empty-state
   {:bids {}
    :dealer nil
-   :messages []
+   :log []
    :onus nil
    :players []
    :player-cards {}
@@ -69,8 +69,12 @@
   (:onus state))
 (defn get-winner [state]
   (:winner state))
+(defn get-log [state]
+  (:log state))
 (defn get-messages [state]
-  (:messages state))
+  (map (fn [{:keys [player action value] :as event}]
+         (str player " " action " " value))
+       (get-log state)))
 
 ; Utility functions to get next player
 (defn index-of [vect item]
@@ -137,8 +141,8 @@
   (-> state
       (assoc :points {})
       (assoc :winner nil)))
-(defn clear-messages [state]
-  (assoc state :messages []))
+(defn clear-log [state]
+  (assoc state :log []))
 (defn starting-stage? [state]
   (nil? (get-dealer state)))
 (def game-started? (comp not starting-stage?))
@@ -170,7 +174,7 @@
   (let [dealer (get-dealer state)]
     (-> state
         clear-points
-        clear-messages
+        clear-log
         add-cards
         (if-> dealer
               (dealt-state (next-player (get-players state) dealer))
@@ -363,8 +367,8 @@
                      (update-bid old-state player value))
                    (when (= action "play")
                      (update-play old-state player value))))]
-    (let [msg (str player " " action " " value)]
-      (update-in s [:messages] #(conj % msg)))))
+    (let [event {:player player :action action :value value}]
+      (update-in s [:log] #(conj % event)))))
 
 (defn bid [state player value]
   (advance-state state player "bid" value))
