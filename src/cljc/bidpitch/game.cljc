@@ -370,17 +370,3 @@
   (advance-state state player "bid" value))
 (defn play [state player value]
   (advance-state state player "play" value))
-
-(defn possessive-name [state]
-  (when-let [onus (get-onus state)]
-    (if (= onus (:me state)) "Your" (str onus "'s"))))
-
-(defn message-next-step [state]
-  (if (game-started? state)
-    (if (game-over? state)
-      (str "Game over. " (get-winner state) " wins.")
-      (when (get-onus state)
-        (if (bidding-stage? state)
-          (str (possessive-name state) " turn to bid.")
-          (str (possessive-name state) " turn to play."))))
-    "Waiting for everyone to join"))

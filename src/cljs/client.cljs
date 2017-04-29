@@ -108,6 +108,20 @@
     (dom/span #js {:className "button history"
                    :onClick #(.alert js/window (history-pprint data))} "^")))
 
+(defn possessive-name [state]
+  (when-let [onus (game/get-onus state)]
+    (if (= onus (:me state)) "Your" (str onus "'s"))))
+
+(defn message-next-step [state]
+  (if (game/game-started? state)
+    (if (game/game-over? state)
+      (str "Game over. " (game/get-winner state) " wins.")
+      (when (game/get-onus state)
+        (if (game/bidding-stage? state)
+          (str (possessive-name state) " turn to bid.")
+          (str (possessive-name state) " turn to play."))))
+    "Waiting for everyone to join"))
+
 (defview start-view
   (dom/div #js {:className "start-view"}
            ;; hidden history button so can-start message is centered
@@ -118,7 +132,7 @@
                        (msg-button "Start" "start" true))
              (let [show-ai (and (shield/am-i-leader? data) (game/can-join? data "ai"))]
                (dom/span (when show-ai #js {:className "show-ai"})
-                         (dom/p nil (or (game/message-next-step data)
+                         (dom/p nil (or (message-next-step data)
                                         (history-unicode (last (game/get-messages data)))))
                          (when show-ai (msg-button "Add AI Player" "ai" true)))))
            (history-view data)))
