@@ -362,7 +362,7 @@
                             (dealt-state))]
       (is (= (get-dealer initial-state) "tim"))
       (is (= (get-onus initial-state) "sharon"))
-      (is (= (:messages initial-state [])))
+      (is (= (:messages initial-state) []))
       ;; only sharon can make the next move
       (is (nil? (advance-state initial-state "louise" "bid" 2)))
       ;; bid must be at least 2
