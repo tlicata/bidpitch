@@ -274,6 +274,12 @@
                     (play "sharon" "KS")
                     (play "tim" "QD"))))
 
+(deftest test-who-played-card
+  (testing "detecting who played the winning (or any) card"
+    (is (= (who-played-card hand-played "AC") "louise"))
+    (is (= (who-played-card hand-played "2C") "sharon"))
+    (is (= (who-played-card hand-played "4C") "tim"))))
+
 (deftest test-award-hand-to-winner
   (testing "put table-cards into winner's tricks pile"
     (is (= (get-player-tricks hand-played "louise") [["AC" "2C" "4C"]]))))
