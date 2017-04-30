@@ -1,5 +1,7 @@
 (ns bidpitch.game
-  (:require [bidpitch.cards :refer [create-deck get-suit get-rank make-card ranks suits]])
+  (:require
+   [bidpitch.cards :refer [create-deck get-suit get-rank make-card ranks suits]]
+   [clojure.string :as string])
   (#?(:clj :require :cljs :require-macros) [pallet.thread-expr :refer [arg-> if-> when-> when-not->]]))
 
 ;; Is a new hand automatically dealt? Yes, (true), except during tests
@@ -28,7 +30,7 @@
 (def empty-state
   {:bids {}
    :dealer nil
-   :messages []
+   :log []
    :onus nil
    :players []
    :player-cards {}
@@ -69,8 +71,10 @@
   (:onus state))
 (defn get-winner [state]
   (:winner state))
+(defn get-log [state]
+  (:log state))
 (defn get-messages [state]
-  (:messages state))
+  (map (partial string/join " ") (get-log state)))
 
 ; Utility functions to get next player
 (defn index-of [vect item]
@@ -137,8 +141,8 @@
   (-> state
       (assoc :points {})
       (assoc :winner nil)))
-(defn clear-messages [state]
-  (assoc state :messages []))
+(defn clear-log [state]
+  (assoc state :log []))
 (defn starting-stage? [state]
   (nil? (get-dealer state)))
 (def game-started? (comp not starting-stage?))
@@ -170,7 +174,7 @@
   (let [dealer (get-dealer state)]
     (-> state
         clear-points
-        clear-messages
+        clear-log
         add-cards
         (if-> dealer
               (dealt-state (next-player (get-players state) dealer))
@@ -199,14 +203,13 @@
         (or (= value 0) ;; else bid must be in range and above max (or pass)
             (and (> value leading) in-range))))))
 (defn update-bid [old-state player value]
-  (let [players (get-players old-state)]
-    (if (valid-bid? old-state player value)
-      (let [new-state (assoc-in old-state [:bids player] value)]
-        (if (= (count players) (count (get-bids new-state)))
-          (-> new-state
-              (assoc :onus (highest-bidder new-state))
-              (order-around-onus))
-          (assoc new-state :onus (next-player players player)))))))
+  (let [players (get-players old-state)
+        new-state (assoc-in old-state [:bids player] value)]
+    (if (= (count players) (count (get-bids new-state)))
+      (-> new-state
+          (assoc :onus (highest-bidder new-state))
+          (order-around-onus))
+      (assoc new-state :onus (next-player players player)))))
 
 ;; helper functions for managing cards
 (defn cards-by-suit [state player suit]
@@ -237,16 +240,19 @@
   (let [num-players (count (get-players state))]
     (and (> num-players 0)
          (= num-players (count (get-table-cards state))))))
+(defn who-played-card [state card]
+  (reduce (fn [_ [player action value]]
+            (when (= value card) (reduced player)))
+          nil (reverse (get-log state))))
 (defn who-won-hand [state]
   (let [lead-suit (get-lead-suit state)
         table-cards (get-table-cards state)
         trump (get-trump state)
-        players (get-players state)
         highest-trump (highest table-cards trump)
         highest-lead-suit (highest table-cards lead-suit)
         winning-card (or highest-trump highest-lead-suit)]
     (when (everyone-played? state)
-      (nth players (index-of table-cards winning-card)))))
+      (who-played-card state winning-card))))
 ;; helper function for scoring tricks
 (defn tally-game-pts [state player]
   (let [tricks (get-player-tricks state player)
@@ -348,39 +354,32 @@
       (check-round-over)))
 
 (defn update-play [old-state player value]
-  (when (valid-play? old-state player value)
-    (-> old-state
-        (remove-card player value)
-        (add-table-card value)
-        (trump-if-none (get-suit value))
-        (advance-onus)
-        (if-> *reconcile-hand-over* do-reconcile))))
+  (-> old-state
+      (remove-card player value)
+      (add-table-card value)
+      (trump-if-none (get-suit value))
+      (advance-onus)
+      (if-> *reconcile-hand-over* do-reconcile)))
 
-(defn advance-state [old-state player action value]
-  (when-let [s (when (= (get-onus old-state) player)
-                 (if (bidding-stage? old-state)
-                   (when (= action "bid")
-                     (update-bid old-state player value))
-                   (when (= action "play")
-                     (update-play old-state player value))))]
-    (let [msg (str player " " action " " value)]
-      (update-in s [:messages] #(conj % msg)))))
+(defn update-log [state event]
+  (update-in state [:log] #(conj % event)))
+
+(defn valid? [old-state [player action value]]
+  (when (= (get-onus old-state) player)
+    (if (bidding-stage? old-state)
+      (and (= action "bid") (valid-bid? old-state player value))
+      (and (= action "play") (valid-play? old-state player value)))))
+
+(defn update-state [state [player _ value]]
+  (if (bidding-stage? state)
+    (update-bid state player value)
+    (update-play state player value)))
+
+(defn advance-state [state & event]
+  (when (valid? state event)
+    (update-state (update-log state event) event)))
 
 (defn bid [state player value]
   (advance-state state player "bid" value))
 (defn play [state player value]
   (advance-state state player "play" value))
-
-(defn possessive-name [state]
-  (when-let [onus (get-onus state)]
-    (if (= onus (:me state)) "Your" (str onus "'s"))))
-
-(defn message-next-step [state]
-  (if (game-started? state)
-    (if (game-over? state)
-      (str "Game over. " (get-winner state) " wins.")
-      (when (get-onus state)
-        (if (bidding-stage? state)
-          (str (possessive-name state) " turn to bid.")
-          (str (possessive-name state) " turn to play."))))
-    "Waiting for everyone to join"))

@@ -274,6 +274,12 @@
                     (play "sharon" "KS")
                     (play "tim" "QD"))))
 
+(deftest test-who-played-card
+  (testing "detecting who played the winning (or any) card"
+    (is (= (who-played-card hand-played "AC") "louise"))
+    (is (= (who-played-card hand-played "2C") "sharon"))
+    (is (= (who-played-card hand-played "4C") "tim"))))
+
 (deftest test-award-hand-to-winner
   (testing "put table-cards into winner's tricks pile"
     (is (= (get-player-tricks hand-played "louise") [["AC" "2C" "4C"]]))))
@@ -363,6 +369,7 @@
       (is (= (get-dealer initial-state) "tim"))
       (is (= (get-onus initial-state) "sharon"))
       (is (= (get-messages initial-state) []))
+      (is (= (get-log initial-state) []))
       ;; only sharon can make the next move
       (is (nil? (advance-state initial-state "louise" "bid" 2)))
       ;; bid must be at least 2
@@ -373,6 +380,7 @@
         (is (= (get-onus next-state) "louise"))
         (is (= (get-bids next-state) {"sharon" 2}))
         (is (= (get-messages next-state) ["sharon bid 2"]))
+        (is (= (get-log next-state) [["sharon" "bid" 2]]))
         ;; only louise can act
         (is (nil? (advance-state next-state "rob" "bid" "3")))
         ;; louise can only bid
@@ -381,6 +389,8 @@
         (is (nil? (advance-state next-state "louise" "bid" 2)))
         (let [bid-3 (advance-state next-state "louise" "bid" 3)]
           (is (= (get-messages bid-3) ["sharon bid 2" "louise bid 3"]))
+          (is (= (get-log bid-3) [["sharon" "bid" 2]
+                                  ["louise" "bid" 3]]))
           ;; louise can bid more than sharon
           (is (not (nil? bid-3)))
           ;; then the onus should be on rob
