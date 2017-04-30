@@ -374,7 +374,7 @@
         (is (= (get-onus next-state) "louise"))
         (is (= (get-bids next-state) {"sharon" 2}))
         (is (= (get-messages next-state) ["sharon bid 2"]))
-        (is (= (get-log next-state) [{:player "sharon" :action "bid" :value 2}]))
+        (is (= (get-log next-state) [["sharon" "bid" 2]]))
         ;; only louise can act
         (is (nil? (advance-state next-state "rob" "bid" "3")))
         ;; louise can only bid
@@ -383,8 +383,8 @@
         (is (nil? (advance-state next-state "louise" "bid" 2)))
         (let [bid-3 (advance-state next-state "louise" "bid" 3)]
           (is (= (get-messages bid-3) ["sharon bid 2" "louise bid 3"]))
-          (is (= (get-log bid-3) [{:player "sharon" :action "bid" :value 2}
-                                  {:player "louise" :action "bid" :value 3}]))
+          (is (= (get-log bid-3) [["sharon" "bid" 2]
+                                  ["louise" "bid" 3]]))
           ;; louise can bid more than sharon
           (is (not (nil? bid-3)))
           ;; then the onus should be on rob

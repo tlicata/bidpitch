@@ -1,5 +1,7 @@
 (ns bidpitch.game
-  (:require [bidpitch.cards :refer [create-deck get-suit get-rank make-card ranks suits]])
+  (:require
+   [bidpitch.cards :refer [create-deck get-suit get-rank make-card ranks suits]]
+   [clojure.string :as string])
   (#?(:clj :require :cljs :require-macros) [pallet.thread-expr :refer [arg-> if-> when-> when-not->]]))
 
 ;; Is a new hand automatically dealt? Yes, (true), except during tests
@@ -72,9 +74,7 @@
 (defn get-log [state]
   (:log state))
 (defn get-messages [state]
-  (map (fn [{:keys [player action value] :as event}]
-         (str player " " action " " value))
-       (get-log state)))
+  (map (partial string/join " ") (get-log state)))
 
 ; Utility functions to get next player
 (defn index-of [vect item]
@@ -367,8 +367,7 @@
                      (update-bid old-state player value))
                    (when (= action "play")
                      (update-play old-state player value))))]
-    (let [event {:player player :action action :value value}]
-      (update-in s [:log] #(conj % event)))))
+    (update-in s [:log] #(conj % [player action value]))))
 
 (defn bid [state player value]
   (advance-state state player "bid" value))
