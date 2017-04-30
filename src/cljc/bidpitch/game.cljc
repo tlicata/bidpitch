@@ -108,12 +108,12 @@
   (some #(= player %) (get-players state)))
 (defn add-players [state players]
   (let [dedupe (filter (partial can-join? state) players)]
-    (update-in state [:players] concat dedupe)))
+    (update state :players concat dedupe)))
 (defn add-player [state & players]
   (add-players state players))
 (defn remove-player [state player]
   (when (can-leave? state player)
-    (update-in state [:players] #(remove #{player} %))))
+    (update state :players #(remove #{player} %))))
 (defn add-cards
   ;; deal random cards
   ([state]
@@ -287,10 +287,10 @@
         bidder (highest-bidder state)
         winning-bid (max-bid state)
         no-jack (-> (zipmap (get-players state) (repeat 0))
-                    (update-in [high-card] one-or-inc)
-                    (update-in [low-card] one-or-inc)
-                    (update-in [jack-card] one-or-inc)
-                    (update-in [most-points] one-or-inc))
+                    (update high-card one-or-inc)
+                    (update low-card one-or-inc)
+                    (update jack-card one-or-inc)
+                    (update most-points one-or-inc))
         pts (dissoc no-jack nil)]
     (if (< (get pts bidder) winning-bid)
       (assoc pts bidder (- 0 winning-bid))
@@ -330,7 +330,7 @@
     (-> state award-hand-to-winner clear-table-cards)
     state))
 (defn add-scores [state]
-  (update-in state [:points] #(merge-with + % (calc-points state))))
+  (update state :points #(merge-with + % (calc-points state))))
 (defn declare-winner [state]
   (if (game-over? state)
     (assoc state :winner (key (apply max-key val (:points state))))
@@ -362,7 +362,7 @@
       (if-> *reconcile-hand-over* do-reconcile)))
 
 (defn update-log [state event]
-  (update-in state [:log] #(conj % event)))
+  (update state :log conj event))
 
 (defn valid? [old-state [player action value]]
   (when (= (get-onus old-state) player)
