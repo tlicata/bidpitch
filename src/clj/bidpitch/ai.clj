@@ -104,7 +104,9 @@
       (when-let [game-state (read-string (<!! out))]
         (when (shield/my-turn? game-state)
           (Thread/sleep 1000)
-          (let [{:keys [:action :value]} (best-move-memo game-state)]
+          (let [worker (future (best-move-memo game-state))
+                event (deref worker 3000 (rand-nth (possible-moves game-state)))
+                {:keys [:action :value]} event]
             (>!! in {:message (str action ":" value)})))
         (recur)))
     (println "AI stopped due to disconnect")))
