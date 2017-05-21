@@ -193,7 +193,7 @@
         (let [target (.getElementById js/document "content")
               name (or (.getItem js/localStorage "username")
                        (.get goog.net.cookies "username")
-                       (.prompt js/window "Enter your name"))]
+                       (.prompt js/window "Pick a username"))]
           (if (blank? name)
             (.alert js/window "It works better if you enter a name. Refresh to try again.")
             (go
