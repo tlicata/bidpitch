@@ -9,7 +9,7 @@
 (defn possible-bids [state]
   (let [player (game/get-onus state)
         valid? (partial game/valid-bid? state player)
-        options (filter valid? [2 0])]
+        options (filter valid? [0 2])]
     (map (fn [bid] {:action "bid" :value bid}) options)))
 (defn possible-cards [state]
   (let [player (game/get-onus state)
@@ -117,8 +117,10 @@
   `(thunk-timeout (fn [] ~@body) ~time))
 
 (defn best-move-timeout [state]
-  (try (with-timeout 3000 (best-move-memo state))
-       (catch TimeoutException _ (rand-nth (possible-moves state)))))
+  (try (with-timeout 10000 (best-move-memo state))
+       (catch TimeoutException _
+         (println "Timeout exception caught. AI picking randomly.")
+         (first (possible-moves state)))))
 
 (defn play [in out]
   (>!! in {:message "AI"})
