@@ -3,12 +3,13 @@
             [clojure.core.memoize :as memoize]
             [bidpitch.cards :as cards]
             [bidpitch.game :as game]
-            [bidpitch.shield :as shield]))
+            [bidpitch.shield :as shield])
+  (:import (java.util.concurrent TimeoutException TimeUnit FutureTask)))
 
 (defn possible-bids [state]
   (let [player (game/get-onus state)
         valid? (partial game/valid-bid? state player)
-        options (filter valid? [2 0])]
+        options (filter valid? [0 2])]
     (map (fn [bid] {:action "bid" :value bid}) options)))
 (defn possible-cards [state]
   (let [player (game/get-onus state)
@@ -96,6 +97,31 @@
 
 (def best-move-memo (memoize/ttl best-move {} :ttl/threshold (* 240000)))
 
+;; Thread timeout helpers inspired by code in Clojail.
+;; https://github.com/flatland/clojail/blob/master/src/clojail/core.clj
+(defn thunk-timeout [thunk time]
+  (let [task (FutureTask. thunk)
+        thread (Thread. task)]
+    (try
+      (.start thread)
+      (.get task time TimeUnit/MILLISECONDS)
+      (catch TimeoutException e
+        (.cancel task true)
+        (.stop thread)
+        (throw (TimeoutException. "Execution timed out.")))
+      (catch Exception e
+        (.cancel task true)
+        (.stop thread)
+        (throw e)))))
+(defmacro with-timeout [time & body]
+  `(thunk-timeout (fn [] ~@body) ~time))
+
+(defn best-move-timeout [state]
+  (try (with-timeout 10000 (best-move-memo state))
+       (catch TimeoutException _
+         (println "Timeout exception caught. AI picking randomly.")
+         (first (possible-moves state)))))
+
 (defn play [in out]
   (>!! in {:message "AI"})
   (let [jwt (<!! out) game-state (<!! out)]
@@ -104,7 +130,7 @@
       (when-let [game-state (read-string (<!! out))]
         (when (shield/my-turn? game-state)
           (Thread/sleep 1000)
-          (let [{:keys [:action :value]} (best-move-memo game-state)]
+          (let [{:keys [:action :value]} (best-move-timeout game-state)]
             (>!! in {:message (str action ":" value)})))
         (recur)))
     (println "AI stopped due to disconnect")))
