@@ -11,14 +11,14 @@
                  [hiccup "1.0.5"]
                  [http-kit "2.2.0"]
                  [jarohen/chord "0.7.0"]
+                 [javax.servlet/servlet-api "2.5"]
                  [org.omcljs/om "0.9.0"]]
   :plugins [[lein-cljsbuild "1.1.5"]]
   :hooks [leiningen.cljsbuild]
   :main bidpitch.handler
   :source-paths ["src/clj" "src/cljc"]
   :min-lein-version "2.7.1"
-  :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
-                                  [ring-mock "0.1.5"]]
+  :profiles {:dev {:dependencies [[ring-mock "0.1.5"]]
                    :plugins [[lein-figwheel "0.5.9"]]
                    :cljsbuild {:builds
                                {:key {:figwheel {:on-jsload "bidpitch.client/on-figwheel-reload"}
