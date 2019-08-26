@@ -15,7 +15,7 @@
 
 (def host (.-host (.-location js/window)))
 (def path (.-pathname (.-location js/window)))
-(def websocket-url (str "ws://" host  path "/socky"))
+(def websocket-url (str "wss://" host  path "/socky"))
 
 (defonce websocket (atom (chan)))
 (defonce game-state (atom game/empty-state))
