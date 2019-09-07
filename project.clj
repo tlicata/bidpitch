@@ -29,8 +29,9 @@
                                                  :optimizations :none
                                                  :pretty-print true
                                                  :source-map-timestamp true}}}}}
-             :uberjar {:aot :all
-                       :dependencies [[javax.servlet/servlet-api "2.5"]]}}
+             :prod {:offline? true}
+             :uberjar {:aot :all}}
+  :uberjar-name "bidpitch-standalone.jar"
   :cljsbuild {:builds
               {:key {:source-paths ["src/cljc" "src/cljs"]
                      :compiler {:output-to "target/classes/public/cljs/app.js"
