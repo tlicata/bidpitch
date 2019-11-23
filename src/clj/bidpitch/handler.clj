@@ -146,7 +146,7 @@
        (websocket-handler request id))
   (GET "/rename" [] (view/page-rename))
   (route/resources "/")
-  (route/not-found "Not Found"))
+  (route/not-found (view/page-not-found)))
 
 (def app
   (handler/site app-routes))

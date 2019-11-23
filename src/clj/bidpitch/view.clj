@@ -67,6 +67,21 @@
    [:body
     [:div#content]]))
 
+(defn page-not-found []
+  (html5
+   [:head
+    [:title "Bid Pitch - Page Not Found"]
+    (include-css "/css/styles.css")
+    (meta-viewport)]
+   [:body.page
+    [:div.row1
+     [:h1 "Bid Pitch"]]
+    [:div.row2
+     [:p "Page Not Found"]]
+    [:div.row3
+     [:form {:action "/" :method "GET"}
+      [:input {:type "submit" :value "Home"}]]]]))
+
 (defn page-rename []
   (html5
    [:head
