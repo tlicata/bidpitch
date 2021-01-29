@@ -1,9 +1,9 @@
 (defproject bidpitch "0.1.0-SNAPSHOT"
   :description "The card game"
   :url "https://github.com/tlicata/bidpitch"
-  :dependencies [[org.clojure/clojure "1.8.0"]
+  :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/clojurescript "1.9.473"]
-                 [org.clojure/core.async "0.2.395"]
+                 [org.clojure/core.async "1.3.610"]
                  [org.clojure/core.memoize "0.5.8"]
                  [clj-jwt "0.1.0"]
                  [compojure "1.5.2"]
