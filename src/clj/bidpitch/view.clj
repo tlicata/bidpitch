@@ -51,7 +51,7 @@
      (render-list-of-joined-games games player)
      (render-list-of-games-to-join games)
      [:form {:action games-path :method "POST"}
-      [:input {:type "submit" :value "Create game"}]]]
+      [:input {:type "submit" :value "Create game" :autofocus true}]]]
     [:div.row4
      [:a.howto {:href "http://en.wikipedia.org/wiki/Pitch_(card_game)"} "Wikipedia"]
      [:p.small "(Hint: Auction Pitch with"]
@@ -80,7 +80,7 @@
      [:p "Page Not Found"]]
     [:div.row3
      [:form {:action "/" :method "GET"}
-      [:input {:type "submit" :value "Home"}]]]]))
+      [:input {:type "submit" :value "Home" :autofocus true}]]]]))
 
 (defn page-rename []
   (html5
