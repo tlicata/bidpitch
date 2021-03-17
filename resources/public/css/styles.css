@@ -158,7 +158,6 @@ html, body, #content, .game {
 .hand {
     height: 139px;
     line-height: 0;
-    opacity: .82;
     overflow-x: auto;
     overflow-y: hidden;
     text-align: center;
@@ -173,9 +172,6 @@ html, body, #content, .game {
 .hand .card .card-img {
     height: 139px;
     width: 100px;
-}
-.hand.onus {
-    opacity: 1;
 }
 
 .points div {
