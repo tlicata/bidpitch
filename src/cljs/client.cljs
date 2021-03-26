@@ -4,8 +4,8 @@
             [cljs.reader :refer [read-string]]
             [clojure.string :refer [blank? join replace]]
             [goog.net.cookies]
-            [om.core :as om :include-macros true]
-            [om.dom :as dom :include-macros true]
+            [reagent.core :as reagent]
+            [reagent.dom :as reagent-dom]
             [bidpitch.cards :refer [get-rank get-suit ranks suits to-unicode]]
             [bidpitch.game :as game]
             [bidpitch.shield :as shield]
@@ -17,8 +17,8 @@
 (def path (.-pathname (.-location js/window)))
 (def websocket-url (str "wss://" host  path "/socky"))
 
-(defonce websocket (atom (chan)))
-(defonce game-state (atom game/empty-state))
+(defonce websocket (reagent/atom (chan)))
+(defonce game-state (reagent/atom game/empty-state))
 
 (defn send-message [msg]
   (put! @websocket msg))
@@ -42,45 +42,37 @@
   (vec (sort sort-cards cards)))
 
 (defn card-ui [card]
-  (let [html-class {:className (str "card-img" (if card "" " empty"))}
+  (let [html-class {:class (str "card-img" (if card "" " empty"))}
         card-url {:src (str "/img/cards/individual/" card ".svg")
                   ;; Force react to not reuse card <img>s. Safari was
                   ;; messing with the sizes of cards when setting the
                   ;; `src` attribute to a cached image.
                   :key card}]
     (if card
-      (dom/img (clj->js (merge html-class card-url)))
-      (dom/span (clj->js html-class)))))
-(defview card-view
-  (let [card (:card data) handler #(send-message (str "play:" card))]
-    (dom/span #js {:onClick handler :className "card"} (card-ui card))))
+      [:img (merge html-class card-url)]
+      [:span html-class ""])))
 
 (defview hand-view
   (if-let [player-cards (shield/my-cards data)]
-    (apply dom/div
-           #js {:className (str "hand" (when (shield/my-turn? data) " onus"))}
-           (om/build-all card-view
-                         (map (partial hash-map :card) (sort-hand player-cards))
-                         {:key :card}))
-    (dom/div nil "")))
+    [:div {:class (str "hand" (when (shield/my-turn? data) " onus"))}
+     (for [card (sort-hand player-cards)]
+       (let [handler #(send-message (str "play:" card))]
+         ^{:key card} [:span.card {:on-click handler} (card-ui card)]))]
+    [:div]))
 
 (defn link-button [text url show]
-  (dom/a #js {:className "button"
-              :href url
-              :style (display show)} text))
+  [:a.button {:href url :style (display show)} text])
 (defn msg-button [text msg show]
-  (dom/button #js {:className "button"
-                   :style (display show)
-                   :onClick #(send-message msg)} text))
+  [:button.button {:style (display show) :onClick #(send-message msg)} text])
 
 (defn bid-button [data val txt]
   (msg-button txt (str "bid:" val) (game/valid-bid? data (:me data) val)))
 (defview bid-view
-  (dom/div #js {:className "bids" :style (display (shield/my-turn-to-bid? data))}
-           (bid-button data 0 "pass")
-           (bid-button data 2 "2")
-           (bid-button data 3 "3")
-           (bid-button data 4 "4")))
+  [:div.bids {:style (display (shield/my-turn-to-bid? data))}
+   (bid-button data 0 "pass")
+   (bid-button data 2 "2")
+   (bid-button data 3 "3")
+   (bid-button data 4 "4")])
 
 (def history-play-regex (partial re-matches #"(.*)\splay\s(\S\S)"))
 (def history-bid-regex (partial re-matches #"(.*)\sbid\s(\d)"))
@@ -104,9 +96,8 @@
                   (history-current-game state))))
 (defn history-view [data]
   (if (empty? (game/get-messages data))
-    (dom/span nil nil)
-    (dom/span #js {:className "button history"
-                   :onClick #(.alert js/window (history-pprint data))} "^")))
+    [:span]
+    [:span.button.history {:onClick #(.alert js/window (history-pprint data))} "^"]))
 
 (defn possessive-name [state]
   (when-let [onus (game/get-onus state)]
@@ -123,70 +114,68 @@
     "Waiting for everyone to join"))
 
 (defview start-view
-  (dom/div #js {:className "start-view"}
-           ;; hidden history button so can-start message is centered
-           (dom/span #js {:style #js {:visibility "hidden"}} (history-view data))
-           (if (shield/can-i-start? data)
-             (dom/span #js {:className "starter"}
-                       (dom/p nil "When you're satisfied with the participant list,")
-                       (msg-button "Start" "start" true))
-             (let [show-ai (and (shield/am-i-leader? data) (game/can-join? data "ai"))]
-               (dom/span (when show-ai #js {:className "show-ai"})
-                         (dom/p nil (or (message-next-step data)
-                                        (history-unicode (last (game/get-messages data)))))
-                         (when show-ai (msg-button "Add AI Player" "ai" true)))))
-           (history-view data)))
+  [:div.start-view
+   ;; hidden history button so can-start message is centered
+   [:span {:style {:visibility "hidden"}} (history-view data)]
+   (if (shield/can-i-start? data)
+     [:span.starter
+      [:p "When you're satisfied with the participant list,"]
+      (msg-button "Start" "start" true)]
+     (let [show-ai (and (shield/am-i-leader? data) (game/can-join? data "ai"))]
+       [:span (when show-ai {:class "show-ai"})
+        [:p (or (message-next-step data)
+                (history-unicode (last (game/get-messages data))))]
+        (when show-ai (msg-button "Add AI Player" "ai" true))]))
+   (history-view data)])
 
-(defview points-li
-  (dom/li nil (str (key data) ": " (val data))))
+(defn points-li [[player points]]
+  ^{:key player} [:li (str player ": " points)])
 (defview points-view
   (let [points (:points data)
         winner (:winner data)]
-    (dom/div #js {:className "points"
-                  :style (display (not (empty? points)))}
-             (apply dom/ul nil (om/build-all points-li points))
-             (dom/div #js {:style (display (not (nil? winner)))}
-                      (str winner " wins!"))
-             (msg-button "Play again!" "start" (game/game-over? data))
-             (link-button "Home" "/" (game/game-over? data)))))
+    [:div.points {:style (display (not (empty? points)))}
+     [:ul (for [point points] (points-li point))]
+     [:div {:style (display (not (nil? winner)))} (str winner " wins!")]
+     (msg-button "Play again!" "start" (game/game-over? data))
+     (link-button "Home" "/" (game/game-over? data))]))
 
 (defn name-ui [player-name]
-  (dom/div #js {:className "player-wrapper"}
-           (dom/span #js {:className "player"} player-name)))
+  [:div.player-wrapper
+   [:span.player player-name]])
 
-(defview table-card
-  (dom/div nil (card-ui (second data)) (name-ui (first data))))
+(defn table-card [[player card]]
+  ^{:key player} [:div (card-ui card) (name-ui player)])
 (defview table-cards-view
   (when (and (game/game-started? data)
              (not (game/bidding-stage? data))
              (not (game/game-over? data)))
     (let [players (game/get-players data)
           table-cards (game/get-table-cards data)]
-      (apply dom/div #js {:className "tablecards"}
-             (om/build-all table-card (util/map-all vector players table-cards))))))
+      [:div.tablecards
+       (for [each-card (util/map-all vector players table-cards)]
+         (table-card each-card))])))
 
-(defview join-list-li
-  (dom/li nil (if (nil? data) "_____" data)))
+(defn join-list-li [player index]
+  ^{:key index} [:li (if (nil? player) "_____" player)])
 (defview join-list-view
   (let [players-and-nils (game/get-players-with-nils data)]
-    (dom/div #js {:className "player-list" :style (display (not (game/game-started? data)))}
-             (dom/h3 nil "Players")
-             (apply dom/ol nil
-                    (om/build-all join-list-li players-and-nils)))))
+    [:div.player-list {:style (display (not (game/game-started? data)))}
+     [:h3 "Players"]
+     [:ol (map-indexed (fn [index player]
+                         (join-list-li player index))
+                       players-and-nils)]]))
 
 (defview game-view
-  (dom/div #js {:className "game"}
-           (dom/div #js {:className "top-ui"}
-                    (om/build bid-view data)
-                    (om/build table-cards-view data)
-                    (om/build join-list-view data))
-           (when-not (game/game-started? data)
-             (om/build start-view data))
-           (dom/div #js {:className "bottom-ui"}
-                    (when (game/game-started? data)
-                      (om/build start-view data))
-                    (om/build hand-view data)
-                    (om/build points-view data))))
+  [:div.game
+   [:div.top-ui
+    [bid-view]
+    [table-cards-view]
+    [join-list-view]]
+   (when-not (game/game-started? data) [start-view])
+   [:div.bottom-ui
+    (when (game/game-started? data) [start-view])
+    [hand-view]
+    [points-view]]])
 
 (set! (.-onload js/window)
       (fn []
@@ -210,7 +199,7 @@
                           (set! (.-cookie js/document) (str "username=" username ";path=/;expires=Fri, 31 Dec 9999 23:59:59 GMT")))
                         (reset! game-state (read-string (:message (<! @websocket))))
                         (send-message "join")
-                        (om/root game-view game-state {:target target})
+                        (reagent-dom/render [game-view] target)
                         (loop []
                           (when-let [msg (<! @websocket)]
                             (reset! game-state (read-string (:message msg)))
@@ -218,4 +207,4 @@
                         (.alert js/window "Lost connection. Reload page.")))))))))))
 
 (defn on-figwheel-reload []
-  (om/root game-view game-state {:target (.getElementById js/document "content")}))
+  (reagent-dom/render [game-view] (.getElementById js/document "content")))

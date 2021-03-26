@@ -14,9 +14,10 @@ Websockets handle most of the client-server communication.
 Henderson's [Chord][chord] provides a nice [core.async][async]
 wrapper. I'm not sure if it was necessary but it was very convenient.
 
-Also on the front-end I experimented with Facebook's [React.js][react]
-and David Nolen's [Om][om] for a UI rendered by pure functions. Also
-not necessary, but they were very nice.
+On the front-end I experimented with Facebook's [React.js][react]. I initially
+used [Om][om] as a ClojureScript interface, but that is no longer being actively
+maintained, so I moved to [Reagent][reagent]. The [Hiccup][hiccup] syntax
+definitely feels like an improvement.
 
 [pitch]: http://en.wikipedia.org/wiki/Pitch_(card_game)
 [lockport]: http://en.wikipedia.org/wiki/Lockport_(city),_New_York
@@ -28,6 +29,8 @@ not necessary, but they were very nice.
 [async]: https://github.com/clojure/core.async
 [react]: http://facebook.github.io/react/
 [om]: https://github.com/swannodette/om
+[reagent]: https://reagent-project.github.io/
+[hiccup]: https://github.com/weavejester/hiccup
 
 ## Prerequisites
 
