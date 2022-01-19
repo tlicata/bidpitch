@@ -117,8 +117,7 @@
                   "bid" (player-bid! game-id username val)
                   "play" (player-play! game-id username val)
                   "start" (player-start! game-id)
-                  "state" (>! out (state-to-client (get-game! game-id) username out))
-                  :else (>! out "unknown message type"))
+                  (>! out (state-to-client (get-game! game-id) username out)))
                 (recur))
               (do
                 (player-leave! game-id username)
