@@ -40,7 +40,8 @@ You will need [Leiningen][leiningen] installed.
 
 ## Running
 
-To start a web server for the application, run:
+To start a web server for the application, which will be available on
+port 8080 by default, run:
 
     lein run
 
@@ -50,6 +51,10 @@ via [Figwheel][figwheel], run:
     lein figwheel
 
 [figwheel]: https://github.com/bhauman/lein-figwheel
+
+The game uses a secure WebSocket (`wss://`) which requires some configuration to
+work properly on localhost. The `local-dev` branch changes the WebSocket to be
+insecure (`ws://`) so it will work out-of-the-box for local development.
 
 ## TODO
 
