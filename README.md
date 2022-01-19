@@ -24,7 +24,7 @@ definitely feels like an improvement.
 [clj]: http://clojure.org/
 [cljs]: https://github.com/clojure/clojurescript
 [cljc]: https://github.com/clojure/clojurescript/wiki/Using-cljc
-[httpkit]: http://http-kit.org/
+[httpkit]: https://http-kit.github.io
 [chord]: https://github.com/james-henderson/chord
 [async]: https://github.com/clojure/core.async
 [react]: http://facebook.github.io/react/
